@@ -238,7 +238,7 @@ export function TeachersTable({
           </div>
 
           <div className="flex flex-col md:flex-row flex-1 items-stretch md:items-center justify-end gap-3">
-            <div className="flex flex-wrap items-center gap-2 justify-end">
+            <div className="flex flex-wrap items-center gap-2 justify-start">
               <Select
                 value={departmentFilter}
                 onValueChange={onDepartmentFilterChange}
@@ -261,7 +261,7 @@ export function TeachersTable({
 
               <Select value={roleFilter} onValueChange={onRoleFilterChange}>
                 <SelectTrigger
-                  className="w-full md:w-[140px] text-right h-10 border-gray-200 bg-gray-50/50"
+                  className="w-full md:w-40 text-right h-10 border-gray-200 bg-gray-50/50"
                   dir="rtl"
                 >
                   <SelectValue placeholder="الدور" />
@@ -392,7 +392,7 @@ export function TeachersTable({
 
             {teachers.length === 0 && (
               <div className="text-center p-12 text-gray-400 font-medium">
-                لا يوجد مستخدمين يطابقون البحث
+                لا يوجد مستخدمين
               </div>
             )}
           </div>

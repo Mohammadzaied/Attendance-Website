@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { BookOpen, Users, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import {
   Select,
   SelectContent,
@@ -27,12 +28,17 @@ interface MajorDetailProps {
 
 export function MajorDetail({ major, onSelectYear }: MajorDetailProps) {
   const dispatch = useAppDispatch();
-  const { semesterStats, StudentCountSpecialization, yearsNumber } =
-    useAppSelector((state) => state.specializations);
+  const {
+    semesterStats,
+    StudentCountSpecialization,
+    yearsNumber,
+    fetchStatsState,
+  } = useAppSelector((state) => state.specializations);
 
   const specializationId = parseInt(major.id);
 
   const [semesters, setSemesters] = useState<SemestersResponse[]>([]);
+  const [isSemestersLoading, setIsSemestersLoading] = useState(true);
   const [selectedAcademicYearFilter, setSelectedAcademicYearFilter] =
     useState<string>("");
   const [selectedSemesterFilter, setSelectedSemesterFilter] =
@@ -46,6 +52,7 @@ export function MajorDetail({ major, onSelectYear }: MajorDetailProps) {
   }, [dispatch, specializationId]);
 
   const loadSemesters = async () => {
+    setIsSemestersLoading(true);
     try {
       const data = await semesterService.getAllSemesters();
 
@@ -59,6 +66,8 @@ export function MajorDetail({ major, onSelectYear }: MajorDetailProps) {
       }
     } catch (error) {
       console.error("Failed to load semesters:", error);
+    } finally {
+      setIsSemestersLoading(false);
     }
   };
 
@@ -206,89 +215,102 @@ export function MajorDetail({ major, onSelectYear }: MajorDetailProps) {
           </div>
         </div>
 
-        <div className="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {(() => {
-            const selectedSem = semesters.find(
-              (s) => s.semesterId.toString() === selectedSemesterFilter,
-            );
+        <div className="p-6">
+          {isSemestersLoading || fetchStatsState.isLoading ? (
+            <div className="col-span-full py-24 flex flex-col items-center justify-center bg-white rounded-3xl border border-gray-100 shadow-sm">
+              <Spinner className="h-10 w-10 text-blue-600" />
+              <p className="text-gray-500 mt-4 font-medium">
+                جاري تحميل البيانات...
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {(() => {
+                const selectedSem = semesters.find(
+                  (s) => s.semesterId.toString() === selectedSemesterFilter,
+                );
 
-            const filteredSemesters = selectedSem ? [selectedSem] : [];
+                const filteredSemesters = selectedSem ? [selectedSem] : [];
 
-            return filteredSemesters.length > 0 ? (
-              filteredSemesters.map((sem) => (
-                <div
-                  key={sem.semesterId}
-                  className="group border border-gray-100 rounded-xl p-5 hover:border-blue-200 hover:shadow-md transition-all relative overflow-hidden bg-white"
-                >
-                  <div className="absolute top-0 right-0 h-1 w-full bg-blue-500/10 group-hover:bg-blue-500 transition-colors" />
+                return filteredSemesters.length > 0 ? (
+                  filteredSemesters.map((sem) => (
+                    <div
+                      key={sem.semesterId}
+                      className="group border border-gray-100 rounded-xl p-5 hover:border-blue-200 hover:shadow-md transition-all relative overflow-hidden bg-white"
+                    >
+                      <div className="absolute top-0 right-0 h-1 w-full bg-blue-500/10 group-hover:bg-blue-500 transition-colors" />
 
-                  <div className="flex justify-between items-start mb-4">
-                    <div>
-                      <h4 className="text-lg font-bold text-gray-900">
-                        السنة الأكاديمية {sem.year}-{sem.year + 1}
-                      </h4>
+                      <div className="flex justify-between items-start mb-4">
+                        <div>
+                          <h4 className="text-lg font-bold text-gray-900">
+                            السنة الأكاديمية {sem.year}-{sem.year + 1}
+                          </h4>
 
-                      <p className="text-md font-medium text-blue-600">
-                        {major.name} : {sem.name} -{" "}
-                        {selectedLevelFilter === "1" ? "سنة أولى" : "سنة ثانية"}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="space-y-3 mb-6">
-                    <div className="flex justify-between text-sm">
-                      <span className="text-right text-gray-500">
-                        المواد الدراسية
-                      </span>
-                      <div className="flex justify-center border border-gray-200 p-2 rounded-lg  w-[21%]">
-                        <span className=" font-medium text-gray-900">
-                          {semesterStats[sem.semesterId]?.subjectCount || 0}{" "}
-                          مواد
-                        </span>
+                          <p className="text-md font-medium text-blue-600">
+                            {major.name} : {sem.name} -{" "}
+                            {selectedLevelFilter === "1"
+                              ? "سنة أولى"
+                              : "سنة ثانية"}
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-right text-gray-500">
-                        الطلاب المسجلين
-                      </span>
-                      <div className="flex justify-center  border border-gray-200 p-2 rounded-lg w-[21%]">
-                        <span className="text-right font-medium text-gray-900">
-                          {semesterStats[sem.semesterId]?.studentCount || 0}{" "}
-                          طالب
-                        </span>
-                      </div>
-                    </div>
-                  </div>
 
-                  <Button
-                    variant="outline"
-                    className="w-full gap-2 border-gray-200 text-gray-700 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600 cursor-pointer transition-all"
-                    onClick={() => {
-                      const studyYear: StudyYear = {
-                        id: sem.semesterId.toString(),
-                        semesterId: sem.semesterId,
-                        yearName: `السنة الأكاديمية ${sem.year} - ${sem.name}`,
-                        subjects: [],
-                        students: [],
-                        academicYearId: sem.academicYearId,
-                        studyYear: parseInt(selectedLevelFilter),
-                      };
-                      onSelectYear(studyYear);
-                    }}
-                  >
-                    <ArrowLeft className="h-4 w-4" />
-                    إدارة الفصل
-                  </Button>
-                </div>
-              ))
-            ) : (
-              <div className="col-span-full py-12 text-center border-2 border-dashed border-gray-100 rounded-xl">
-                <p className="text-gray-400">
-                  لا توجد فصول مضافة لهذه السنة حالياً
-                </p>
-              </div>
-            );
-          })()}
+                      <div className="space-y-3 mb-6">
+                        <div className="flex justify-between text-sm">
+                          <span className="text-right text-gray-500">
+                            المواد الدراسية
+                          </span>
+                          <div className="flex justify-center border border-gray-200 p-2 rounded-lg  w-[21%]">
+                            <span className=" font-medium text-gray-900">
+                              {semesterStats[sem.semesterId]?.subjectCount || 0}{" "}
+                              مواد
+                            </span>
+                          </div>
+                        </div>
+                        <div className="flex justify-between text-sm">
+                          <span className="text-right text-gray-500">
+                            الطلاب المسجلين
+                          </span>
+                          <div className="flex justify-center  border border-gray-200 p-2 rounded-lg w-[21%]">
+                            <span className="text-right font-medium text-gray-900">
+                              {semesterStats[sem.semesterId]?.studentCount || 0}{" "}
+                              طالب
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <Button
+                        variant="outline"
+                        className="w-full gap-2 border-gray-200 text-gray-700 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600 cursor-pointer transition-all"
+                        onClick={() => {
+                          const studyYear: StudyYear = {
+                            id: sem.semesterId.toString(),
+                            semesterId: sem.semesterId,
+                            yearName: `السنة الأكاديمية ${sem.year} - ${sem.name}`,
+                            subjects: [],
+                            students: [],
+                            academicYearId: sem.academicYearId,
+                            studyYear: parseInt(selectedLevelFilter),
+                          };
+                          onSelectYear(studyYear);
+                        }}
+                      >
+                        <ArrowLeft className="h-4 w-4" />
+                        إدارة الفصل
+                      </Button>
+                    </div>
+                  ))
+                ) : (
+                  <div className="col-span-full py-12 text-center border-2 border-dashed border-gray-100 rounded-xl">
+                    <p className="text-gray-400">
+                      لا توجد فصول مضافة لهذه السنة حالياً
+                    </p>
+                  </div>
+                );
+              })()}
+            </div>
+          )}
         </div>
       </div>
     </div>

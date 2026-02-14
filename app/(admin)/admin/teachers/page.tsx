@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import { useSidebar } from "@/contexts/sidebar-context";
 import { useAdminSidebarItems } from "@/lib/utils/sidebar-items";
+import { Spinner } from "@/components/ui/spinner";
 import { TeachersTable } from "@/components/admin/teacherTab/teachers-table";
 import { AddTeacherDialog } from "@/components/admin/teacherTab/add-teacher-dialog";
 import { ImportUsersDialog } from "@/components/admin/teacherTab/import-users-dialog";
@@ -31,6 +32,7 @@ export default function TeachersPage() {
     selectedTeacher,
     isUpdateDialogOpen,
     isDeleteDialogOpen,
+    fetchTeachersState,
   } = useAppSelector((state) => state.admin);
 
   const [teacherSearch, setTeacherSearch] = useState("");
@@ -82,24 +84,33 @@ export default function TeachersPage() {
       /> */}
 
       <div className="space-y-4">
-        <TeachersTable
-          teachers={filteredTeachers as any}
-          searchValue={teacherSearch}
-          onSearchChange={setTeacherSearch}
-          onEdit={handleEditTeacher as any}
-          onDelete={handleDeleteTeacher as any}
-          roleFilter={roleFilter}
-          onRoleFilterChange={setRoleFilter}
-          departmentFilter={departmentFilter}
-          onDepartmentFilterChange={setDepartmentFilter}
-          departments={departments}
-          headerAction={
-            <div className="flex gap-2">
-              <ImportUsersDialog onSuccess={handleTeacherSuccess} />
-              <AddTeacherDialog onSuccess={handleTeacherSuccess} />
-            </div>
-          }
-        />
+        {fetchTeachersState.isLoading ? (
+          <div className="flex flex-col items-center justify-center py-24 bg-white rounded-3xl border border-gray-100 shadow-sm">
+            <Spinner className="h-10 w-10 text-blue-600" />
+            <p className="text-gray-500 mt-4 font-medium">
+              جاري تحميل البيانات...
+            </p>
+          </div>
+        ) : (
+          <TeachersTable
+            teachers={filteredTeachers as any}
+            searchValue={teacherSearch}
+            onSearchChange={setTeacherSearch}
+            onEdit={handleEditTeacher as any}
+            onDelete={handleDeleteTeacher as any}
+            roleFilter={roleFilter}
+            onRoleFilterChange={setRoleFilter}
+            departmentFilter={departmentFilter}
+            onDepartmentFilterChange={setDepartmentFilter}
+            departments={departments}
+            headerAction={
+              <div className="flex gap-2">
+                <ImportUsersDialog onSuccess={handleTeacherSuccess} />
+                <AddTeacherDialog onSuccess={handleTeacherSuccess} />
+              </div>
+            }
+          />
+        )}
         <UpdateTeacherDialog
           teacher={selectedTeacher}
           open={isUpdateDialogOpen}

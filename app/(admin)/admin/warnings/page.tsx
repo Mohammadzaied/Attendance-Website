@@ -73,6 +73,7 @@ export default function WarningsPage() {
   const [rejectionReason, setRejectionReason] = useState("");
   const [extensionClasses, setExtensionClasses] = useState<number>(0);
   const [isExporting, setIsExporting] = useState(false);
+  const [hasAttemptedLoad, setHasAttemptedLoad] = useState(false);
 
   const [resultDialog, setResultDialog] = useState({
     open: false,
@@ -115,6 +116,25 @@ export default function WarningsPage() {
 
   const loadAlerts = () => {
     if (academicYearId === "" || semesterId === "") return;
+
+    // Guard: Prevent mismatched fetch during year changes
+    if (
+      academicYearId !== "all" &&
+      semesterId !== "all" &&
+      semesters.length > 0
+    ) {
+      const selectedSemester = semesters.find(
+        (s) => s.semesterId.toString() === semesterId,
+      );
+      if (
+        selectedSemester &&
+        selectedSemester.academicYearId.toString() !== academicYearId
+      ) {
+        return;
+      }
+    }
+
+    setHasAttemptedLoad(true);
     dispatch(
       fetchAlertsByStudent({
         studentName: studentName || undefined,
@@ -480,7 +500,9 @@ export default function WarningsPage() {
               </div>
             )}
           </>
-        ) : alertsByStudent ? (
+        ) : hasAttemptedLoad &&
+          !fetchAlertsByStudentState.isLoading &&
+          alertsByStudent ? (
           <div className="flex flex-col items-center justify-center py-24 bg-white rounded-3xl border border-gray-100 shadow-sm opacity-60">
             <div className="h-20 w-20 rounded-full bg-gray-50 flex items-center justify-center mb-4">
               <Filter className="h-10 w-10 text-gray-300" />
