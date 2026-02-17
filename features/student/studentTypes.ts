@@ -8,6 +8,21 @@ export interface MajorStudent {
   studentNumber?: string;
 }
 
+export type Warning = {
+  id: string;
+  studentId: string;
+  studentName: string;
+  studentNumber: string;
+  department: string;
+  section: string;
+  warningText: string;
+  sentBy: string;
+  sentByEmail: string;
+  date: string;
+  severity: "low" | "medium" | "high";
+  isRead: boolean;
+};
+
 export type Student = {
   id: string;
   name: string;
@@ -91,6 +106,7 @@ export interface StudentProfileResponse {
   academicYearId: number;
   academicYear: number;
   studyYear: number;
+  isGraduated: boolean;
   academicYears: Array<{
     academicYearId: number;
     year: number;

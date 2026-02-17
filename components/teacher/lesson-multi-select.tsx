@@ -26,6 +26,7 @@ type LessonMultiSelectProps = {
   placeholder?: string;
   className?: string;
   orphanedLessonNames?: string[]; // Non-selectable lessons that have been rescheduled
+  hideSelectedNames?: boolean;
 };
 
 export function LessonMultiSelect({
@@ -36,6 +37,7 @@ export function LessonMultiSelect({
   placeholder = "اختر الحصص",
   className,
   orphanedLessonNames = [],
+  hideSelectedNames = false,
 }: LessonMultiSelectProps) {
   const [open, setOpen] = useState(false);
 
@@ -83,34 +85,27 @@ export function LessonMultiSelect({
           ) : (
             lessons.map((lesson) => {
               const isSelected = selectedLessonIds.includes(lesson.lessonId);
-              const isLastSelected =
-                isSelected && selectedLessonIds.length === 1;
+              // const isLastSelected =
+              //   isSelected && selectedLessonIds.length === 1;
               return (
                 <div
                   key={lesson.lessonId}
                   className={cn(
                     "flex items-center space-x-2 space-x-reverse rounded-md p-2",
-                    isLastSelected
-                      ? "opacity-50 cursor-not-allowed"
-                      : "cursor-pointer hover:bg-gray-50",
+                    "cursor-pointer hover:bg-gray-50",
                   )}
-                  onClick={() =>
-                    !isLastSelected && toggleLesson(lesson.lessonId)
-                  }
+                  onClick={() => toggleLesson(lesson.lessonId)}
                 >
                   <Checkbox
                     checked={isSelected}
-                    onCheckedChange={() =>
-                      !isLastSelected && toggleLesson(lesson.lessonId)
-                    }
+                    onCheckedChange={() => toggleLesson(lesson.lessonId)}
                     onClick={(e) => e.stopPropagation()}
-                    disabled={isLastSelected}
                     className="h-4 w-4"
                   />
                   <label
                     className={cn(
                       "text-sm font-medium leading-none flex-1 pr-1",
-                      isLastSelected ? "cursor-not-allowed" : "cursor-pointer",
+                      "cursor-pointer",
                     )}
                   >
                     {lesson.name}
@@ -138,7 +133,7 @@ export function LessonMultiSelect({
             </div>
           </div>
         )}
-        {selectedLessons.length > 0 && (
+        {/* {selectedLessons.length > 0 && !hideSelectedNames && (
           <div className="mt-3 pt-3 border-t border-gray-200">
             <div className="flex flex-wrap gap-1">
               {selectedLessons.map((lesson) => (
@@ -152,7 +147,7 @@ export function LessonMultiSelect({
               ))}
             </div>
           </div>
-        )}
+        )} */}
         <div className="mt-3 pt-2 text-[10px] text-gray-400 text-center border-t border-gray-100 italic">
           يجب اختيار حصة واحدة على الأقل.
         </div>

@@ -28,7 +28,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Spinner } from "@/components/ui/spinner";
 
-interface PresenceDialogsProps {
+interface AbsencesDialogsProps {
   isEditDialogOpen: boolean;
   setIsEditDialogOpen: (open: boolean) => void;
   isDeleteDialogOpen: boolean;
@@ -43,7 +43,7 @@ interface PresenceDialogsProps {
   deleteLoading: boolean;
 }
 
-export function PresenceDialogs({
+export function AbsencesDialogs({
   isEditDialogOpen,
   setIsEditDialogOpen,
   isDeleteDialogOpen,
@@ -56,7 +56,7 @@ export function PresenceDialogs({
   onConfirmDelete,
   editLoading,
   deleteLoading,
-}: PresenceDialogsProps) {
+}: AbsencesDialogsProps) {
   return (
     <>
       {/* Edit Absence Dialog */}

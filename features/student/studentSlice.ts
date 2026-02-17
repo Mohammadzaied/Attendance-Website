@@ -281,6 +281,20 @@ const studentSlice = createSlice({
       state.profile = null;
       state.fetchProfileState = initialAsyncState;
     },
+    resetStudentDetails: (state) => {
+      state.profile = null;
+      state.subjects = null;
+      state.adminSubjects = null;
+      state.absenceDetails = null;
+      state.alerts = null;
+      state.unifiedAlerts = null;
+      state.fetchProfileState = initialAsyncState;
+      state.fetchSubjectsState = initialAsyncState;
+      state.fetchAdminSubjectsState = initialAsyncState;
+      state.fetchAbsenceDetailsState = initialAsyncState;
+      state.fetchAlertsState = initialAsyncState;
+      state.fetchUnifiedAlertsState = initialAsyncState;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -423,5 +437,5 @@ const studentSlice = createSlice({
   },
 });
 
-export const { clearProfile } = studentSlice.actions;
+export const { clearProfile, resetStudentDetails } = studentSlice.actions;
 export default studentSlice.reducer;

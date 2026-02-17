@@ -5,6 +5,7 @@ import { specializationsReducer } from "@/features/specialization";
 import { teacherReducer } from "@/features/teacher";
 import { studentReducer } from "@/features/student";
 import { alertReducer } from "@/features/alert";
+import { lessonReducer } from "@/features/lesson";
 import { injectStore } from "@/lib/api";
 
 export const store = configureStore({
@@ -15,6 +16,7 @@ export const store = configureStore({
     teacher: teacherReducer,
     student: studentReducer,
     alert: alertReducer,
+    lesson: lessonReducer,
   },
 });
 

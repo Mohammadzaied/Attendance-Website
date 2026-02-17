@@ -9,12 +9,12 @@ export default function NotFoundPage() {
   const router = useRouter();
 
   useEffect(() => {
-    // const navEntries = performance.getEntriesByType(
-    //   "navigation",
-    // ) as PerformanceNavigationTiming[];
-    // if (navEntries.length > 0 && navEntries[0].type === "reload") {
-    //   router.back();
-    // }
+    const navEntries = performance.getEntriesByType(
+      "navigation",
+    ) as PerformanceNavigationTiming[];
+    if (navEntries.length > 0 && navEntries[0].type === "reload") {
+      router.back();
+    }
   }, [router]);
 
   const handleRetry = () => {

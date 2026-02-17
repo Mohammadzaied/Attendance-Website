@@ -50,8 +50,12 @@ export function StudentProfileHeader({
               className="gap-2 py-1.5 px-4 border-gray-200 text-gray-600 bg-gray-50/50 rounded-xl font-bold"
             >
               <BookOpen className="h-3.5 w-3.5 opacity-60" />
-              {profile.specializationName} - السنة{" "}
-              {profile.studyYear === 1 ? "الأولى" : "الثانية"}
+              {profile.specializationName}
+              {profile.isGraduated
+                ? " - متخرج"
+                : profile.studyYear === 1
+                  ? "الأولى - السنة"
+                  : "الثانية - السنة"}
             </Badge>
           </div>
         </div>

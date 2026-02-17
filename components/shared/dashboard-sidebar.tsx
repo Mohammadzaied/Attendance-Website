@@ -98,19 +98,6 @@ export function DashboardSidebar({ items: propsItems }: DashboardSidebarProps) {
           !isOpen && !isMobile && "justify-center",
         );
 
-        if (item.onClick) {
-          return (
-            <button
-              key={index}
-              onClick={() => handleItemClick(item)}
-              className={baseClasses}
-              title={!isOpen && !isMobile ? item.label : undefined}
-            >
-              {content}
-            </button>
-          );
-        }
-
         if (item.href) {
           return (
             <Link
@@ -122,6 +109,19 @@ export function DashboardSidebar({ items: propsItems }: DashboardSidebarProps) {
             >
               {content}
             </Link>
+          );
+        }
+
+        if (item.onClick) {
+          return (
+            <button
+              key={index}
+              onClick={() => handleItemClick(item)}
+              className={baseClasses}
+              title={!isOpen && !isMobile ? item.label : undefined}
+            >
+              {content}
+            </button>
           );
         }
 

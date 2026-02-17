@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -83,6 +83,7 @@ export function StudentAbsenceDetailsDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogTitle></DialogTitle>
       <DialogContent
         className="w-[90vw]! max-w-[1400px]! max-h-[90vh]! flex flex-col p-0"
         dir="rtl"
@@ -134,13 +135,13 @@ export function StudentAbsenceDetailsDialog({
                     غياب
                   </TableHead>
                   <TableHead className="sticky top-0 z-10 bg-gray-50 text-center font-bold text-gray-900 w-28 border-b border-gray-200">
-                    حرمان
-                  </TableHead>
-                  <TableHead className="sticky top-0 z-10 bg-gray-50 text-center font-bold text-gray-900 w-28 border-b border-gray-200">
                     انذار أول
                   </TableHead>
                   <TableHead className="sticky top-0 z-10 bg-gray-50 text-center font-bold text-gray-900 w-28 border-b border-gray-200">
                     انذار ثاني
+                  </TableHead>
+                  <TableHead className="sticky top-0 z-10 bg-gray-50 text-center font-bold text-gray-900 w-28 border-b border-gray-200">
+                    حرمان
                   </TableHead>
                 </TableRow>
               </TableHeader>
@@ -188,16 +189,7 @@ export function StudentAbsenceDetailsDialog({
                         {student.absenceStats.absentCount}
                       </Badge>
                     </TableCell>
-                    <TableCell className="text-center">
-                      {student.hasApprovedDeprivationAlert ? (
-                        <div className="flex items-center justify-center gap-1 text-red-600">
-                          <AlertTriangle className="h-4 w-4" />
-                          <span className="text-xs font-bold">نعم</span>
-                        </div>
-                      ) : (
-                        <span className="text-gray-400 text-xs">لا</span>
-                      )}
-                    </TableCell>
+
                     <TableCell className="text-center">
                       {student.hasFirstAlert ? (
                         <div className="flex items-center justify-center gap-1 text-red-600">
@@ -210,6 +202,16 @@ export function StudentAbsenceDetailsDialog({
                     </TableCell>
                     <TableCell className="text-center">
                       {student.hasSecondAlert ? (
+                        <div className="flex items-center justify-center gap-1 text-red-600">
+                          <AlertTriangle className="h-4 w-4" />
+                          <span className="text-xs font-bold">نعم</span>
+                        </div>
+                      ) : (
+                        <span className="text-gray-400 text-xs">لا</span>
+                      )}
+                    </TableCell>
+                    <TableCell className="text-center">
+                      {student.hasApprovedDeprivationAlert ? (
                         <div className="flex items-center justify-center gap-1 text-red-600">
                           <AlertTriangle className="h-4 w-4" />
                           <span className="text-xs font-bold">نعم</span>

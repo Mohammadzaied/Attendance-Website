@@ -29,6 +29,10 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
     setSidebarItems(dhItems);
   }, [dhItems, setSidebarItems]);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
   return (
     <div className="min-h-screen bg-gray-50">
       <NavHeader items={[]} />

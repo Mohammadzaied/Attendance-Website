@@ -95,7 +95,7 @@ export default function StudentWarningsPage() {
           </h1>
           <p className="text-gray-500 text-lg">
             {profile
-              ? `${profile.specializationName} - السنة ${profile.studyYear === 1 ? "الأولى" : "الثانية"}`
+              ? `${profile.specializationName}${!profile.isGraduated ? ` - السنة ${profile.studyYear === 1 ? "الأولى" : "الثانية"}` : " - متخرج"}`
               : "تابع الإنذارات الأكاديمية المسجلة بحقك"}
           </p>
         </div>
@@ -189,20 +189,28 @@ export default function StudentWarningsPage() {
                   <SelectValue placeholder="اختر الفصل" />
                 </SelectTrigger>
                 <SelectContent className="rounded-2xl border-gray-100 shadow-2xl">
-                  {profile?.semesters
+                  {profile?.academicYears
                     ?.filter(
-                      (semester) =>
-                        semester.academicYearId ===
-                        parseInt(selectedAcademicYear || "0"),
+                      (year) =>
+                        year.academicYearId.toString() === selectedAcademicYear,
                     )
-                    .map((semester) => (
-                      <SelectItem
-                        key={semester.semesterId}
-                        value={semester.semesterId.toString()}
-                        className="rounded-xl py-3 focus:bg-amber-50 cursor-pointer"
-                      >
-                        {semester.name}
-                      </SelectItem>
+                    .map((year) => (
+                      <SelectGroup key={year.academicYearId}>
+                        {profile?.semesters
+                          ?.filter(
+                            (semester) =>
+                              semester.academicYearId === year.academicYearId,
+                          )
+                          .map((semester) => (
+                            <SelectItem
+                              key={semester.semesterId}
+                              value={semester.semesterId.toString()}
+                              className="rounded-xl py-3 focus:bg-amber-50 cursor-pointer pr-8"
+                            >
+                              {semester.name}
+                            </SelectItem>
+                          ))}
+                      </SelectGroup>
                     ))}
                 </SelectContent>
               </Select>

@@ -1,6 +1,10 @@
 import { apiClient } from "@/lib/api";
 import { ApiResponse } from "@/lib/ApiResponse";
-import { CreateSubjectDto, DetailedSubjectResponse } from "./subjectTypes";
+import {
+  CreateSubjectDto,
+  CreateSubjectToTeacherDto,
+  DetailedSubjectResponse,
+} from "./subjectTypes";
 
 const SUBJECTS_ENDPOINT = "Subjects";
 
@@ -11,6 +15,17 @@ export const subjectService = {
   async createSubject(data: CreateSubjectDto): Promise<any> {
     const response = await apiClient.post<ApiResponse<any>>(
       `${SUBJECTS_ENDPOINT}`,
+      data,
+    );
+    return response.data;
+  },
+
+  /**
+   * Create a new subject for a specific teacher
+   */
+  async createSubjectToTeacher(data: CreateSubjectToTeacherDto): Promise<any> {
+    const response = await apiClient.post<ApiResponse<any>>(
+      `${SUBJECTS_ENDPOINT}/CreateSubjectToTeacher`,
       data,
     );
     return response.data;

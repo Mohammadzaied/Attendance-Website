@@ -58,76 +58,88 @@ export function AbsenceLogsList({
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
-      {filteredLogs.map((dateGroup, idx) => (
-        <div
-          key={idx}
-          className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:border-blue-200 transition-all flex flex-col group"
-        >
-          <div className="flex items-center justify-between mb-4 pb-4 border-b border-gray-50">
-            <div className="flex items-center gap-4">
-              <div className="h-12 w-12 rounded-2xl bg-gray-50 text-gray-400 flex items-center justify-center group-hover:bg-blue-50 group-hover:text-blue-600 transition-all">
-                <CalendarIcon className="h-6 w-6" />
-              </div>
-              <div className="text-right">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="font-bold text-gray-900 text-lg">
-                    {new Date(dateGroup.date).toLocaleDateString("en-GB", {
-                      year: "numeric",
-                      month: "numeric",
-                      day: "numeric",
-                    })}
-                  </span>
-                  <span className="text-sm text-gray-500">
-                    ({dateGroup.lessons[0].dayName})
-                  </span>
+      {filteredLogs.length > 0 ? (
+        filteredLogs.map((dateGroup, idx) => (
+          <div
+            key={idx}
+            className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:border-blue-200 transition-all flex flex-col group"
+          >
+            <div className="flex items-center justify-between mb-4 pb-4 border-b border-gray-50">
+              <div className="flex items-center gap-4">
+                <div className="h-12 w-12 rounded-2xl bg-gray-50 text-gray-400 flex items-center justify-center group-hover:bg-blue-50 group-hover:text-blue-600 transition-all">
+                  <CalendarIcon className="h-6 w-6" />
+                </div>
+                <div className="text-right">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="font-bold text-gray-900 text-lg">
+                      {new Date(dateGroup.date).toLocaleDateString("en-GB", {
+                        year: "numeric",
+                        month: "numeric",
+                        day: "numeric",
+                      })}
+                    </span>
+                    <span className="text-sm text-gray-500">
+                      ({dateGroup.dayOfWeek})
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {dateGroup.lessons.map((lesson) => (
-              <div
-                key={lesson.id}
-                className="flex flex-col p-3 rounded-xl bg-gray-50/50 border border-gray-100/50"
-              >
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-bold text-gray-700">
-                    {lesson.lessonName}
-                  </span>
-                  {getStatusBadge(lesson.status)}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {dateGroup.lessons.map((lesson) => (
+                <div
+                  key={lesson.id}
+                  className="flex flex-col p-3 rounded-xl bg-gray-50/50 border border-gray-100/50"
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-bold text-gray-700">
+                      {lesson.lessonName}
+                    </span>
+                    {getStatusBadge(lesson.status)}
+                  </div>
+                  {!isReadOnly && (
+                    <div className="flex items-center gap-1.5 mt-2">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-7 w-7 text-gray-400 hover:text-blue-600 hover:bg-amber-50 rounded-lg"
+                        onClick={() => onEdit?.(lesson)}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-7 w-7 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg"
+                        onClick={() => onDelete?.(lesson.id)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  )}
+                  {lesson.reason && (
+                    <div className="flex items-center gap-1.5 text-xs text-blue-500 mt-1">
+                      <AlertCircle className="h-3 w-3" />
+                      <span className="truncate">{lesson.reason}</span>
+                    </div>
+                  )}
                 </div>
-                {!isReadOnly && (
-                  <div className="flex items-center gap-1.5 mt-2">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-7 w-7 text-gray-400 hover:text-blue-600 hover:bg-amber-50 rounded-lg"
-                      onClick={() => onEdit?.(lesson)}
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-7 w-7 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg"
-                      onClick={() => onDelete?.(lesson.id)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                )}
-                {lesson.reason && (
-                  <div className="flex items-center gap-1.5 text-xs text-blue-500 mt-1">
-                    <AlertCircle className="h-3 w-3" />
-                    <span className="truncate">{lesson.reason}</span>
-                  </div>
-                )}
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
+        ))
+      ) : (
+        <div className="flex flex-col items-center justify-center py-20 bg-gray-50/30 rounded-3xl border border-dashed border-gray-200">
+          <div className="h-20 w-20 rounded-full bg-blue-50 flex items-center justify-center mb-4">
+            <AlertCircle className="h-10 w-10 text-blue-400 opacity-50" />
+          </div>
+          <h4 className="text-xl font-bold text-gray-900">لا توجد غيابات</h4>
+          <p className="text-sm text-gray-500 max-w-xs mt-2 text-center">
+            لم يتم العثور على أي سجلات غياب لهذا الطالب في هذه المادة.
+          </p>
         </div>
-      ))}
+      )}
     </div>
   );
 }

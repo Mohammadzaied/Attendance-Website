@@ -14,6 +14,7 @@ import {
   Settings,
   ShieldCheck,
 } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -60,13 +61,7 @@ import {
   StudyYear,
   Subject,
   DetailedSubjectResponse,
-  SubjectLessonDto,
 } from "@/features/subject";
-import {
-  LessonResponse,
-  WeekDayResponse,
-  lessonService,
-} from "@/features/lesson";
 import { Badge } from "@/components/ui/badge";
 import { ImportStudentsDialog } from "./import-students-dialog";
 import { EmailImportDialog } from "./email-import-dialog";
@@ -144,29 +139,9 @@ export function StudyYearDetail({
     teacherId: "",
     teacherName: "",
     numberOfHours: 3,
-    lessons: [] as SubjectLessonDto[],
   });
 
-  const [availableLessons, setAvailableLessons] = useState<LessonResponse[]>(
-    [],
-  );
-  const [availableDays, setAvailableDays] = useState<WeekDayResponse[]>([]);
-
-  useEffect(() => {
-    const loadSubjectData = async () => {
-      try {
-        const [lessons, days] = await Promise.all([
-          lessonService.getAllLessons(),
-          lessonService.getAllDays(),
-        ]);
-        setAvailableLessons(lessons);
-        setAvailableDays(days);
-      } catch (error) {
-        console.error("Failed to load subject metadata:", error);
-      }
-    };
-    loadSubjectData();
-  }, []);
+  // No longer needed: availableLessons, availableDays, loadSubjectData useEffect
 
   // Student Dialogs State
   const [isStudentDialogOpen, setIsStudentDialogOpen] = useState(false);
@@ -186,14 +161,16 @@ export function StudyYearDetail({
   const [isDeleteSubjectConfirmOpen, setIsDeleteSubjectConfirmOpen] =
     useState(false);
 
-  const [errorDialog, setErrorDialog] = useState<{
+  const [statusDialog, setStatusDialog] = useState<{
     isOpen: boolean;
     title: string;
     message: string;
+    type: "success" | "error" | "warning";
   }>({
     isOpen: false,
     title: "",
     message: "",
+    type: "error",
   });
 
   const {
@@ -224,16 +201,16 @@ export function StudyYearDetail({
   }, [activeTab, major.id, year.semesterId, year.studyYear, dispatch]);
 
   const handleSaveSubject = async () => {
-    // if (!subjectForm.name.trim() || !subjectForm.teacherId) return;
-
-    // if (subjectForm.lessons.length !== subjectForm.numberOfHours) {
-    //   setErrorDialog({
-    //     isOpen: true,
-    //     title: "تنبيه التحقق",
-    //     message: `يجب اختيار ${subjectForm.numberOfHours} حصص دراسية لتتوافق مع عدد الساعات المحدد (المختار حالياً: ${subjectForm.lessons.length} حصص)`,
-    //   });
-    //   return;
-    // }
+    // Validation for name and teacher
+    if (!subjectForm.name.trim() || !subjectForm.teacherId) {
+      setStatusDialog({
+        isOpen: true,
+        title: "تنبيه التحقق",
+        message: "يرجى إدخال اسم المادة واختيار المعلم",
+        type: "warning",
+      });
+      return;
+    }
 
     try {
       if (!editingSubject) {
@@ -245,7 +222,6 @@ export function StudyYearDetail({
             studyYear: year.studyYear,
             teacherId: subjectForm.teacherId,
             numberOfHours: subjectForm.numberOfHours,
-            lessons: subjectForm.lessons,
           }),
         ).unwrap();
       } else {
@@ -256,7 +232,6 @@ export function StudyYearDetail({
               name: subjectForm.name,
               teacherId: subjectForm.teacherId,
               numberOfHours: subjectForm.numberOfHours,
-              lessons: subjectForm.lessons,
             },
           }),
         ).unwrap();
@@ -269,7 +244,6 @@ export function StudyYearDetail({
         teacherId: "",
         teacherName: "",
         numberOfHours: 3,
-        lessons: [],
       });
       // Refresh the subjects list from backend
       dispatch(
@@ -280,12 +254,22 @@ export function StudyYearDetail({
         }),
       );
       onUpdateYear(year);
+
+      setStatusDialog({
+        isOpen: true,
+        title: editingSubject ? "تمت العملية بنجاح" : "تمت العملية بنجاح",
+        message: editingSubject
+          ? "تم تعديل المادة بنجاح"
+          : "تم إضافة المادة الجديدة بنجاح",
+        type: "success",
+      });
     } catch (error: any) {
       console.error("Failed to save subject:", error);
-      setErrorDialog({
+      setStatusDialog({
         isOpen: true,
         title: editingSubject ? "خطأ في تعديل المادة" : "خطأ في إضافة المادة",
         message: error || "حدث خطأ غير متوقع أثناء معالجة طلبك",
+        type: "error",
       });
     }
   };
@@ -308,12 +292,21 @@ export function StudyYearDetail({
       );
       setIsDeleteSubjectConfirmOpen(false);
       setSubjectToDelete(null);
+
+      // Show success dialog
+      setStatusDialog({
+        isOpen: true,
+        title: "تم الحذف بنجاح",
+        message: "تم حذف المادة بنجاح من النظام",
+        type: "success",
+      });
     } catch (error: any) {
       console.error("Failed to delete subject:", error);
-      setErrorDialog({
+      setStatusDialog({
         isOpen: true,
         title: "خطأ في حذف المادة",
         message: error || "حدث خطأ غير متوقع أثناء حذف المادة",
+        type: "error",
       });
     }
   };
@@ -383,10 +376,11 @@ export function StudyYearDetail({
       setStudentToDelete(null);
     } catch (error: any) {
       console.error("Failed to delete student:", error);
-      setErrorDialog({
+      setStatusDialog({
         isOpen: true,
         title: "خطأ في حذف الطالب",
         message: error || "حدث خطأ غير متوقع أثناء حذف الطالب",
+        type: "error",
       });
     }
   };
@@ -404,13 +398,6 @@ export function StudyYearDetail({
         teacherId: subject.teacherId || "",
         teacherName: subject.teacherName || "",
         numberOfHours: subject.numberOfHours,
-        lessons:
-          subject.schedule?.flatMap((day) =>
-            day.lessons.map((l) => ({
-              lessonId: l.lessonId,
-              weekDayId: day.weekDayId,
-            })),
-          ) || [],
       });
       setIsEditMode(false);
     }
@@ -480,7 +467,6 @@ export function StudyYearDetail({
                       teacherId: "",
                       teacherName: "",
                       numberOfHours: 3,
-                      lessons: [],
                     });
                     setIsEditMode(false);
                   }
@@ -488,7 +474,7 @@ export function StudyYearDetail({
                   setIsSubjectDialogOpen(true);
                 }}
                 size="sm"
-                disabled={students.length > 0 && !canEdit}
+                disabled={!canEdit}
                 className="bg-blue-600 hover:bg-blue-700 gap-2 cursor-pointer shadow-sm rounded-lg flex-1 sm:flex-none justify-center"
               >
                 <Plus className="h-4 w-4" />
@@ -507,7 +493,7 @@ export function StudyYearDetail({
                   <Button
                     onClick={() => setIsEmailDialogOpen(true)}
                     variant="outline"
-                    disabled={students.length > 0 && !canEdit}
+                    disabled={!canEdit}
                     size="sm"
                     className="w-full bg-white hover:bg-gray-50 text-blue-600 border-blue-200 gap-2 cursor-pointer shadow-sm rounded-lg justify-center mb-2 sm:mb-0"
                   >
@@ -524,13 +510,13 @@ export function StudyYearDetail({
                     specializationId={Number(major.id)}
                     semesterId={year.semesterId}
                     onSuccess={refreshStudents}
-                    disabled={students.length > 0 && !canEdit}
+                    disabled={!canEdit}
                   />
                 </div>
                 <Button
                   onClick={() => setIsStudentDialogOpen(true)}
                   size="sm"
-                  disabled={students.length > 0 && !canEdit}
+                  disabled={!canEdit}
                   className="bg-blue-600 hover:bg-blue-700 gap-2 cursor-pointer shadow-sm rounded-lg flex-1 sm:flex-none justify-center"
                 >
                   <UserPlus className="h-4 w-4" />
@@ -915,10 +901,26 @@ export function StudyYearDetail({
       </Tabs>
 
       {/* Subject Dialog */}
-      <Dialog open={isSubjectDialogOpen} onOpenChange={setIsSubjectDialogOpen}>
+      <Dialog
+        open={isSubjectDialogOpen}
+        onOpenChange={(open) => {
+          setIsSubjectDialogOpen(open);
+          if (!open) {
+            setTimeout(() => {
+              setEditingSubject(null);
+              setSubjectForm({
+                name: "",
+                teacherId: "",
+                teacherName: "",
+                numberOfHours: 3,
+              });
+              setIsEditMode(false);
+            }, 100);
+          }
+        }}
+      >
         <DialogContent
           className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto"
-          showCloseButton={false}
           onInteractOutside={(e) => e.preventDefault()}
         >
           <DialogHeader>
@@ -926,28 +928,6 @@ export function StudyYearDetail({
               <div className="flex items-center gap-2">
                 {editingSubject ? <div>تفاصيل المادة</div> : "إضافة مادة جديدة"}
               </div>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8 rounded-full hover:bg-gray-100 cursor-pointer text-gray-400 hover:text-gray-900"
-                onClick={() => {
-                  setIsSubjectDialogOpen(false);
-                  setTimeout(() => {
-                    setEditingSubject(null);
-                    setSubjectForm({
-                      name: "",
-                      teacherId: "",
-                      teacherName: "",
-                      numberOfHours: 3,
-                      lessons: [],
-                    });
-                    setIsEditMode(false);
-                  }, 100);
-                }}
-              >
-                <Plus className="h-5 w-5 rotate-45" />
-                <span className="sr-only">Close</span>
-              </Button>
             </DialogTitle>
           </DialogHeader>
           <div className="grid gap-6 py-4" dir="rtl">
@@ -1029,103 +1009,14 @@ export function StudyYearDetail({
               />
             </div>
 
-            <div className="grid gap-4">
-              <Label className="text-right font-bold border-b pb-2">
-                الحصص الدراسية
-              </Label>
-              {availableDays.map((day) => (
-                <div
-                  key={day.weekDayId}
-                  className="space-y-2 border-b pb-2 last:border-0"
-                >
-                  <p className="text-sm font-medium text-gray-700 text-right">
-                    {day.name}
-                  </p>
-                  <div className="flex flex-wrap gap-2 justify-start">
-                    {availableLessons
-                      .filter((lesson) => {
-                        // If adding a subject, show only active lessons
-                        if (!editingSubject) return lesson.isActive;
-                        // If editing and edit mode is active, show only active lessons
-                        if (isEditMode) return lesson.isActive;
-                        // Otherwise (viewing existing subject), show all lessons
-                        return true;
-                      })
-                      .map((lesson) => {
-                        const isSelected = subjectForm.lessons.some(
-                          (l) =>
-                            l.lessonId === lesson.lessonId &&
-                            l.weekDayId === day.weekDayId,
-                        );
-                        const isDisabled = !!editingSubject && !isEditMode;
-
-                        return (
-                          <Badge
-                            key={`${day.weekDayId}-${lesson.lessonId}`}
-                            variant={isSelected ? "default" : "outline"}
-                            className={`cursor-pointer ${
-                              isSelected
-                                ? "bg-blue-600 hover:bg-blue-700"
-                                : "hover:bg-blue-50"
-                            } ${
-                              isDisabled ? "opacity-60 cursor-not-allowed" : ""
-                            }`}
-                            onClick={() => {
-                              if (isDisabled) return;
-                              if (isSelected) {
-                                setSubjectForm({
-                                  ...subjectForm,
-                                  lessons: subjectForm.lessons.filter(
-                                    (l) =>
-                                      !(
-                                        l.lessonId === lesson.lessonId &&
-                                        l.weekDayId === day.weekDayId
-                                      ),
-                                  ),
-                                });
-                              } else {
-                                setSubjectForm({
-                                  ...subjectForm,
-                                  lessons: [
-                                    ...subjectForm.lessons,
-                                    {
-                                      lessonId: lesson.lessonId,
-                                      weekDayId: day.weekDayId,
-                                    },
-                                  ],
-                                });
-                              }
-                            }}
-                          >
-                            {lesson.name}
-                          </Badge>
-                        );
-                      })}
-                  </div>
-                </div>
-              ))}
-            </div>
+            {/* Scheduling removed per user request */}
           </div>
           <DialogFooter className="flex flex-row gap-2">
             {(!editingSubject || isEditMode) && (
               <>
                 <Button
                   variant="outline"
-                  onClick={() => {
-                    setIsSubjectDialogOpen(false);
-                    // Explicitly reset on Cancel
-                    setTimeout(() => {
-                      setEditingSubject(null);
-                      setSubjectForm({
-                        name: "",
-                        teacherId: "",
-                        teacherName: "",
-                        numberOfHours: 3,
-                        lessons: [],
-                      });
-                      setIsEditMode(false);
-                    }, 100);
-                  }}
+                  onClick={() => setIsSubjectDialogOpen(false)}
                   className="flex-1 cursor-pointer border-gray-200 text-gray-600 hover:bg-gray-50"
                 >
                   إلغاء
@@ -1147,21 +1038,7 @@ export function StudyYearDetail({
             )}
             {editingSubject && !isEditMode && (
               <Button
-                onClick={() => {
-                  setIsSubjectDialogOpen(false);
-                  // Explicitly reset on Close
-                  setTimeout(() => {
-                    setEditingSubject(null);
-                    setSubjectForm({
-                      name: "",
-                      teacherId: "",
-                      teacherName: "",
-                      numberOfHours: 3,
-                      lessons: [],
-                    });
-                    setIsEditMode(false);
-                  }, 100);
-                }}
+                onClick={() => setIsSubjectDialogOpen(false)}
                 className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 border-none cursor-pointer h-10 rounded-lg font-medium"
               >
                 إغلاق
@@ -1321,28 +1198,53 @@ export function StudyYearDetail({
         </DialogContent>
       </Dialog>
 
-      {/* Error Dialog */}
+      {/* Status Dialog */}
       <AlertDialog
-        open={errorDialog.isOpen}
+        open={statusDialog.isOpen}
         onOpenChange={(open) =>
-          setErrorDialog((prev) => ({ ...prev, isOpen: open }))
+          setStatusDialog((prev) => ({ ...prev, isOpen: open }))
         }
       >
-        <AlertDialogContent>
+        <AlertDialogContent className="sm:max-w-[400px]" dir="rtl">
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-red-600 text-right font-bold flex items-center gap-2">
-              <span>{errorDialog.title}</span>
+            <AlertDialogTitle
+              className={cn(
+                "text-right font-bold flex items-center gap-2 text-xl",
+                statusDialog.type === "error"
+                  ? "text-red-600"
+                  : statusDialog.type === "success"
+                    ? "text-emerald-600"
+                    : "text-amber-600",
+              )}
+            >
+              {statusDialog.type === "error" && (
+                <Plus className="h-5 w-5 rotate-45" />
+              )}
+              {statusDialog.type === "success" && (
+                <ShieldCheck className="h-5 w-5" />
+              )}
+              {statusDialog.type === "warning" && (
+                <Settings className="h-5 w-5 animate-spin-slow" />
+              )}
+              <span>{statusDialog.title}</span>
             </AlertDialogTitle>
-            <AlertDialogDescription className="text-right text-gray-600 mt-2">
-              {errorDialog.message}
+            <AlertDialogDescription className="text-right text-gray-600 mt-3 leading-relaxed">
+              {statusDialog.message}
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter className="flex justify-end mt-4">
+          <AlertDialogFooter className="mt-6">
             <AlertDialogAction
               onClick={() =>
-                setErrorDialog((prev) => ({ ...prev, isOpen: false }))
+                setStatusDialog((prev) => ({ ...prev, isOpen: false }))
               }
-              className="bg-red-600 hover:bg-red-700 text-white font-bold h-11 px-8 rounded-xl"
+              className={cn(
+                "w-full h-11 rounded-xl font-bold shadow-lg transition-all active:scale-95 text-white border-none cursor-pointer",
+                statusDialog.type === "error"
+                  ? "bg-red-600 hover:bg-red-700 shadow-red-200"
+                  : statusDialog.type === "success"
+                    ? "bg-emerald-600 hover:bg-emerald-700 shadow-emerald-200"
+                    : "bg-amber-600 hover:bg-amber-700 shadow-amber-200",
+              )}
             >
               موافق
             </AlertDialogAction>

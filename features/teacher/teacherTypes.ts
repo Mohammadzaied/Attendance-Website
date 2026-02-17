@@ -45,6 +45,7 @@ export interface StudentAttendanceItem {
 export interface BatchAttendanceCreateDto {
   students: StudentAttendanceItem[];
   subjectId: number;
+  date: string;
 }
 
 export interface ServerTime {
@@ -199,6 +200,7 @@ export interface TeacherState {
   absenceSession: AbsenceSessionResponse | null;
   subjectAbsenceData: SubjectAbsenceDataResponse | null;
   serverTime: ServerTime | null;
+  favoriteLessonIds: number[];
   fetchActiveAcademicYearsState: {
     isLoading: boolean;
     error: string | null;
@@ -239,5 +241,9 @@ export interface TeacherState {
     isLoading: boolean;
     error: string | null;
     deletingId: number | null;
+  };
+  fetchFavoriteLessonsState: {
+    isLoading: boolean;
+    error: string | null;
   };
 }

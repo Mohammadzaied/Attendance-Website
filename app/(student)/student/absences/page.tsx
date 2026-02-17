@@ -82,7 +82,7 @@ export default function StudentAbsencesPage() {
           </h1>
           <p className="text-gray-500 text-lg">
             {profile
-              ? `${profile.specializationName} - السنة ${profile.studyYear === 1 ? "الأولى" : "الثانية"}`
+              ? `${profile.specializationName}${!profile.isGraduated ? ` - السنة ${profile.studyYear === 1 ? "الأولى" : "الثانية"}` : " - متخرج"}`
               : "تابع سجل غياباتك بكل سهولة"}
           </p>
         </div>
@@ -176,26 +176,28 @@ export default function StudentAbsencesPage() {
                   <SelectValue placeholder="اختر الفصل" />
                 </SelectTrigger>
                 <SelectContent className="rounded-2xl border-gray-100 shadow-2xl">
-                  {profile?.academicYears?.map((year) => (
-                    <SelectGroup key={year.academicYearId}>
-                      <SelectLabel className="text-right px-4 py-2 text-xs font-black text-blue-500 bg-blue-50/50 mb-1">
-                        السنة {year.year} - {Number(year.year) + 1}
-                      </SelectLabel>
-                      {profile?.semesters
-                        ?.filter(
-                          (s) => s.academicYearId === year.academicYearId,
-                        )
-                        .map((semester) => (
-                          <SelectItem
-                            key={semester.semesterId}
-                            value={semester.semesterId.toString()}
-                            className="rounded-xl py-3 focus:bg-blue-50 cursor-pointer pr-8"
-                          >
-                            {semester.name}
-                          </SelectItem>
-                        ))}
-                    </SelectGroup>
-                  ))}
+                  {profile?.academicYears
+                    ?.filter(
+                      (year) =>
+                        year.academicYearId.toString() === selectedAcademicYear,
+                    )
+                    .map((year) => (
+                      <SelectGroup key={year.academicYearId}>
+                        {profile?.semesters
+                          ?.filter(
+                            (s) => s.academicYearId === year.academicYearId,
+                          )
+                          .map((semester) => (
+                            <SelectItem
+                              key={semester.semesterId}
+                              value={semester.semesterId.toString()}
+                              className="rounded-xl py-3 focus:bg-blue-50 cursor-pointer pr-8"
+                            >
+                              {semester.name}
+                            </SelectItem>
+                          ))}
+                      </SelectGroup>
+                    ))}
                 </SelectContent>
               </Select>
             </div>

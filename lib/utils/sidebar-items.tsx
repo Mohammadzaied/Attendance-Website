@@ -5,6 +5,7 @@ import { useMemo } from "react";
 export interface SidebarItem {
   label: string;
   icon: React.JSX.Element;
+  href?: string;
   onClick: () => void;
   isActive: boolean;
   badge?: number;
@@ -34,12 +35,14 @@ export const useAdminSidebarItems = (
             />
           </svg>
         ),
+        href: "/admin/majors",
         onClick: () => router.push("/admin/majors"),
         isActive: activeSection === "majors",
       },
       {
         label: "المعلمين",
         icon: <FileUser className="h-5! w-5!" />,
+        href: "/admin/teachers",
         onClick: () => router.push("/admin/teachers"),
         isActive: activeSection === "teachers",
       },
@@ -52,6 +55,7 @@ export const useAdminSidebarItems = (
             <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
           </svg>
         ),
+        href: "/admin/students",
         onClick: () => router.push("/admin/students"),
         isActive: activeSection === "students",
       },
@@ -66,6 +70,7 @@ export const useAdminSidebarItems = (
             />
           </svg>
         ),
+        href: "/admin/warnings",
         onClick: () => router.push("/admin/warnings"),
         isActive: activeSection === "warnings",
       },
@@ -92,6 +97,7 @@ export const useTeacherSidebarItems = (
             />
           </svg>
         ),
+        href: "/teacher/entry",
         onClick: () => router.push("/teacher/entry"),
         isActive: activeSection === "entry",
       },
@@ -107,6 +113,7 @@ export const useTeacherSidebarItems = (
             />
           </svg>
         ),
+        href: "/teacher/absences",
         onClick: () => router.push("/teacher/absences"),
         isActive: activeSection === "absences",
       },
@@ -127,6 +134,7 @@ export const useTeacherSidebarItems = (
             />
           </svg>
         ),
+        href: "/teacher/subjects",
         onClick: () => router.push("/teacher/subjects"),
         isActive: activeSection === "subjects",
       },
@@ -153,6 +161,7 @@ export const useStudentSidebarItems = (
             />
           </svg>
         ),
+        href: "/student/absences",
         onClick: () => router.push("/student/absences"),
         isActive: activeSection === "absences",
       },
@@ -167,6 +176,7 @@ export const useStudentSidebarItems = (
             />
           </svg>
         ),
+        href: "/student/warnings",
         onClick: () => router.push("/student/warnings"),
         isActive: activeSection === "warnings",
       },
@@ -193,6 +203,7 @@ export const useDepartmentHeadSidebarItems = (
             />
           </svg>
         ),
+        href: "/department-head/entry",
         onClick: () => router.push("/department-head/entry"),
         isActive: activeSection === "entry",
       },
@@ -208,6 +219,7 @@ export const useDepartmentHeadSidebarItems = (
             />
           </svg>
         ),
+        href: "/department-head/absences",
         onClick: () => router.push("/department-head/absences"),
         isActive: activeSection === "absences",
       },
@@ -228,6 +240,7 @@ export const useDepartmentHeadSidebarItems = (
             />
           </svg>
         ),
+        href: "/department-head/subjects",
         onClick: () => router.push("/department-head/subjects"),
         isActive: activeSection === "subjects",
       },
@@ -238,6 +251,7 @@ export const useDepartmentHeadSidebarItems = (
             <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
           </svg>
         ),
+        href: "/department-head/students",
         onClick: () => router.push("/department-head/students"),
         isActive: activeSection === "students",
       },
@@ -252,6 +266,7 @@ export const useDepartmentHeadSidebarItems = (
             />
           </svg>
         ),
+        href: "/department-head/warnings",
         onClick: () => router.push("/department-head/warnings"),
         isActive: activeSection === "warnings",
       },

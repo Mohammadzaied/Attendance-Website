@@ -1,15 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import {
-  Plus,
-  Edit,
-  Trash2,
-  Settings,
-  Users,
-  BookOpen,
-  Search,
-} from "lucide-react";
+import { Plus, Edit, Trash2, Settings, BookOpen, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -30,13 +22,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+
 import { Major } from "@/features/specialization";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
@@ -181,7 +167,7 @@ export function MajorsList({
       ).unwrap();
       setResult({
         success: true,
-        message: "تم حذف القسم بنجاح",
+        message: "تم حذف التخصص بنجاح",
         show: true,
       });
       setIsDeleteDialogOpen(false);

@@ -22,6 +22,7 @@ const initialState: TeacherState = {
   absenceSession: null,
   subjectName: "",
   serverTime: null,
+  favoriteLessonIds: [],
   fetchActiveAcademicYearsState: {
     isLoading: false,
     error: null,
@@ -54,6 +55,10 @@ const initialState: TeacherState = {
     isLoading: false,
     error: null,
     deletingId: null,
+  },
+  fetchFavoriteLessonsState: {
+    isLoading: false,
+    error: null,
   },
 };
 
@@ -246,6 +251,27 @@ const fetchSubjectStudentsWithAbsenceData = createAsyncThunk(
   },
 );
 
+export const fetchFavoriteLessons = createAsyncThunk(
+  "teacher/fetchFavoriteLessons",
+  async (
+    { subjectId, date }: { subjectId: number; date: string },
+    { rejectWithValue },
+  ) => {
+    try {
+      const response = await teacherService.getFavoriteLessonAdvanced(
+        subjectId,
+        date,
+      );
+      return response.favoriteLessonIds;
+    } catch (error) {
+      if (error instanceof Error) {
+        return rejectWithValue(error.message);
+      }
+      return rejectWithValue("Failed to fetch favorite lessons");
+    }
+  },
+);
+
 const teacherSlice = createSlice({
   name: "teacher",
   initialState,
@@ -395,6 +421,23 @@ const teacherSlice = createSlice({
       .addCase(fetchAbsenceSession.rejected, (state, action) => {
         state.fetchAbsenceSessionState.isLoading = false;
         state.fetchAbsenceSessionState.error = action.payload as string;
+      })
+      // Fetch Favorite Lessons
+      .addCase(fetchFavoriteLessons.pending, (state) => {
+        state.fetchFavoriteLessonsState.isLoading = true;
+        state.fetchFavoriteLessonsState.error = null;
+      })
+      .addCase(
+        fetchFavoriteLessons.fulfilled,
+        (state, action: PayloadAction<number[]>) => {
+          state.fetchFavoriteLessonsState.isLoading = false;
+          state.favoriteLessonIds = action.payload;
+          state.fetchFavoriteLessonsState.error = null;
+        },
+      )
+      .addCase(fetchFavoriteLessons.rejected, (state, action) => {
+        state.fetchFavoriteLessonsState.isLoading = false;
+        state.fetchFavoriteLessonsState.error = action.payload as string;
       })
       // updateAbsenceBatch
       .addCase(updateAbsenceBatch.pending, (state) => {

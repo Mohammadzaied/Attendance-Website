@@ -19,6 +19,7 @@ import {
   AcademicStatisticsParams,
   AcademicStatisticsResponse,
   CreateSubjectDto,
+  CreateSubjectToTeacherDto,
   DetailedSubjectResponse,
 } from "@/features/subject";
 import {
@@ -66,6 +67,7 @@ interface SpecializationsState {
   StudentCountSpecialization: number;
   yearsNumber: number;
   promoteStudentsState: AsyncState;
+  createSubjectToTeacherState: AsyncState;
 }
 
 const initialAsyncState: AsyncState = { isLoading: false, error: null };
@@ -100,6 +102,7 @@ const initialState: SpecializationsState = {
   StudentCountSpecialization: 0,
   yearsNumber: 0,
   promoteStudentsState: initialAsyncState,
+  createSubjectToTeacherState: initialAsyncState,
 };
 
 // Async thunks
@@ -342,6 +345,21 @@ export const createSubjectThunk = createAsyncThunk(
   },
 );
 
+export const createSubjectToTeacherThunk = createAsyncThunk(
+  "specializations/createSubjectToTeacher",
+  async (data: CreateSubjectToTeacherDto, { rejectWithValue }) => {
+    try {
+      const response = await subjectService.createSubjectToTeacher(data);
+      return response;
+    } catch (error) {
+      if (error instanceof Error) {
+        return rejectWithValue(error.message);
+      }
+      return rejectWithValue("Failed to create subject for teacher");
+    }
+  },
+);
+
 export const fetchSubjectsBySpecializationThunk = createAsyncThunk(
   "specializations/fetchSubjectsBySpecialization",
   async (
@@ -446,6 +464,7 @@ const specializationsSlice = createSlice({
       state.updateSubjectState.error = null;
       state.deleteSubjectState.error = null;
       state.promoteStudentsState.error = null;
+      state.createSubjectToTeacherState.error = null;
     },
     clearSubjects: (state) => {
       state.subjectsBySpecialization = [];
@@ -690,6 +709,18 @@ const specializationsSlice = createSlice({
       .addCase(createSubjectThunk.rejected, (state, action) => {
         state.createSubjectState.isLoading = false;
         state.createSubjectState.error = action.payload as string;
+      })
+      .addCase(createSubjectToTeacherThunk.pending, (state) => {
+        state.createSubjectToTeacherState.isLoading = true;
+        state.createSubjectToTeacherState.error = null;
+      })
+      .addCase(createSubjectToTeacherThunk.fulfilled, (state) => {
+        state.createSubjectToTeacherState.isLoading = false;
+        state.createSubjectToTeacherState.error = null;
+      })
+      .addCase(createSubjectToTeacherThunk.rejected, (state, action) => {
+        state.createSubjectToTeacherState.isLoading = false;
+        state.createSubjectToTeacherState.error = action.payload as string;
       })
       .addCase(fetchSubjectsBySpecializationThunk.pending, (state) => {
         state.fetchDetailedSubjectsState.isLoading = true;

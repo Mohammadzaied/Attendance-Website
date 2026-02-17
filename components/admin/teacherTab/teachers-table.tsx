@@ -2,13 +2,7 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -22,19 +16,12 @@ import {
   type DepartmentResponse,
 } from "@/features/admin";
 import { ROLE_OPTIONS } from "@/Config/roles";
-import {
-  Edit,
-  Trash2,
-  Search,
-  Filter,
-  Calendar,
-  Settings,
-  Plus,
-  BookOpen,
-  Clock,
-} from "lucide-react";
+import { Edit, Trash2, Search, Calendar, BookPlus } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { fetchTeacherLastActiveSemester } from "@/features/admin/adminSlice";
+import {
+  fetchTeacherLastActiveSemester,
+  clearTeacherLastActiveSemester,
+} from "@/features/admin/adminSlice";
 import { updateSubjectThunk } from "@/features/specialization/specializationsSlice";
 import { fetchTeachersList } from "@/features/admin/adminSlice";
 import {
@@ -44,15 +31,13 @@ import {
   DialogTitle as ShadcnDialogTitle,
   DialogFooter as ShadcnDialogFooter,
 } from "@/components/ui/dialog";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { Badge as ShadcnBadge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TeacherSearchSelect } from "@/components/admin/specializationTab/teacher-search-select";
 import { useState, useMemo, useEffect } from "react";
 import { DetailedSubjectResponse } from "@/features/subject";
-import { lessonService, LessonResponse } from "@/features/lesson";
+import { AddSubjectToTeacherDialog } from "./add-subject-to-teacher-dialog";
 
 type TeachersTableProps = {
   teachers: TeacherResponse[];
@@ -98,6 +83,9 @@ export function TeachersTable({
   const [isEditMode, setIsEditMode] = useState(false);
   const [editingSubject, setEditingSubject] =
     useState<DetailedSubjectResponse | null>(null);
+  const [isAddSubjectOpen, setIsAddSubjectOpen] = useState(false);
+  const [teacherForSubject, setTeacherForSubject] =
+    useState<TeacherResponse | null>(null);
 
   const [result, setResult] = useState<{
     success: boolean;
@@ -114,33 +102,15 @@ export function TeachersTable({
     teacherId: "",
     teacherName: "",
     numberOfHours: 3,
-    lessons: [] as { lessonId: number; weekDayId: number }[],
   });
 
-  const [allLessons, setAllLessons] = useState<LessonResponse[]>([]);
-
-  const availableDays = [
-    { weekDayId: 1, name: "الأحد" },
-    { weekDayId: 2, name: "الاثنين" },
-    { weekDayId: 3, name: "الثلاثاء" },
-    { weekDayId: 4, name: "الأربعاء" },
-    { weekDayId: 5, name: "الخميس" },
-  ];
-
   const handleOpenSchedule = async (teacher: TeacherResponse) => {
+    dispatch(clearTeacherLastActiveSemester());
+    dispatch(fetchTeachersList());
     setActiveTeacher(teacher);
     setIsScheduleDialogOpen(true);
     // Optional: clear previous data to avoid showing old data
-    // dispatch(clearTeacherSchedule()); // If such action exists or just let isLoading handle it
     dispatch(fetchTeacherLastActiveSemester(teacher.userId));
-
-    // Fetch all lessons from system
-    try {
-      const lessons = await lessonService.getAllLessons();
-      setAllLessons(lessons);
-    } catch (error) {
-      console.error("Failed to fetch lessons:", error);
-    }
   };
 
   const handleCloseSchedule = () => {
@@ -148,6 +118,13 @@ export function TeachersTable({
     setEditingSubject(null);
     setIsEditMode(false);
     setActiveTeacher(null);
+    dispatch(clearTeacherLastActiveSemester());
+    setSubjectForm({
+      name: "",
+      teacherId: "",
+      teacherName: "",
+      numberOfHours: 3,
+    });
   };
 
   const handleSaveSubject = async () => {
@@ -161,7 +138,6 @@ export function TeachersTable({
             name: subjectForm.name,
             teacherId: subjectForm.teacherId,
             numberOfHours: subjectForm.numberOfHours,
-            lessons: subjectForm.lessons,
           },
         }),
       ).unwrap();
@@ -205,15 +181,6 @@ export function TeachersTable({
         teacherId: editingSubject.teacherId || "",
         teacherName: editingSubject.teacherName || "",
         numberOfHours: editingSubject.numberOfHours || 3,
-        lessons:
-          editingSubject.schedule?.flatMap((day) =>
-            day.lessons
-              ?.filter((l) => l.isActive)
-              .map((l) => ({
-                lessonId: l.lessonId,
-                weekDayId: day.weekDayId,
-              })),
-          ) || [],
       });
     }
   }, [editingSubject]);
@@ -295,7 +262,7 @@ export function TeachersTable({
       <CardContent className="p-0">
         <div className="w-full">
           {/* Table Header */}
-          <div className="hidden md:grid grid-cols-[minmax(0,3fr)_minmax(0,3fr)_minmax(0,2fr)_minmax(0,2fr)_minmax(0,1fr)] px-6 py-4 bg-gray-600/40 rounded-t-xl border-x border-t border-gray-100">
+          <div className="hidden md:grid grid-cols-[minmax(0,3fr)_minmax(0,3fr)_minmax(0,2fr)_minmax(0,2fr)_minmax(0,2fr)] px-6 py-4 bg-gray-600/40 rounded-t-xl border-x border-t border-gray-100">
             <div className="text-right font-bold text-gray-900 text-sm  border-blue-500 rounded-lg align-center justify-items-center justify-center">
               الاسم الكامل
             </div>
@@ -308,7 +275,7 @@ export function TeachersTable({
             <div className="text-right font-bold text-gray-900 text-sm">
               القسم
             </div>
-            <div className=""></div>
+            <div className="text-right font-bold text-gray-900 text-sm"></div>
           </div>
 
           {/* Table Body */}
@@ -317,7 +284,7 @@ export function TeachersTable({
               <div
                 key={index}
                 // onClick={() => onEdit?.(teacher)}
-                className="group flex-col items-center md:grid grid-cols-[minmax(0,3fr)_minmax(0,3fr)_minmax(0,2fr)_minmax(0,2fr)_minmax(0,1fr)] px-6 py-4 hover:bg-blue-50/40 transition-all duration-200 cursor-pointer relative gap-3 md:gap-0"
+                className="group flex-col items-center md:grid grid-cols-[minmax(0,3fr)_minmax(0,3fr)_minmax(0,2fr)_minmax(0,2fr)_minmax(0,2fr)] px-6 py-4 hover:bg-blue-50/40 transition-all duration-200 cursor-pointer relative gap-3 md:gap-0"
               >
                 <div className="text-right pt-3 md:pt-0">
                   <div className="font-bold text-gray-900 text-base md:text-sm">
@@ -347,7 +314,7 @@ export function TeachersTable({
                   {teacher.departmentName}
                 </div>
 
-                <div className="w-full pt-3 md:pt-0 flex items-center gap-1 justify-center">
+                <div className="w-full pt-3  md:pt-0 flex items-center gap-1 justify-center">
                   <Button
                     variant="ghost"
                     size="icon"
@@ -360,10 +327,24 @@ export function TeachersTable({
                   >
                     <Calendar className="h-5 w-5" />
                   </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setTeacherForSubject(teacher);
+                      setIsAddSubjectOpen(true);
+                    }}
+                    className="h-9 w-9 text-blue-600 hover:text-blue-700 hover:bg-blue-100/50 transition-colors"
+                    title="إضافة مادة"
+                  >
+                    <BookPlus className="h-5 w-5" />
+                  </Button>
                   {onEdit && (
                     <Button
                       variant="ghost"
                       size="icon"
+                      title="تعديل"
                       onClick={(e) => {
                         e.stopPropagation();
                         onEdit(teacher);
@@ -377,6 +358,7 @@ export function TeachersTable({
                     <Button
                       variant="ghost"
                       size="icon"
+                      title="حذف"
                       onClick={(e) => {
                         e.stopPropagation();
                         onDelete(teacher);
@@ -446,7 +428,12 @@ export function TeachersTable({
                           key={subject.subjectId}
                           value={subject.subjectId.toString()}
                         >
-                          {subject.name} - {subject.specializationName}
+                          {subject.name} - {subject.specializationName} -{" "}
+                          {subject.studyYear === 1
+                            ? "سنة أولى"
+                            : subject.studyYear === 2
+                              ? "سنة ثانية"
+                              : null}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -518,98 +505,22 @@ export function TeachersTable({
                         />
                       </div>
 
-                      <div className="grid gap-4">
-                        <Label className="text-right font-bold border-b pb-2 flex items-center justify-between">
-                          <span>الحصص الدراسية</span>
-                          {!isEditMode && (
-                            <span className="text-[10px] font-normal text-gray-400">
-                              يتم عرض الأيام التي تحتوي على حصص فقط
-                            </span>
-                          )}
-                        </Label>
-                        <div className="grid gap-3">
-                          {availableDays
-                            .filter((day) => {
-                              if (isEditMode) return true;
-                              // In preview, only show days that have assigned lessons
-                              return subjectForm.lessons.some(
-                                (l) => l.weekDayId === day.weekDayId,
-                              );
+                      <div className="grid gap-2 text-right">
+                        <Label className="text-right">عدد الساعات</Label>
+                        <Input
+                          type="number"
+                          value={subjectForm.numberOfHours}
+                          disabled={!isEditMode}
+                          onChange={(e) =>
+                            setSubjectForm({
+                              ...subjectForm,
+                              numberOfHours: Number(e.target.value),
                             })
-                            .map((day) => (
-                              <div
-                                key={day.weekDayId}
-                                className="space-y-3 p-3 bg-gray-50/50 rounded-xl border border-gray-100"
-                              >
-                                <p className="text-xs font-bold text-blue-800 text-right">
-                                  {day.name}
-                                </p>
-                                <div className="flex flex-wrap gap-1.5 justify-start">
-                                  {allLessons
-                                    .filter((lesson) => {
-                                      if (isEditMode) return lesson.isActive;
-                                      return subjectForm.lessons.some(
-                                        (l) =>
-                                          l.lessonId === lesson.lessonId &&
-                                          l.weekDayId === day.weekDayId,
-                                      );
-                                    })
-                                    .map((lesson) => {
-                                      const isSelected =
-                                        subjectForm.lessons.some(
-                                          (l) =>
-                                            l.lessonId === lesson.lessonId &&
-                                            l.weekDayId === day.weekDayId,
-                                        );
-                                      return (
-                                        <ShadcnBadge
-                                          key={`${day.weekDayId}-${lesson.lessonId}`}
-                                          variant={
-                                            isSelected ? "default" : "outline"
-                                          }
-                                          className={`cursor-pointer transition-all text-[10px] sm:text-xs py-1 px-3 ${
-                                            isSelected
-                                              ? "bg-blue-600 hover:bg-blue-700 text-white border-transparent"
-                                              : "hover:bg-blue-50 text-gray-500 border-gray-200"
-                                          } ${!isEditMode ? "opacity-100 cursor-default" : ""}`}
-                                          onClick={() => {
-                                            if (!isEditMode) return;
-                                            if (isSelected) {
-                                              setSubjectForm({
-                                                ...subjectForm,
-                                                lessons:
-                                                  subjectForm.lessons.filter(
-                                                    (l) =>
-                                                      !(
-                                                        l.lessonId ===
-                                                          lesson.lessonId &&
-                                                        l.weekDayId ===
-                                                          day.weekDayId
-                                                      ),
-                                                  ),
-                                              });
-                                            } else {
-                                              setSubjectForm({
-                                                ...subjectForm,
-                                                lessons: [
-                                                  ...subjectForm.lessons,
-                                                  {
-                                                    lessonId: lesson.lessonId,
-                                                    weekDayId: day.weekDayId,
-                                                  },
-                                                ],
-                                              });
-                                            }
-                                          }}
-                                        >
-                                          {lesson.name}
-                                        </ShadcnBadge>
-                                      );
-                                    })}
-                                </div>
-                              </div>
-                            ))}
-                        </div>
+                          }
+                          className="text-right h-11 bg-gray-50/30"
+                          min={1}
+                          max={10}
+                        />
                       </div>
                     </div>
 
@@ -638,11 +549,25 @@ export function TeachersTable({
         </ShadcnDialogContent>
       </ShadcnDialog>
 
+      <AddSubjectToTeacherDialog
+        teacher={teacherForSubject}
+        open={isAddSubjectOpen}
+        onOpenChange={setIsAddSubjectOpen}
+        onSuccess={() => {
+          setResult({
+            success: true,
+            message: "تم إضافة المادة للمعلم بنجاح",
+            show: true,
+          });
+          dispatch(fetchTeachersList());
+        }}
+      />
+
       <ShadcnDialog
         open={result.show}
         onOpenChange={(show) => {
           setResult({ ...result, show });
-          if (!show && result.success) {
+          if (!show && result.success && !isAddSubjectOpen) {
             handleCloseSchedule();
           }
         }}
@@ -662,7 +587,7 @@ export function TeachersTable({
             <Button
               onClick={() => {
                 setResult({ ...result, show: false });
-                if (result.success) {
+                if (result.success && !isAddSubjectOpen) {
                   handleCloseSchedule();
                 }
               }}

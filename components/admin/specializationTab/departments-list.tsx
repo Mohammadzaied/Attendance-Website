@@ -95,6 +95,9 @@ export function DepartmentsList({
   const [academicYears, setAcademicYears] = useState<AcademicYearResponse[]>(
     [],
   );
+  const [activeAcademicYears, setActiveAcademicYears] = useState<
+    AcademicYearResponse[]
+  >([]);
   const [isAcademicYearDialogOpen, setIsAcademicYearDialogOpen] =
     useState(false);
   const [newAcademicYear, setNewAcademicYear] = useState("");
@@ -114,12 +117,22 @@ export function DepartmentsList({
 
   useEffect(() => {
     loadAcademicYears();
+    loadActiveAcademicYears();
   }, [dispatch]);
 
   const loadAcademicYears = async () => {
     try {
       const years = await academicYearService.getAllAcademicYears();
       setAcademicYears(years);
+    } catch (error) {
+      console.error("Failed to load academic years:", error);
+    }
+  };
+
+  const loadActiveAcademicYears = async () => {
+    try {
+      const years = await academicYearService.getActiveAcademicYears();
+      setActiveAcademicYears(years);
     } catch (error) {
       console.error("Failed to load academic years:", error);
     }
@@ -136,6 +149,7 @@ export function DepartmentsList({
     try {
       await academicYearService.createAcademicYear({ year });
       await loadAcademicYears();
+      await loadActiveAcademicYears();
       setIsAcademicYearDialogOpen(false);
       setNewAcademicYear("");
     } catch (error) {
@@ -158,6 +172,7 @@ export function DepartmentsList({
 
       if (deleteAcademicYearThunk.fulfilled.match(resultAction)) {
         await loadAcademicYears();
+        await loadActiveAcademicYears();
         setIsYearDeleteDialogOpen(false);
         setYearToDelete(null);
         setDeleteYearPassword("");
@@ -198,6 +213,7 @@ export function DepartmentsList({
         setIsPromoteDialogOpen(false);
         setAdminPassword("");
         setSelectedYearForPromotion("");
+        await loadActiveAcademicYears();
         setResult({
           success: true,
           message: "تمت ترقية الطلاب بنجاح",
@@ -806,7 +822,10 @@ export function DepartmentsList({
             </Button>
             <Button
               variant="destructive"
-              onClick={handleDeleteYear}
+              onClick={() => {
+                handleDeleteYear();
+                setIsManagementDialogOpen(false);
+              }}
               disabled={deleteProgramYearState.isLoading || !deleteYearPassword}
             >
               {deleteProgramYearState.isLoading
@@ -843,7 +862,7 @@ export function DepartmentsList({
                   <SelectValue placeholder="اختر السنة الأكاديمية" />
                 </SelectTrigger>
                 <SelectContent>
-                  {academicYears.map((year) => (
+                  {activeAcademicYears.map((year) => (
                     <SelectItem
                       key={year.academicYearId}
                       value={year.academicYearId.toString()}

@@ -55,7 +55,7 @@ export function AlertsSection({
     <div className="space-y-4">
       {/* Subject Filter for Alerts */}
       {subjectsWithAlerts.length > 0 && (
-        <div className="flex flex-wrap gap-2 mb-6 p-4 bg-amber-50/50 rounded-2xl border border-blue-100/50">
+        <div className="flex flex-wrap gap-2 mb-6 p-4 bg-white rounded-2xl border border-blue-100/50">
           <Button
             variant={selectedAlertSubjectId === "all" ? "default" : "outline"}
             size="sm"
@@ -182,16 +182,18 @@ export function AlertsSection({
           </div>
         ))}
 
-        {unifiedAlerts.length === 0 && (
+        {filteredAlerts.length === 0 && (
           <div className="flex flex-col items-center justify-center py-20 text-center opacity-60">
-            <div className="h-20 w-20 rounded-full bg-emerald-50 flex items-center justify-center mb-4">
-              <CheckCircle2 className="h-10 w-10 text-blue-500" />
+            <div className="h-20 w-20 rounded-full bg-emerald-50 flex items-center justify-center mb-4 text-blue-500">
+              <CheckCircle2 className="h-10 w-10" />
             </div>
             <h4 className="text-xl font-bold text-gray-900">
               سجل نظيف من الإنذارات
             </h4>
             <p className="text-sm text-gray-500 max-w-xs mt-2">
-              لم يتم إصدار أي إنذار للطالب في هذا الفصل.
+              {selectedAlertSubjectId === "all"
+                ? "لم يتم إصدار أي إنذار للطالب في هذا الفصل الدراسي."
+                : "لم يتم إصدار أي إنذار للطالب في هذه المادة."}
             </p>
           </div>
         )}

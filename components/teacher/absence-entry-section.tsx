@@ -25,6 +25,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { AbsenceTableRow } from "./absence-table-row";
+import { DatePicker } from "@/components/ui/date-picker";
 import {
   type AbsenceType,
   type AbsenceTypeMap,
@@ -39,7 +40,7 @@ import { Student } from "@/features/student";
 type AbsenceEntrySectionProps = {
   academicYears: AcademicYear[];
   selectedAcademicYearId: number | null;
-  onAcademicYearChange: (yearId: number) => void;
+  onAcademicYearChange: (yearId: number | null) => void;
   isLoadingAcademicYears?: boolean;
   isLoadingSubjects?: boolean;
   sections: { value: string; label: string }[];
@@ -47,6 +48,8 @@ type AbsenceEntrySectionProps = {
   canRecordAttendance?: boolean;
   selectedSection: string;
   onSectionChange: (value: string) => void;
+  date: Date;
+  onDateChange: (date: Date) => void;
   students: Student[];
   isLoadingStudents?: boolean;
   absentStudents: Set<string>;
@@ -71,14 +74,14 @@ type AbsenceEntrySectionProps = {
 export function AbsenceEntrySection({
   academicYears,
   selectedAcademicYearId,
-  onAcademicYearChange,
-  isLoadingAcademicYears,
   isLoadingSubjects,
   sections,
   availableLessons,
   canRecordAttendance = true,
   selectedSection,
   onSectionChange,
+  date,
+  onDateChange,
   students,
   isLoadingStudents,
   absentStudents,
@@ -114,8 +117,15 @@ export function AbsenceEntrySection({
   return (
     <Card className="shadow-sm border-none md:border md:shadow-xs mb-6 md:mb-8 overflow-hidden rounded-xl">
       <CardHeader className="px-4 md:px-6 pt-2 pb-4 md:pb-6 text-right">
-        <CardTitle className="text-lg md:text-xl font-bold text-blue-900 leading-tight">
+        <CardTitle className="text-sm md:text-xl font-bold text-blue-900 leading-tight">
           تسجيل الغياب اليومي
+          {selectedAcademicYearId && (
+            <>
+              {" "}
+              - السنة الأكاديمية ({Number(selectedYearLabel)} -{" "}
+              {Number(selectedYearLabel) + 1})
+            </>
+          )}
         </CardTitle>
         <CardDescription className="text-blue-700/70 text-sm mt-1">
           اختر الشعبة والتاريخ ثم حدد الطلاب الغائبين
@@ -124,40 +134,6 @@ export function AbsenceEntrySection({
 
       <CardContent className="p-4 md:p-6 space-y-6">
         <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-          <div className="space-y-2">
-            <Label
-              htmlFor="academic-year"
-              className="text-right block text-sm font-bold text-gray-700"
-            >
-              السنة الأكاديمية
-            </Label>
-            <Select
-              dir="rtl"
-              value={selectedAcademicYearId?.toString() || ""}
-              onValueChange={(value) => onAcademicYearChange(Number(value))}
-              disabled={isLoadingAcademicYears}
-            >
-              <SelectTrigger
-                id="academic-year"
-                className="w-full h-11 bg-white border-gray-200"
-              >
-                <SelectValue placeholder="اختر السنة">
-                  {Number(selectedYearLabel)} - {Number(selectedYearLabel) + 1}
-                </SelectValue>
-              </SelectTrigger>
-              <SelectContent>
-                {academicYears.map((year) => (
-                  <SelectItem
-                    key={year.academicYearId}
-                    value={year.academicYearId.toString()}
-                  >
-                    {Number(year.year)} - {Number(year.year) + 1}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
           <div className="space-y-2">
             <Label
               htmlFor="section"
@@ -213,46 +189,22 @@ export function AbsenceEntrySection({
               lessons={availableLessons}
               selectedLessonIds={defaultLessonIds}
               onSelectionChange={onDefaultLessonIdsChange}
-              disabled={!selectedSection || !canRecordAttendance}
+              disabled={!selectedSection}
               placeholder="اختر الحصص"
               className="h-9"
             />
           </div>
+
+          <div className="space-y-2">
+            <DatePicker
+              label="تاريخ الغياب"
+              date={date}
+              setDate={(d) => d && onDateChange(d)}
+            />
+          </div>
         </div>
 
-        {!canRecordAttendance && sections.length > 0 && (
-          <div className="bg-amber-50 border border-amber-200 p-4 rounded-xl flex items-center gap-3 text-amber-800 animate-in fade-in slide-in-from-top-4 duration-500">
-            <div className="h-10 w-10 bg-amber-100 rounded-full flex items-center justify-center text-amber-600 shrink-0">
-              <svg
-                className="h-6 w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-                />
-              </svg>
-            </div>
-            <div className="text-right">
-              <p className="font-bold">لا يوجد حصص اليوم</p>
-              <p className="text-sm opacity-90">
-                لا يمكن تسجيل غياب في يوم ليس به حصص مجدولة لهذه المادة.
-              </p>
-            </div>
-          </div>
-        )}
-
-        <div
-          className={`space-y-3 ${
-            !canRecordAttendance
-              ? "opacity-50 grayscale pointer-events-none"
-              : ""
-          }`}
-        >
+        <div className={`space-y-3`}>
           <div className="flex items-center justify-between">
             <Label className="text-right block text-base font-bold text-gray-800">
               قائمة الطلاب

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { StudentGraduationDto } from "@/features/student/studentTypes";
 import { Eye, Edit, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 interface GraduationStudentsTableProps {
   students: StudentGraduationDto[];
@@ -68,11 +69,10 @@ export function GraduationStudentsTable({
         {students.map((student) => {
           const latestEnrollment = student.enrollments;
           return (
-            <div
+            <Link
               key={student.studentId}
-              onClick={() =>
-                router.push(`${basePath}/students/${student.studentId}`)
-              }
+              href={`${basePath}/students/${student.studentId}`}
+              target="_blank"
               className="group flex-col items-center md:grid grid-cols-[minmax(0,3fr)_minmax(0,3fr)_minmax(0,2fr)_minmax(0,2fr)] px-6 py-4 hover:bg-blue-50/50 transition-all duration-200 cursor-pointer relative gap-3 md:gap-0"
             >
               <div className="text-right pt-3 md:pt-0">
@@ -107,18 +107,12 @@ export function GraduationStudentsTable({
 
               {/* Actions */}
               <div className="w-full md:w-32 flex items-center gap-1 justify-end md:justify-end">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-9 w-9 text-blue-600 hover:text-blue-700 hover:bg-blue-100 transition-colors cursor-pointer"
+                <div
+                  className="h-9 w-9 flex items-center justify-center text-blue-600 hover:text-blue-700 hover:bg-blue-100 transition-colors cursor-pointer rounded-md"
                   title="عرض التفاصيل"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    router.push(`${basePath}/students/${student.studentId}`);
-                  }}
                 >
                   <Eye className="h-5 w-5" />
-                </Button>
+                </div>
                 {!isReadOnly && (
                   <>
                     {latestEnrollment.studyYear !== 0 && (
@@ -128,6 +122,7 @@ export function GraduationStudentsTable({
                         className="h-9 w-9 text-amber-600 hover:text-amber-700 hover:bg-amber-100 transition-colors cursor-pointer"
                         title="تعديل"
                         onClick={(e) => {
+                          e.preventDefault();
                           e.stopPropagation();
                           if (onEdit) onEdit(student);
                         }}
@@ -141,6 +136,7 @@ export function GraduationStudentsTable({
                       className="h-9 w-9 text-red-600 hover:text-red-700 hover:bg-red-100 transition-colors cursor-pointer"
                       title="حذف"
                       onClick={(e) => {
+                        e.preventDefault();
                         e.stopPropagation();
                         if (onDelete) onDelete(student);
                       }}
@@ -150,7 +146,7 @@ export function GraduationStudentsTable({
                   </>
                 )}
               </div>
-            </div>
+            </Link>
           );
         })}
       </div>

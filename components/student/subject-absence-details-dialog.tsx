@@ -105,7 +105,7 @@ export function SubjectAbsenceDetailsDialog({
             <div className="grid grid-cols-4 md:grid-cols-2 gap-2">
               {data.adjustedTotalAbsences > 0 && (
                 <div className="bg-red-50 border border-red-200 rounded-xl p-2 text-center">
-                  <p className="text-sm text-red-600 mb-1">إجمالي الغيابات</p>
+                  <p className="text-sm text-red-600 mb-1">الإجمالي</p>
                   <p className="text-3xl font-bold text-red-700">
                     {data.adjustedTotalAbsences}
                   </p>
@@ -113,7 +113,7 @@ export function SubjectAbsenceDetailsDialog({
               )}
               {data.absencesByStatus["Late"] > 0 && (
                 <div className="bg-amber-50 border border-amber-200 rounded-xl p-2 text-center">
-                  <p className="text-sm text-amber-600 mb-1">تأخير</p>
+                  <p className="text-sm text-amber-600 mb-1">تأخر</p>
                   <p className="text-3xl font-bold text-amber-700">
                     {data.absencesByStatus["Late"]}
                   </p>

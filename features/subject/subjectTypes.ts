@@ -30,11 +30,6 @@ export interface WeekDayResponse {
   name: string;
 }
 
-export interface SubjectLessonDto {
-  lessonId: number;
-  weekDayId: number;
-}
-
 export interface CreateSubjectDto {
   name: string;
   specializationId: number;
@@ -42,20 +37,27 @@ export interface CreateSubjectDto {
   studyYear: number;
   teacherId: string;
   numberOfHours: number;
-  lessons: SubjectLessonDto[];
 }
 
-export interface ScheduleDayResponse {
-  weekDayId: number;
+export interface CreateSubjectToTeacherDto {
   name: string;
-  nameEnglish: string;
-  order: number;
-  lessons: {
-    isActive: boolean;
-    lessonId: number;
-    name: string;
-  }[];
+  specializationId: number;
+  studyYear: number;
+  teacherId: string;
+  numberOfHours: number;
 }
+
+// export interface ScheduleDayResponse {
+//   weekDayId: number;
+//   name: string;
+//   nameEnglish: string;
+//   order: number;
+//   lessons: {
+//     isActive: boolean;
+//     lessonId: number;
+//     name: string;
+//   }[];
+// }
 
 export interface DetailedSubjectResponse {
   subjectId: number;
@@ -74,7 +76,7 @@ export interface DetailedSubjectResponse {
   academicYear: number;
   studyYear: number;
   createdAt: string;
-  schedule: ScheduleDayResponse[];
+  // schedule: ScheduleDayResponse[];
   enrolledStudentsCount: number;
 }
 
@@ -82,7 +84,6 @@ export interface SubjectUpdateDto {
   name: string;
   teacherId: string;
   numberOfHours: number;
-  lessons: SubjectLessonDto[];
 }
 
 export interface AcademicStatisticsParams {
@@ -93,9 +94,6 @@ export interface AcademicStatisticsParams {
 }
 
 export interface AcademicStatisticsResponse {
-  // totalStudents: number;
-  // activeStudents: number;
-  // inactiveStudents: number;
   yearsNumber: number;
   studentCountSpecialization: number;
   subjectCount: number;

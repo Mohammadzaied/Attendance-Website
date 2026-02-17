@@ -8,11 +8,13 @@ import { AdminAllSubjectsResponse } from "@/features/student";
 interface SubjectTabsListProps {
   adminSubjects: AdminAllSubjectsResponse;
   activeTypeTab: "absences" | "alerts";
+  isDH?: boolean;
 }
 
 export function SubjectTabsList({
   adminSubjects,
   activeTypeTab,
+  isDH = false,
 }: SubjectTabsListProps) {
   return (
     <TabsList
@@ -49,8 +51,16 @@ export function SubjectTabsList({
                 <div className="flex flex-wrap gap-1">
                   {info.subjects.map((subject) => (
                     <TabsTrigger
-                      key={subject.subjectId}
-                      value={subject.subjectId.toString()}
+                      key={
+                        isDH
+                          ? subject.subjectId
+                          : `${info.studentAcademicInfoId}-${subject.subjectId}`
+                      }
+                      value={
+                        isDH
+                          ? subject.subjectId.toString()
+                          : `${info.studentAcademicInfoId}-${subject.subjectId}`
+                      }
                       className="rounded-lg h-8 px-3 font-bold text-gray-500 data-[state=active]:border-blue-500 data-[state=active]:bg-white data-[state=active]:text-blue-600 data-[state=active]:shadow-sm transition-all duration-300 cursor-pointer flex items-center gap-2 group whitespace-nowrap border border-transparent text-xs"
                     >
                       {subject.subjectName}

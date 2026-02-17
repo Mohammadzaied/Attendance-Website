@@ -18,6 +18,7 @@ import { LessonMultiSelect, type LessonOption } from "./lesson-multi-select";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 import { Student } from "@/features/student";
+import { useEffect, useState } from "react";
 
 type AbsenceTableRowProps = {
   student: Student;
@@ -48,19 +49,27 @@ export function AbsenceTableRow({
 }: AbsenceTableRowProps) {
   const isMobileHook = useIsMobile();
   const isMobile = isMobileProp !== undefined ? isMobileProp : isMobileHook;
+  const [showDetails, setShowDetails] = useState(false);
+
+  // Reset showDetails when student is unselected
+  useEffect(() => {
+    if (!isSelected) {
+      setShowDetails(false);
+    }
+  }, [isSelected]);
 
   if (isMobile) {
     return (
       <div
         className={cn(
-          "p-4 rounded-xl border transition-all space-y-4 mb-3 cursor-pointer",
+          "p-4 rounded-xl border transition-all mb-3 cursor-pointer",
           isSelected
             ? "border-blue-200 bg-blue-50/30"
             : "border-gray-100 bg-white",
         )}
         onClick={onToggle}
       >
-        <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center justify-between gap-3 mb-4">
           <div className="flex items-center gap-3">
             <Checkbox
               checked={isSelected}
@@ -72,7 +81,24 @@ export function AbsenceTableRow({
               {student.name}
             </span>
           </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            className={cn(
+              "h-8 text-blue-600 font-bold hover:bg-blue-100/50 transition-all",
+              isSelected && !showDetails
+                ? "opacity-100 visible"
+                : "opacity-0 invisible pointer-events-none",
+            )}
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowDetails(true);
+            }}
+          >
+            تفاصيل
+          </Button>
         </div>
+
         <div
           onClick={(e) => isSelected && e.stopPropagation()}
           className="w-full"
@@ -83,55 +109,60 @@ export function AbsenceTableRow({
             onSelectionChange={onLessonIdsChange}
             disabled={!isSelected}
             placeholder="اختر الحصص"
+            hideSelectedNames={isMobile}
           />
         </div>
+
         <div
           className={cn(
-            "grid grid-cols-1 gap-3",
-            isSelected ? "visible" : "invisible h-0 opacity-0 overflow-hidden",
+            "grid transition-all duration-300 ease-in-out overflow-hidden",
+            isSelected && showDetails
+              ? "grid-rows-[1fr] opacity-100 mt-4 pt-4 border-t border-blue-100/50"
+              : "grid-rows-[0fr] opacity-0 mt-0 pt-0",
           )}
         >
-          <div
-            className="space-y-1.5"
-            onClick={(e) => isSelected && e.stopPropagation()}
-          >
-            <span className="text-xs px-2 font-semibold text-gray-500 block text-right">
-              النوع
-            </span>
-            <Select
-              value={absenceType || "absence"}
-              onValueChange={(value: AbsenceType) => onTypeChange(value)}
-              dir="rtl"
-            >
-              <SelectTrigger className="w-full h-8! bg-white">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="absence">غياب</SelectItem>
-                <SelectItem value="late">تأخير</SelectItem>
-                <SelectItem value="excused">غياب بعذر</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+          <div className="min-h-0">
+            <div className="grid grid-cols-1 gap-3">
+              <div className="space-y-1.5" onClick={(e) => e.stopPropagation()}>
+                <span className="text-xs px-2 font-semibold text-gray-500 block text-right">
+                  النوع
+                </span>
+                <Select
+                  value={absenceType || "absence"}
+                  onValueChange={(value: AbsenceType) => onTypeChange(value)}
+                  dir="rtl"
+                >
+                  <SelectTrigger className="w-full h-8! bg-white">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="absence">غياب</SelectItem>
+                    <SelectItem value="late">تأخير</SelectItem>
+                    <SelectItem value="excused">غياب بعذر</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
 
-          <div
-            className={cn(
-              "space-y-1.5 transition-all",
-              absenceType === "excused"
-                ? "visible h-auto opacity-100"
-                : "invisible h-0 opacity-0 overflow-hidden",
-            )}
-            onClick={(e) => isSelected && e.stopPropagation()}
-          >
-            <span className="text-xs font-semibold text-gray-500 block text-right">
-              سبب الغياب
-            </span>
-            <Textarea
-              placeholder="أدخل سبب الغياب..."
-              value={reason || ""}
-              onChange={(e) => onReasonChange(e.target.value)}
-              className="text-right text-sm min-h-20 bg-white resize-none"
-            />
+              <div
+                className={cn(
+                  "space-y-1.5 text-right transition-all duration-300",
+                  absenceType === "excused"
+                    ? "opacity-100 visible h-auto mt-0"
+                    : "opacity-0 invisible h-0 -mt-1",
+                )}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <span className="text-xs font-semibold text-gray-500 block">
+                  سبب الغياب
+                </span>
+                <Textarea
+                  placeholder="أدخل سبب الغياب..."
+                  value={reason || ""}
+                  onChange={(e) => onReasonChange(e.target.value)}
+                  className="text-right text-sm min-h-20 bg-white resize-none"
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>

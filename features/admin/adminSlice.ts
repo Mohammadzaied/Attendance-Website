@@ -260,6 +260,10 @@ const adminSlice = createSlice({
       state.isDeleteDialogOpen = false;
       state.selectedTeacher = null;
     },
+    clearTeacherLastActiveSemester: (state) => {
+      state.teacherLastActiveSemester = [];
+      state.fetchTeacherLastActiveSemesterState = initialAsyncState;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -488,6 +492,7 @@ export const {
   closeUpdateDialog,
   openDeleteDialog,
   closeDeleteDialog,
+  clearTeacherLastActiveSemester,
 } = adminSlice.actions;
 
 export default adminSlice.reducer;

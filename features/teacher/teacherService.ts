@@ -121,4 +121,19 @@ export const teacherService = {
     >(`${SUBJECTS_ENDPOINT}/${subjectId}/StudentsWithAbsenceData`);
     return response.data;
   },
+
+  /**
+   * Get favorite lesson IDs for a specific subject and date
+   */
+  async getFavoriteLessonAdvanced(
+    subjectId: number,
+    date: string,
+  ): Promise<{ favoriteLessonIds: number[] }> {
+    const response = await apiClient.get<
+      ApiResponse<{ favoriteLessonIds: number[] }>
+    >(
+      `${ABSENCES_ENDPOINT}/FavoriteLesson?subjectId=${subjectId}&date=${date}`,
+    );
+    return response.data;
+  },
 };
