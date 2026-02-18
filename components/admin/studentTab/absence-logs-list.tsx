@@ -50,35 +50,37 @@ export function AbsenceLogsList({
 
     const statusInfo = statusMap[status] || statusMap.Absent;
     return (
-      <Badge className={`${statusInfo.className} font-medium`}>
+      <Badge
+        className={`${statusInfo.className} font-medium text-[10px] md:text-xs py-0 px-1.5 md:px-2.5`}
+      >
         {statusInfo.icon} {statusInfo.label}
       </Badge>
     );
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
+    <div className="grid grid-cols-1 gap-3 md:gap-4">
       {filteredLogs.length > 0 ? (
         filteredLogs.map((dateGroup, idx) => (
           <div
             key={idx}
-            className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:border-blue-200 transition-all flex flex-col group"
+            className="bg-white p-3.5 md:p-5 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:border-blue-200 transition-all flex flex-col group overflow-hidden"
           >
-            <div className="flex items-center justify-between mb-4 pb-4 border-b border-gray-50">
-              <div className="flex items-center gap-4">
-                <div className="h-12 w-12 rounded-2xl bg-gray-50 text-gray-400 flex items-center justify-center group-hover:bg-blue-50 group-hover:text-blue-600 transition-all">
-                  <CalendarIcon className="h-6 w-6" />
+            <div className="flex items-center justify-between mb-3 md:mb-4 pb-3 md:pb-4 border-b border-gray-50">
+              <div className="flex items-center gap-3 md:gap-4">
+                <div className="h-10 w-10 md:h-12 md:w-12 rounded-xl md:rounded-2xl bg-gray-50 text-gray-400 flex items-center justify-center group-hover:bg-blue-50 group-hover:text-blue-600 transition-all">
+                  <CalendarIcon className="h-5 w-5 md:h-6 md:w-6" />
                 </div>
                 <div className="text-right">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="font-bold text-gray-900 text-lg">
+                  <div className="flex items-center gap-2 mb-0.5 md:mb-1">
+                    <span className="font-bold text-gray-900 text-base md:text-lg">
                       {new Date(dateGroup.date).toLocaleDateString("en-GB", {
                         year: "numeric",
                         month: "numeric",
                         day: "numeric",
                       })}
                     </span>
-                    <span className="text-sm text-gray-500">
+                    <span className="text-[10px] md:text-sm text-gray-500 font-medium">
                       ({dateGroup.dayOfWeek})
                     </span>
                   </div>
@@ -86,41 +88,41 @@ export function AbsenceLogsList({
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-3">
               {dateGroup.lessons.map((lesson) => (
                 <div
                   key={lesson.id}
-                  className="flex flex-col p-3 rounded-xl bg-gray-50/50 border border-gray-100/50"
+                  className="flex flex-col p-2.5 md:p-3 rounded-xl bg-gray-50/50 border border-gray-100/50 transition-colors hover:bg-white hover:shadow-sm"
                 >
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-bold text-gray-700">
+                  <div className="flex items-center justify-between gap-2 overflow-hidden">
+                    <span className="text-xs md:text-sm font-bold text-gray-700 truncate">
                       {lesson.lessonName}
                     </span>
                     {getStatusBadge(lesson.status)}
                   </div>
                   {!isReadOnly && (
-                    <div className="flex items-center gap-1.5 mt-2">
+                    <div className="flex items-center gap-1.5 mt-2 md:mt-2.5">
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-7 w-7 text-gray-400 hover:text-blue-600 hover:bg-amber-50 rounded-lg"
+                        className="h-7 w-7 md:h-8 md:w-8 text-gray-400 hover:text-blue-600 hover:bg-amber-50 rounded-lg bg-white md:bg-transparent shadow-sm md:shadow-none border md:border-0 border-gray-100"
                         onClick={() => onEdit?.(lesson)}
                       >
-                        <Edit className="h-4 w-4" />
+                        <Edit className="h-3.5 w-3.5 md:h-4 md:w-4" />
                       </Button>
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-7 w-7 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg"
+                        className="h-7 w-7 md:h-8 md:w-8 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg bg-white md:bg-transparent shadow-sm md:shadow-none border md:border-0 border-gray-100"
                         onClick={() => onDelete?.(lesson.id)}
                       >
-                        <Trash2 className="h-4 w-4" />
+                        <Trash2 className="h-3.5 w-3.5 md:h-4 md:w-4" />
                       </Button>
                     </div>
                   )}
                   {lesson.reason && (
-                    <div className="flex items-center gap-1.5 text-xs text-blue-500 mt-1">
-                      <AlertCircle className="h-3 w-3" />
+                    <div className="flex items-center gap-1.5 text-[10px] md:text-xs text-blue-500 mt-1.5 opacity-80">
+                      <AlertCircle className="h-3 w-3 shrink-0" />
                       <span className="truncate">{lesson.reason}</span>
                     </div>
                   )}
@@ -130,12 +132,14 @@ export function AbsenceLogsList({
           </div>
         ))
       ) : (
-        <div className="flex flex-col items-center justify-center py-20 bg-gray-50/30 rounded-3xl border border-dashed border-gray-200">
-          <div className="h-20 w-20 rounded-full bg-blue-50 flex items-center justify-center mb-4">
-            <AlertCircle className="h-10 w-10 text-blue-400 opacity-50" />
+        <div className="flex flex-col items-center justify-center py-12 md:py-20 bg-gray-50/30 rounded-3xl border border-dashed border-gray-200">
+          <div className="h-16 w-16 md:h-20 md:w-20 rounded-full bg-blue-50 flex items-center justify-center mb-4">
+            <AlertCircle className="h-8 w-8 md:h-10 md:w-10 text-blue-400 opacity-50" />
           </div>
-          <h4 className="text-xl font-bold text-gray-900">لا توجد غيابات</h4>
-          <p className="text-sm text-gray-500 max-w-xs mt-2 text-center">
+          <h4 className="text-lg md:text-xl font-bold text-gray-900">
+            لا توجد غيابات
+          </h4>
+          <p className="text-xs md:text-sm text-gray-500 max-w-xs mt-2 text-center px-6">
             لم يتم العثور على أي سجلات غياب لهذا الطالب في هذه المادة.
           </p>
         </div>

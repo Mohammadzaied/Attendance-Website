@@ -282,7 +282,7 @@ export function StudentProfileContent({
     <div
       className={cn(
         "min-h-screen bg-gray-50/50",
-        isDH ? "p-4 md:p-8" : "p-2 md:p-2",
+        isDH ? "p-4 md:p-8" : "p-0 md:p-2", // Removed padding on mobile for non-DH
       )}
       dir="rtl"
     >
@@ -294,19 +294,21 @@ export function StudentProfileContent({
         setSelectedSemesterId={setSelectedSemesterId}
       />
 
-      <div className="max-w-7xl mx-auto flex">
+      <div className="max-w-7xl mx-auto flex px-2 md:px-0">
+        {" "}
+        {/* Added horizontal padding on mobile */}
         <div className="w-full">
-          <Card className="border-none shadow-xl shadow-blue-500/5 bg-white h-full flex flex-col overflow-visible">
-            <div className="p-6 border-b border-gray-100 flex items-center justify-between  bg-white z-40 shadow-sm rounded-t-3xl">
-              <div className="text-right">
-                <h3 className="text-xl font-bold text-gray-900">
+          <Card className="border-none shadow-xl shadow-blue-500/5 bg-white h-full flex flex-col overflow-visible rounded-3xl md:rounded-3xl">
+            <div className="p-4 md:p-6 border-b border-gray-100 flex flex-col md:flex-row items-start md:items-center justify-between bg-white z-40 shadow-sm rounded-t-3xl gap-4">
+              <div className="text-right w-full md:w-auto">
+                <h3 className="text-lg md:text-xl font-bold text-gray-900">
                   سجل الطالب التفصيلي
                 </h3>
-                <div className="flex items-center gap-1 mt-2 bg-gray-100 p-1 rounded-xl w-fit">
+                <div className="flex items-center gap-1 mt-3 md:mt-2 bg-gray-100 p-1 rounded-xl w-full md:w-fit">
                   <button
                     onClick={() => setActiveTypeTab("absences")}
                     className={cn(
-                      "px-4 py-1.5 rounded-lg text-sm font-bold transition-all duration-200 cursor-pointer",
+                      "flex-1 md:flex-none px-4 py-2 md:py-1.5 rounded-lg text-sm font-bold transition-all duration-200 cursor-pointer",
                       activeTypeTab === "absences"
                         ? "bg-white text-blue-600 shadow-sm"
                         : "text-gray-500 hover:text-gray-700",
@@ -320,7 +322,7 @@ export function StudentProfileContent({
                       dispatch(fetchUnifiedAlerts(studentId));
                     }}
                     className={cn(
-                      "px-4 py-1.5 rounded-lg text-sm font-bold transition-all duration-200 cursor-pointer",
+                      "flex-1 md:flex-none px-4 py-2 md:py-1.5 rounded-lg text-sm font-bold transition-all duration-200 cursor-pointer",
                       activeTypeTab === "alerts"
                         ? "bg-white text-blue-600 shadow-sm"
                         : "text-gray-500 hover:text-gray-700",
@@ -338,7 +340,7 @@ export function StudentProfileContent({
               dir="rtl"
               className="flex-1 flex flex-col"
             >
-              <div className="px-6 py-4 bg-white border-b border-gray-100/80 overflow-x-auto">
+              <div className="px-4 md:px-6 py-4 bg-white border-b border-gray-100/80 overflow-x-auto scrollbar-hide">
                 <SubjectTabsList
                   adminSubjects={adminSubjects}
                   activeTypeTab={activeTypeTab}
@@ -361,7 +363,7 @@ export function StudentProfileContent({
                           ? subject.subjectId.toString()
                           : `${subject.studentAcademicInfoId}-${subject.subjectId}`
                       }
-                      className="m-0 p-6 animate-in fade-in slide-in-from-bottom-2 duration-500"
+                      className="m-0 p-4 md:p-6 animate-in fade-in slide-in-from-bottom-2 duration-500"
                     >
                       {activeTypeTab === "absences" ? (
                         <>
@@ -391,13 +393,13 @@ export function StudentProfileContent({
                               />
 
                               {activeTypeTab === "absences" && (
-                                <div className="px-6 py-3 bg-gray-50/50 border-b border-gray-100 flex items-center gap-3 rounded-xl mb-4">
+                                <div className="px-3 md:px-6 py-3 bg-gray-50/50 border-b border-gray-100 flex flex-wrap items-center gap-2 md:gap-3 rounded-2xl mb-4 overflow-hidden">
                                   <Popover>
                                     <PopoverTrigger asChild>
                                       <Button
                                         variant="outline"
                                         size="sm"
-                                        className={`gap-2 h-9 border-gray-200 cursor-pointer bg-white ${selectedDate ? "border-blue-200 bg-blue-50 text-blue-600" : ""}`}
+                                        className={`gap-2 h-9 border-gray-200 cursor-pointer bg-white text-xs md:text-sm flex-1 md:flex-none ${selectedDate ? "border-blue-200 bg-blue-50 text-blue-600" : ""}`}
                                       >
                                         <CalendarDays className="h-4 w-4" />
                                         {selectedDate
@@ -427,7 +429,7 @@ export function StudentProfileContent({
                                       variant="ghost"
                                       size="sm"
                                       onClick={() => setSelectedDate(undefined)}
-                                      className="text-blue-600 hover:text-blue-600 hover:bg-blue-50 gap-1 h-9 font-bold"
+                                      className="text-blue-600 hover:text-blue-600 hover:bg-blue-50 gap-1 h-9 font-bold text-xs md:text-sm"
                                     >
                                       <X className="h-4 w-4" />
                                       إلغاء الفلتر
@@ -497,14 +499,14 @@ export function StudentProfileContent({
                     </TabsContent>
                   ))
                 ) : (
-                  <div className="flex flex-col items-center justify-center py-32 text-center">
-                    <div className="h-24 w-24 rounded-3xl bg-gray-50 flex items-center justify-center mb-6">
-                      <User className="h-12 w-12 text-gray-300" />
+                  <div className="flex flex-col items-center justify-center py-20 md:py-32 text-center px-6">
+                    <div className="h-20 w-20 md:h-24 md:w-24 rounded-3xl bg-gray-50 flex items-center justify-center mb-6">
+                      <User className="h-10 w-10 md:h-12 md:w-12 text-gray-300" />
                     </div>
-                    <h3 className="text-2xl font-black text-gray-900 mb-3">
+                    <h3 className="text-xl md:text-2xl font-black text-gray-900 mb-3">
                       لا توجد مواد مسجلة
                     </h3>
-                    <p className="text-gray-500 font-medium max-w-sm mx-auto leading-relaxed">
+                    <p className="text-sm md:text-base text-gray-500 font-medium max-w-sm mx-auto leading-relaxed">
                       يبدو أن الطالب غير مسجل في أي مواد دراسية لهذه الفترة
                       الأكاديمية المحددة.
                     </p>
