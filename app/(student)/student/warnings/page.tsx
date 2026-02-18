@@ -282,7 +282,7 @@ export default function StudentWarningsPage() {
                             عدد الغيابات عند الاصدار
                           </p>
                           <p className="font-bold text-gray-700">
-                            {alert.absenceCountAtIssue}
+                            {alert.limitAtIssue}
                           </p>
                         </div>
                         {/* <div className="space-y-1">

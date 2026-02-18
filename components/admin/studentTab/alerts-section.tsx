@@ -161,7 +161,7 @@ export function AlertsSection({
                           صدر هذا الإنذار لتجاوز الطالب نسبة الغياب المسموح بها
                           :{" "}
                           <span className="font-bold text-red-500">
-                            عدد الغيابات {alert.absenceCountAtIssue}
+                            عدد الغيابات {alert.limitAtIssue}
                           </span>
                         </p>
                         {alert.isExtended && (
