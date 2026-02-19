@@ -592,15 +592,16 @@ export function StudyYearDetail({
                         <div className="flex items-center gap-2">
                           {subject.teacherName ? (
                             <div className="flex items-center gap-2">
+                                <div className="h-7 w-7 bg-blue-100 text-blue-700 rounded-full flex items-center justify-center text-xs font-black ring-2 ring-white">
+                                {subject.teacherName.charAt(0)}
+                              </div>
                               <span
                                 className="text-gray-700 text-sm font-bold truncate max-w-[150px]"
                                 title={subject.teacherName}
                               >
                                 {subject.teacherName}
                               </span>
-                              <div className="h-7 w-7 bg-blue-100 text-blue-700 rounded-full flex items-center justify-center text-xs font-black ring-2 ring-white">
-                                {subject.teacherName.charAt(0)}
-                              </div>
+
                             </div>
                           ) : (
                             <span className="text-red-500 text-xs font-medium">
@@ -608,9 +609,9 @@ export function StudyYearDetail({
                             </span>
                           )}
                         </div>
-                        <span className="text-[10px] text-gray-400 font-medium">
+                        {/* <span className="text-[10px] text-gray-400 font-medium">
                           ID: {subject.subjectId}
-                        </span>
+                        </span> */}
                       </div>
                     </div>
                   </div>

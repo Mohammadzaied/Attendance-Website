@@ -129,8 +129,9 @@ export function AddTeacherDialog({ onSuccess }: AddTeacherDialogProps) {
                   onChange={(e) =>
                     setFormData({ ...formData, username: e.target.value })
                   }
-                  className="text-right"
+                  className="text-right [unicode-bidi:plaintext]"
                   required
+                 dir="ltr"
                 />
               </div>
               <div className="grid gap-2">
