@@ -38,28 +38,37 @@ export function StudentProfileHeader({
           <User className="h-6 w-6 md:h-8 md:w-8 text-blue-600" />
         </div>
         <div className="flex-1 min-w-0">
-          <h2 className="text-lg md:text-2xl font-black text-gray-900 truncate leading-tight">
+          <h2
+            className="text-lg md:text-2xl font-black text-gray-900 truncate leading-tight"
+            title={profile.fullName}
+          >
             {profile.fullName}
           </h2>
           <div className="flex flex-wrap gap-1.5 md:gap-3 mt-1 md:mt-2">
             <Badge
               variant="outline"
-              className="gap-1.5 py-1 px-2 md:px-4 border-gray-100 text-gray-500 md:text-gray-600 bg-gray-50/50 rounded-lg md:rounded-xl font-bold text-[10px] md:text-xs"
+              className="gap-1.5 py-1 px-2 md:px-4 border-gray-100 text-gray-500 md:text-gray-600 bg-gray-50/50 rounded-lg md:rounded-xl font-bold text-[10px] md:text-xs max-w-[180px] md:max-w-[350px]"
+              title={profile.username}
             >
-              <Mail className="h-3 w-3 md:h-3.5 md:w-3.5 opacity-60" />
-              {profile.username}
+              <Mail className="h-3 w-3 md:h-3.5 md:w-full opacity-60 shrink-0" />
+              <span className="truncate" dir="ltr">
+                {profile.username}
+              </span>
             </Badge>
             <Badge
               variant="outline"
-              className="gap-1.5 py-1 px-2 md:px-4 border-gray-100 text-gray-500 md:text-gray-600 bg-gray-50/50 rounded-lg md:rounded-xl font-bold text-[10px] md:text-xs"
+              className="gap-1.5 py-1 px-2 md:px-4 border-gray-100 text-gray-500 md:text-gray-600 bg-gray-50/50 rounded-lg md:rounded-xl font-bold text-[10px] md:text-xs max-w-[200px] md:max-w-xs"
+              title={`${profile.specializationName} ${profile.isGraduated ? "- متخرج" : profile.studyYear === 1 ? "سنة - أولى" : "سنة - ثانية"}`}
             >
-              <BookOpen className="h-3 w-3 md:h-3.5 md:w-3.5 opacity-60" />
-              {profile.specializationName}{" "}
-              {profile.isGraduated
-                ? " - متخرج"
-                : profile.studyYear === 1
-                  ? "سنة - أولى"
-                  : "سنة - ثانية"}
+              <BookOpen className="h-3 w-3 md:h-3.5 md:w-3.5 opacity-60 shrink-0" />
+              <span className="truncate">
+                {profile.specializationName}{" "}
+                {profile.isGraduated
+                  ? " - متخرج"
+                  : profile.studyYear === 1
+                    ? "سنة - أولى"
+                    : "سنة - ثانية"}
+              </span>
             </Badge>
           </div>
         </div>

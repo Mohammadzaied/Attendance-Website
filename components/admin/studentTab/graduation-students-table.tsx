@@ -67,7 +67,7 @@ export function GraduationStudentsTable({
         <div className=" text-right font-bold text-gray-900 text-sm ">
           اسم الطالب
         </div>
-        <div className=" text-right font-bold text-gray-900 text-sm ">
+        <div className=" text-center font-bold text-gray-900 text-sm ">
           اسم المستخدم
         </div>
         <div className=" text-right font-bold text-gray-900 text-sm ">
@@ -108,18 +108,25 @@ export function GraduationStudentsTable({
                 </div>
 
                 {/* Desktop: Name */}
-                <div className="hidden md:flex items-center px-6 text-right">
-                  <div className="font-bold text-gray-900 group-hover:text-blue-700 transition-colors text-sm">
+                <div className="hidden md:flex items-center px-6 text-right overflow-hidden">
+                  <div
+                    className="font-bold text-gray-900 group-hover:text-blue-700 transition-colors text-sm truncate"
+                    title={student.fullName}
+                  >
                     {student.fullName}
                   </div>
                 </div>
 
                 {/* Username */}
-                <div className="flex flex-col md:flex-row md:items-center md:px-6 gap-1 md:gap-0 text-right">
+                <div className="flex flex-col md:flex-row md:items-center md:px-6 gap-1 md:gap-0 text-right overflow-hidden">
                   <span className="md:hidden text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 flex items-center gap-1.5">
                     <Hash className="h-3 w-3" /> اسم المستخدم
                   </span>
-                  <div className="text-gray-600 font-mono text-sm bg-gray-50 md:bg-gray-100 px-3 md:px-2 py-1.5 md:py-0.5 rounded-lg md:rounded inline-block border border-gray-100 md:border-transparent w-full md:w-auto text-center md:text-right">
+                  <div
+                    className="text-gray-600 font-mono text-sm bg-gray-50 md:bg-gray-100 px-3 md:px-2 py-1.5 md:py-0.5 rounded-lg md:rounded inline-block border border-gray-100 md:border-transparent w-full md:w-auto text-center md:text-right truncate"
+                    title={student.username || undefined}
+                    dir="ltr"
+                  >
                     {student.username || "—"}
                   </div>
                 </div>

@@ -256,23 +256,23 @@ export function MajorDetail({ major, onSelectYear }: MajorDetailProps) {
                       </div>
 
                       <div className="space-y-3 mb-6">
-                        <div className="flex justify-between text-sm">
-                          <span className="text-right text-gray-500">
+                        <div className="flex justify-between items-center text-sm">
+                          <span className="text-right text-gray-500 font-medium">
                             المواد الدراسية
                           </span>
-                          <div className="flex justify-center border border-gray-200 p-2 rounded-lg  w-[21%]">
-                            <span className=" font-medium text-gray-900">
+                          <div className="flex justify-center border border-gray-200 px-3 py-1.5 rounded-lg  min-w-20 w-fit">
+                            <span className="font-bold text-gray-900">
                               {semesterStats[sem.semesterId]?.subjectCount || 0}{" "}
                               مواد
                             </span>
                           </div>
                         </div>
-                        <div className="flex justify-between text-sm">
-                          <span className="text-right text-gray-500">
+                        <div className="flex justify-between items-center text-sm">
+                          <span className="text-right text-gray-500 font-medium">
                             الطلاب المسجلين
                           </span>
-                          <div className="flex justify-center  border border-gray-200 p-2 rounded-lg w-[21%]">
-                            <span className="text-right font-medium text-gray-900">
+                          <div className="flex justify-center border border-gray-200 px-3 py-1.5 rounded-lg  min-w-20 w-fit">
+                            <span className="text-right font-bold text-gray-900">
                               {semesterStats[sem.semesterId]?.studentCount || 0}{" "}
                               طالب
                             </span>

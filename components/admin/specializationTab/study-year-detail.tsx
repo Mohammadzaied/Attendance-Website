@@ -412,22 +412,25 @@ export function StudyYearDetail({
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
       <div className="p-4 md:p-6 border-b border-gray-50">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-2">
-          <div className="space-y-1">
-            <h3 className="text-xl md:text-2xl font-bold text-gray-900 tracking-tight">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="space-y-1.5">
+            <h3 className="text-xl md:text-2xl font-bold text-gray-900 tracking-tight leading-tight">
               {(() => {
                 const ay = academicYears.find(
                   (a) => a.academicYearId === year.academicYearId,
                 );
                 return ay ? `(${ay.year} - ${Number(ay.year) + 1})` : "";
               })()}
-              - {major.name} - {year.studyYear === 1 ? "سنة أولى" : "سنة ثانية"}
+              <span className="mx-1.5 md:mx-2">-</span>
+              {major.name}
+              <span className="mx-1.5 md:mx-2 text-blue-600">/</span>
+              {year.studyYear === 1 ? "سنة أولى" : "سنة ثانية"}
             </h3>
-            <p className="text-sm text-gray-500">
-              إدارة المواد الدراسية وقائمة الطلاب
+            <p className="text-sm text-gray-500 font-medium">
+              إدارة المواد الدراسية وقائمة الطلاب المسجلين
             </p>
           </div>
-          <Badge className="bg-blue-50 text-blue-700 border-blue-100 px-3 py-1 text-sm font-medium w-fit">
+          <Badge className="bg-blue-50 text-blue-700 border-blue-100 px-3 py-1.5 text-xs md:text-sm font-semibold w-fit shadow-sm">
             {major.name}
           </Badge>
         </div>
@@ -437,26 +440,27 @@ export function StudyYearDetail({
         defaultValue="students"
         className="w-full"
         onValueChange={setActiveTab}
+        dir="rtl"
       >
-        <div className="px-4 md:px-6 flex flex-col sm:flex-row items-stretch sm:items-center justify-between bg-gray-50/50 py-3 sm:py-0 border-b border-gray-100">
-          <TabsList className="bg-gray-200/50 p-1 h-11 md:h-12 w-full sm:w-auto self-center sm:self-auto rounded-xl">
-            <TabsTrigger
-              value="subjects"
-              className="px-4 cursor-pointer md:px-6 rounded-lg data-[state=active]:bg-white data-[state=active]:text-blue-600 data-[state=active]:shadow-sm transition-all duration-200 h-full gap-2 text-gray-600 font-medium"
-            >
-              <Book className="h-4 w-4" />
-              <span className="text-sm md:text-base">المواد الدراسية</span>
-            </TabsTrigger>
+        <div className="px-4 md:px-6 flex flex-col lg:flex-row items-stretch lg:items-center justify-between bg-gray-50/50 py-3 lg:py-0 border-b border-gray-100 gap-4">
+          <TabsList className="bg-gray-200/50 p-1.5 h-auto w-full lg:w-auto self-center lg:self-auto rounded-xl grid grid-cols-2 gap-1 lg:flex lg:h-12">
             <TabsTrigger
               value="students"
-              className="px-4 cursor-pointer md:px-6 rounded-lg data-[state=active]:bg-white data-[state=active]:text-blue-600 data-[state=active]:shadow-sm transition-all duration-200 h-full gap-2 text-gray-600 font-medium"
+              className="px-4 cursor-pointer md:px-6 rounded-lg data-[state=active]:bg-white data-[state=active]:text-blue-600 data-[state=active]:shadow-sm transition-all duration-200 h-10 md:h-full gap-2 text-gray-600 font-bold"
             >
               <Users className="h-4 w-4" />
               <span className="text-sm md:text-base">الطلاب</span>
             </TabsTrigger>
+            <TabsTrigger
+              value="subjects"
+              className="px-4 cursor-pointer md:px-6 rounded-lg data-[state=active]:bg-white data-[state=active]:text-blue-600 data-[state=active]:shadow-sm transition-all duration-200 h-10 md:h-full gap-2 text-gray-600 font-bold"
+            >
+              <Book className="h-4 w-4" />
+              <span className="text-sm md:text-base">المواد</span>
+            </TabsTrigger>
           </TabsList>
 
-          <div className="mt-3 sm:mt-0 flex gap-2">
+          <div className="flex flex-wrap items-center gap-2 pb-1 lg:pb-0">
             {activeTab === "subjects" ? (
               <Button
                 onClick={() => {
@@ -475,15 +479,14 @@ export function StudyYearDetail({
                 }}
                 size="sm"
                 disabled={!canEdit}
-                className="bg-blue-600 hover:bg-blue-700 gap-2 cursor-pointer shadow-sm rounded-lg flex-1 sm:flex-none justify-center"
+                className="bg-blue-600 hover:bg-blue-700 gap-2 cursor-pointer shadow-sm rounded-lg flex-1 md:flex-none justify-center h-10 md:h-9 font-bold transition-all active:scale-95"
               >
                 <Plus className="h-4 w-4" />
-                {!isMobile && "إضافة مادة جديدة"}
-                {isMobile && "إضافة مادة"}
+                <span className="whitespace-nowrap">إضافة مادة جديدة</span>
               </Button>
             ) : (
-              <div className="flex gap-2 w-full">
-                <div className="flex-1 sm:flex-none">
+              <div className="flex flex-col sm:flex-row gap-2 w-full lg:w-auto">
+                <div className="flex gap-2 w-full sm:w-auto">
                   <EmailImportDialog
                     open={isEmailDialogOpen}
                     onOpenChange={setIsEmailDialogOpen}
@@ -495,33 +498,32 @@ export function StudyYearDetail({
                     variant="outline"
                     disabled={!canEdit}
                     size="sm"
-                    className="w-full bg-white hover:bg-gray-50 text-blue-600 border-blue-200 gap-2 cursor-pointer shadow-sm rounded-lg justify-center mb-2 sm:mb-0"
+                    className="flex-1 sm:flex-none bg-white hover:bg-gray-50 text-blue-600 border-blue-200 gap-2 cursor-pointer shadow-sm rounded-lg justify-center h-10 md:h-9 font-bold"
                   >
                     <Settings className="h-4 w-4" />
                     {!isMobile && "ادخال الايميلات"}
                     {isMobile && "الايميلات"}
                   </Button>
-                </div>
-                <div className="flex-1 sm:flex-none">
-                  <ImportStudentsDialog
-                    departmentId={major.departmentId}
-                    academicYearId={year.academicYearId || 0}
-                    studyYear={year.studyYear}
-                    specializationId={Number(major.id)}
-                    semesterId={year.semesterId}
-                    onSuccess={refreshStudents}
-                    disabled={!canEdit}
-                  />
+                  <div className="flex-1 sm:flex-none">
+                    <ImportStudentsDialog
+                      departmentId={major.departmentId}
+                      academicYearId={year.academicYearId || 0}
+                      studyYear={year.studyYear}
+                      specializationId={Number(major.id)}
+                      semesterId={year.semesterId}
+                      onSuccess={refreshStudents}
+                      disabled={!canEdit}
+                    />
+                  </div>
                 </div>
                 <Button
                   onClick={() => setIsStudentDialogOpen(true)}
                   size="sm"
                   disabled={!canEdit}
-                  className="bg-blue-600 hover:bg-blue-700 gap-2 cursor-pointer shadow-sm rounded-lg flex-1 sm:flex-none justify-center"
+                  className="bg-blue-600 hover:bg-blue-700 gap-2 cursor-pointer shadow-sm rounded-lg w-full sm:w-auto justify-center h-10 md:h-9 font-bold transition-all active:scale-95"
                 >
                   <UserPlus className="h-4 w-4" />
-                  {!isMobile && "إضافة طالب جديد"}
-                  {isMobile && "إضافة طالب"}
+                  <span className="whitespace-nowrap">إضافة طالب</span>
                 </Button>
               </div>
             )}
@@ -538,78 +540,84 @@ export function StudyYearDetail({
               <p className="font-medium">جاري تحميل المواد...</p>
             </div>
           ) : isMobile ? (
-            <div className="p-4 space-y-4">
+            <div className="p-4 space-y-3 bg-gray-50/30">
               {subjectsBySpecialization.length > 0 ? (
                 subjectsBySpecialization.map((subject) => (
                   <div
                     key={subject.subjectId}
-                    className="bg-gray-50/50 rounded-xl p-4 border border-gray-100 space-y-4 shadow-sm"
+                    className="bg-white rounded-xl p-4 border border-gray-100 shadow-sm relative overflow-hidden group"
                   >
-                    <div className="flex items-start justify-between">
-                      <div className="text-right flex-1">
-                        <h4 className="font-bold text-gray-900 text-lg">
-                          {subject.name}
-                        </h4>
-                        <div className="mt-2 space-y-2 text-right">
-                          {subject.teacherName ? (
-                            <div className="flex items-center gap-2 justify-end">
-                              <span className="text-gray-700 text-sm font-medium">
-                                {subject.teacherName}
-                              </span>
-                              <div className="h-7 w-7 bg-blue-100 text-blue-700 rounded-full flex items-center justify-center text-xs font-bold">
-                                {subject.teacherName.charAt(0)}
-                              </div>
-                            </div>
-                          ) : (
-                            <Badge
-                              variant="outline"
-                              className="text-red-500 border-red-100 bg-red-50/50 font-normal text-xs"
-                            >
-                              لم يعين معلم
-                            </Badge>
-                          )}
-                          <div className="flex flex-wrap gap-2 justify-end">
+                    <div className="absolute top-0 right-0 w-1 h-full bg-blue-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <div className="flex flex-col gap-4">
+                      <div className="flex justify-between items-start">
+                        <div className="space-y-1 text-right">
+                          <h4
+                            className="font-bold text-gray-900 text-lg leading-tight truncate"
+                            title={subject.name}
+                          >
+                            {subject.name}
+                          </h4>
+                          <div className="flex flex-wrap gap-2 justify-end mt-1">
                             <Badge
                               variant="secondary"
-                              className="bg-gray-100/80 text-gray-600 hover:bg-gray-200 font-medium text-xs border-none"
+                              className="bg-blue-50 text-blue-600 hover:bg-blue-100 font-semibold text-[10px] border-none px-2"
                             >
                               {subject.numberOfHours} ساعات
                             </Badge>
                           </div>
                         </div>
+                        <div className="flex gap-1">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => {
+                              handleDeleteSubject(subject.subjectId.toString());
+                            }}
+                            className="h-8 w-8 text-red-500 hover:bg-red-50 hover:text-red-600 rounded-lg"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => openEditSubject(subject)}
+                            className="h-8 w-8 text-blue-600 hover:bg-blue-50 rounded-lg"
+                          >
+                            <Settings className="h-4 w-4" />
+                          </Button>
+                        </div>
                       </div>
-                    </div>
 
-                    <div className="grid grid-cols-1 gap-2 pt-4 border-t border-gray-100">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          openEditSubject(subject);
-                        }}
-                        className="w-full gap-2 border-gray-200 text-blue-600 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200 cursor-pointer text-xs h-9 rounded-lg"
-                      >
-                        <Settings className="h-3.5 w-3.5" />
-                        إدارة المادة
-                      </Button>
-
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          handleDeleteSubject(subject.subjectId.toString());
-                        }}
-                        className="gap-2 border-gray-200 text-red-500 hover:bg-red-50 hover:text-red-600 cursor-pointer h-9 rounded-lg"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                        حذف
-                      </Button>
+                      <div className="flex items-center justify-between pt-3 border-t border-gray-50 bg-gray-50/50 -mx-4 px-4 py-2 mt-auto">
+                        <div className="flex items-center gap-2">
+                          {subject.teacherName ? (
+                            <div className="flex items-center gap-2">
+                              <span
+                                className="text-gray-700 text-sm font-bold truncate max-w-[150px]"
+                                title={subject.teacherName}
+                              >
+                                {subject.teacherName}
+                              </span>
+                              <div className="h-7 w-7 bg-blue-100 text-blue-700 rounded-full flex items-center justify-center text-xs font-black ring-2 ring-white">
+                                {subject.teacherName.charAt(0)}
+                              </div>
+                            </div>
+                          ) : (
+                            <span className="text-red-500 text-xs font-medium">
+                              لم يعين معلم
+                            </span>
+                          )}
+                        </div>
+                        <span className="text-[10px] text-gray-400 font-medium">
+                          ID: {subject.subjectId}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 ))
               ) : (
                 <div className="flex flex-col items-center justify-center py-20 text-gray-400 gap-4">
-                  <div className="h-16 w-16 bg-gray-50 rounded-full flex items-center justify-center">
+                  <div className="h-16 w-16 bg-gray-100 rounded-full flex items-center justify-center">
                     <Book className="h-8 w-8 opacity-20" />
                   </div>
                   <p className="font-medium">لا توجد مواد مضافة حالياً</p>
@@ -640,8 +648,10 @@ export function StudyYearDetail({
                     key={subject.subjectId}
                     className="hover:bg-blue-50/10 transition-colors border-b border-gray-50"
                   >
-                    <TableCell className="text-right font-bold text-gray-900 border-none">
-                      {subject.name}
+                    <TableCell className="text-right font-bold text-gray-900 border-none overflow-hidden max-w-[250px]">
+                      <div className="truncate" title={subject.name}>
+                        {subject.name}
+                      </div>
                     </TableCell>
                     <TableCell className="text-right border-none">
                       {subject.teacherName ? (
@@ -649,7 +659,10 @@ export function StudyYearDetail({
                           <div className="h-7 w-7 bg-blue-100 text-blue-700 rounded-full flex items-center justify-center text-xs font-bold ring-2 ring-white shadow-sm">
                             {subject.teacherName.charAt(0)}
                           </div>
-                          <span className="text-gray-700 font-medium">
+                          <span
+                            className="text-gray-700 font-medium truncate max-w-[150px]"
+                            title={subject.teacherName}
+                          >
                             {subject.teacherName}
                           </span>
                         </div>
@@ -713,49 +726,56 @@ export function StudyYearDetail({
           className="mt-0 p-0 border-t border-gray-100"
         >
           {isMobile ? (
-            <div className="p-4 space-y-4">
+            <div className="p-4 space-y-3 bg-gray-50/30 ">
               {loadingStudents && (
-                <div className="flex items-center justify-center py-12 text-gray-400 gap-3">
-                  <div className="h-5 w-5 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
-                  <span className="font-medium">جاري تحميل الطلاب...</span>
+                <div className="flex flex-col items-center justify-center py-12 text-gray-400 gap-4">
+                  <div className="h-10 w-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
+                  <span className="font-bold text-sm">
+                    جاري تحميل الطلاب...
+                  </span>
                 </div>
               )}
               {!loadingStudents && students.length > 0
                 ? students.map((student) => (
                     <div
                       key={String(student.studentId)}
-                      className="bg-gray-50/50 rounded-xl p-4 border border-gray-100 space-y-4 shadow-sm"
+                      className="bg-white rounded-xl p-4 border border-gray-100 shadow-sm  overflow-hidden group"
                     >
-                      <div className="flex items-center gap-4">
-                        <div className="h-12 w-12 bg-indigo-50 text-indigo-700 rounded-full flex items-center justify-center text-lg font-bold shadow-sm ring-2 ring-white">
+                      <div className="bg-indigo-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+                      <div className="flex items-center gap-4 ">
+                        <div className="h-14 w-14 bg-indigo-50 text-indigo-700 rounded-full flex items-center justify-center text-xl font-black shadow-sm ring-4 ring-white shrink-0">
                           {student.fullName ? student.fullName.charAt(0) : "?"}
                         </div>
-                        <div className="text-right flex-1 min-w-0">
-                          <h4 className="font-bold text-gray-900 text-base truncate">
+                        <div className="text-right flex-col  overflow-hidden!">
+                          <div
+                            className="font-bold text-gray-900 text-lg truncate max-w-[150px] leading-tight"
+                            title={student.fullName}
+                          >
                             {student.fullName}
-                          </h4>
-                          <p className="text-sm text-gray-500 truncate">
-                            {student.username || (
-                              <span className="text-gray-300 italic text-xs">
-                                لا يوجد بريد إلكتروني
-                              </span>
-                            )}
-                          </p>
+                          </div>
+                          <div
+                            className="text-right text-xs text-gray-400 font-medium truncate max-w-[150px] mt-0.5"
+                            title={student.username || undefined}
+                            dir="ltr"
+                          >
+                            {student.username || "لا يوجد بريد إلكتروني"}
+                          </div>
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-2 gap-2 pt-4 border-t border-gray-100">
+                      <div className="flex gap-2 pt-4 mt-4 border-t border-gray-50 h-10">
                         <Link
                           href={`/admin/students/${student.studentId}`}
                           target="_blank"
+                          className="flex-1"
                         >
                           <Button
                             variant="outline"
                             size="sm"
-                            className="gap-2 border-gray-200 text-blue-600 hover:bg-blue-50 hover:border-blue-200 cursor-pointer h-9 rounded-lg text-xs"
+                            className="w-full gap-2 border-gray-100 text-blue-600 hover:bg-blue-50 hover:border-blue-200 cursor-pointer h-full rounded-lg text-xs font-bold"
                           >
                             <FileText className="h-3.5 w-3.5" />
-                            ملف الطالب
+                            الملف
                           </Button>
                         </Link>
                         <Button
@@ -763,29 +783,29 @@ export function StudyYearDetail({
                           size="sm"
                           disabled={!canEdit}
                           onClick={() => handleEditStudent(student)}
-                          className="gap-2 border-gray-200 text-amber-600 hover:bg-amber-50 hover:border-amber-200 cursor-pointer h-9 rounded-lg text-xs"
+                          className="flex-1 gap-2 border-gray-100 text-amber-600 hover:bg-amber-50 hover:border-amber-200 cursor-pointer h-full rounded-lg text-xs font-bold"
                         >
                           <Edit className="h-3.5 w-3.5" />
                           تعديل
                         </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          disabled={!canEdit}
+                          onClick={() =>
+                            confirmDelete(String(student.studentId))
+                          }
+                          className="h-full w-10 text-red-500 hover:bg-red-50 rounded-lg shrink-0"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
                       </div>
-
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        disabled={!canEdit}
-                        onClick={() => confirmDelete(String(student.studentId))}
-                        className="w-full gap-2 text-red-500 hover:bg-red-50 hover:text-red-600 cursor-pointer h-9 rounded-lg"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                        حذف الطالب
-                      </Button>
                     </div>
                   ))
                 : null}
               {!loadingStudents && students.length === 0 && (
                 <div className="flex flex-col items-center justify-center py-20 text-gray-400 gap-4">
-                  <div className="h-16 w-16 bg-gray-50 rounded-full flex items-center justify-center">
+                  <div className="h-16 w-16 bg-gray-100 rounded-full flex items-center justify-center">
                     <Users className="h-8 w-8 opacity-20" />
                   </div>
                   <p className="font-medium text-center">
@@ -804,7 +824,7 @@ export function StudyYearDetail({
                   {/* <TableHead className="text-right font-bold text-gray-700 h-12">
                     الرقم الجامعي
                   </TableHead> */}
-                  <TableHead className="text-right font-bold text-gray-700 h-12">
+                  <TableHead className="text-center font-bold text-gray-700 h-12">
                     البريد الإلكتروني
                   </TableHead>
                   <TableHead className="text-center font-bold text-gray-700 h-12">
@@ -829,21 +849,31 @@ export function StudyYearDetail({
                       key={student.studentId}
                       className="hover:bg-gray-50/50 transition-colors"
                     >
-                      <TableCell className="py-4 font-semibold text-gray-900">
+                      <TableCell className="py-4 font-semibold text-gray-900 overflow-hidden max-w-[250px]">
                         <div className="flex items-center gap-3">
-                          <div className="h-8 w-8 bg-indigo-50 text-indigo-700 rounded-full flex items-center justify-center text-xs font-bold shadow-sm">
+                          <div className="h-8 w-8 bg-indigo-50 text-indigo-700 rounded-full flex items-center justify-center text-xs font-bold shadow-sm shrink-0">
                             {student.fullName
                               ? student.fullName.charAt(0)
                               : "?"}
                           </div>
-                          {student.fullName}
+                          <span className="truncate" title={student.fullName}>
+                            {student.fullName}
+                          </span>
                         </div>
                       </TableCell>
 
-                      <TableCell className="py-4 text-gray-500 text-sm">
-                        {student.username || (
-                          <span className="text-gray-300 italic">لا يوجد</span>
-                        )}
+                      <TableCell className="py-4 text-gray-500 text-sm overflow-hidden max-w-[200px]">
+                        <div
+                          className="truncate"
+                          title={student.username || undefined}
+                          dir="ltr"
+                        >
+                          {student.username || (
+                            <span className="text-gray-300 italic">
+                              لا يوجد
+                            </span>
+                          )}
+                        </div>
                       </TableCell>
                       <TableCell className="py-4">
                         <div className="flex items-center justify-center gap-2">

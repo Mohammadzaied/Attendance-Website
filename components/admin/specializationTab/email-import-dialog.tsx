@@ -239,7 +239,7 @@ export function EmailImportDialog({
                   dir="rtl"
                 >
                   <ScrollArea className="h-full max-h-[400px]">
-                    <Table>
+                    <Table dir="rtl">
                       <TableHeader className="bg-gray-50 sticky top-0 z-10">
                         <TableRow>
                           <TableHead className="text-right">الاسم</TableHead>
@@ -252,7 +252,7 @@ export function EmailImportDialog({
                         {importedData.map((row, idx) => (
                           <TableRow key={idx}>
                             <TableCell>{row.fullName}</TableCell>
-                            <TableCell className="font-medium">
+                            <TableCell dir="ltr" className="font-medium">
                               {row.username || "—"}
                             </TableCell>
                           </TableRow>
