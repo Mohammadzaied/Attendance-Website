@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { changePassword } from "@/features/auth";
+import { Eye, EyeOff } from "lucide-react";
 
 interface ChangePasswordDialogProps {
   open: boolean;
@@ -33,6 +34,10 @@ export function ChangePasswordDialog({
     newPassword: "",
     confirmPassword: "",
   });
+
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const [resultDialog, setResultDialog] = useState({
     open: false,
@@ -94,52 +99,91 @@ export function ChangePasswordDialog({
                 <Label htmlFor="currentPassword" className="text-right">
                   كلمة المرور القديمة
                 </Label>
-                <Input
-                  id="currentPassword"
-                  type="password"
-                  value={formData.currentPassword}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      currentPassword: e.target.value,
-                    })
-                  }
-                  className="text-right"
-                  required
-                />
+                <div className="relative">
+                  <Input
+                    id="currentPassword"
+                    type={showCurrentPassword ? "text" : "password"}
+                    value={formData.currentPassword}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        currentPassword: e.target.value,
+                      })
+                    }
+                    className="text-right"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 cursor-pointer"
+                  >
+                    {showCurrentPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                  </button>
+                </div>
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="newPassword" className="text-right">
                   كلمة المرور الجديدة
                 </Label>
-                <Input
-                  id="newPassword"
-                  type="password"
-                  value={formData.newPassword}
-                  onChange={(e) =>
-                    setFormData({ ...formData, newPassword: e.target.value })
-                  }
-                  className="text-right"
-                  required
-                />
+                <div className="relative">
+                  <Input
+                    id="newPassword"
+                    type={showNewPassword ? "text" : "password"}
+                    value={formData.newPassword}
+                    onChange={(e) =>
+                      setFormData({ ...formData, newPassword: e.target.value })
+                    }
+                    className="text-right"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowNewPassword(!showNewPassword)}
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 cursor-pointer"
+                  >
+                    {showNewPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                  </button>
+                </div>
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="confirmPassword" className="text-right">
                   تأكيد كلمة المرور الجديدة
                 </Label>
-                <Input
-                  id="confirmPassword"
-                  type="password"
-                  value={formData.confirmPassword}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      confirmPassword: e.target.value,
-                    })
-                  }
-                  className="text-right"
-                  required
-                />
+                <div className="relative">
+                  <Input
+                    id="confirmPassword"
+                    type={showConfirmPassword ? "text" : "password"}
+                    value={formData.confirmPassword}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        confirmPassword: e.target.value,
+                      })
+                    }
+                    className="text-right"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 cursor-pointer"
+                  >
+                    {showConfirmPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                  </button>
+                </div>
               </div>
             </div>
             <DialogFooter className="gap-2">

@@ -88,7 +88,7 @@ export default function StudentAbsencesPage() {
         </div>
 
         <div className="flex items-center gap-4 bg-white p-2 rounded-2xl shadow-sm border border-gray-100">
-          <div className="flex flex-col items-start px-4">
+          <div className="flex flex-col items-start px-2">
             <span className="text-xs text-gray-400 font-medium">
               اسم الطالب
             </span>
@@ -97,7 +97,7 @@ export default function StudentAbsencesPage() {
             </span>
           </div>
           <div className="h-10 w-px bg-gray-100" />
-          <div className="flex items-center gap-3 px-4 py-2 bg-blue-50 text-blue-700 rounded-xl text-sm font-bold ring-1 ring-blue-100">
+          <div className="flex items-center gap-1 px-4 py-2 bg-blue-50 text-blue-700 rounded-xl text-sm font-bold ring-1 ring-blue-100">
             <Clock className="h-4 w-4" />
             <span>
               {profile?.semesters.find(

@@ -160,6 +160,7 @@ export function UpdateTeacherDialog({
                     setFormData({ ...formData, username: e.target.value })
                   }
                   className="text-right"
+                  dir="ltr"
                   required
                 />
               </div>

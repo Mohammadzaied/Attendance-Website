@@ -163,14 +163,16 @@ export default function LoginPage() {
             <form onSubmit={handleLogin} className="space-y-5">
               <div className="space-y-2">
                 <Label htmlFor="email" className="text-right block text-md">
-                  البريد الإلكتروني
+                  اسم المستخدم
                 </Label>
                 <Input
                   id="email"
+                  dir="ltr"
                   type="text"
                   placeholder="اسم المستخدم"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  className="text-right"
                   required
                 />
               </div>
@@ -241,11 +243,12 @@ export default function LoginPage() {
                 </Label>
                 <Input
                   id="email-forgot"
+                  dir="ltr"
                   type="email"
                   placeholder="example@email.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="h-12 bg-gray-50 border-gray-100 rounded-xl focus:ring-2 focus:ring-blue-500/20 text-right"
+                  className="h-12 bg-gray-50 border-gray-100 rounded-xl focus:ring-2 focus:ring-blue-500/20 "
                   required
                 />
               </div>

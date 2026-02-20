@@ -7,16 +7,10 @@ import {
   Eye,
   Edit,
   Trash2,
-  User,
   UserCircle,
-  GraduationCap,
-  MapPin,
   Hash,
 } from "lucide-react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { cn } from "@/lib/utils";
 
 interface GraduationStudentsTableProps {
   students: StudentGraduationDto[];
@@ -41,8 +35,7 @@ export function GraduationStudentsTable({
   isReadOnly = false,
   basePath = "/admin",
 }: GraduationStudentsTableProps) {
-  const router = useRouter();
-  const isMobile = useIsMobile();
+
 
   if (isLoading) {
     return (

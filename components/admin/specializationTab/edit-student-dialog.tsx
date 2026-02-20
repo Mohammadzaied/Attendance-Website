@@ -213,7 +213,7 @@ export function EditStudentDialog({
               />
             </div>
           )}
-          <div className="flex gap-4">
+          {/* <div className="flex gap-4"> */}
             <div className="flex-1 grid gap-2 text-right">
               <Label htmlFor="edit-st-name">الاسم الكامل</Label>
               <Input
@@ -233,6 +233,7 @@ export function EditStudentDialog({
               <Input
                 id="edit-st-username"
                 value={editStudentForm.username}
+                dir="ltr"
                 onChange={(e) =>
                   setEditStudentForm({
                     ...editStudentForm,
@@ -242,7 +243,7 @@ export function EditStudentDialog({
                 className="text-right"
               />
             </div>
-          </div>
+          {/* </div> */}
 
           <div className="flex gap-4">
             <div className="flex-1 grid gap-2 text-right">
