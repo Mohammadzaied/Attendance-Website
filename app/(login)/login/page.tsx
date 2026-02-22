@@ -135,7 +135,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="h-screen flex items-center justify-center bg-linear-to-br from-blue-50 via-white to-indigo-50 p-4">
+    <div className="min-h-dvh flex items-center justify-center bg-linear-to-br from-blue-50 via-white to-indigo-50 p-4">
       <Card className="w-full max-w-md shadow-lg">
         <CardHeader className="space-y-1 text-center">
           <div className="mb-4 flex justify-center">
@@ -145,7 +145,7 @@ export default function LoginPage() {
               title="كلية مجتمع المرأة برام الله - الطيرة"
             />
           </div>
-          <CardTitle className="text-2xl font-bold text-gray-900">
+          <CardTitle className="text-xl md:text-2xl font-bold text-gray-900">
             {renderTitle()}
           </CardTitle>
           {step !== "login" && (
