@@ -3,6 +3,7 @@ export interface SpecializationResponse {
   name: string;
   departmentId: number;
   departmentName: string;
+  yearsNumber: number;
 }
 
 export interface CreateSpecializationDto {

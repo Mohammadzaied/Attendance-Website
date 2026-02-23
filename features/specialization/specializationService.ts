@@ -38,10 +38,15 @@ export const specializationService = {
     id: number;
     name: string;
     departmentId: number;
+    yearsNumber: number;
   }): Promise<SpecializationResponse> {
     const response = await apiClient.put<ApiResponse<SpecializationResponse>>(
       `${SPECIALIZATIONS_ENDPOINT}/${data.id}`,
-      { name: data.name, departmentId: data.departmentId },
+      {
+        name: data.name,
+        departmentId: data.departmentId,
+        yearsNumber: data.yearsNumber,
+      },
     );
     return response.data;
   },

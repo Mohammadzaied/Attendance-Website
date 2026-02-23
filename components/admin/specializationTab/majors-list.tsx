@@ -80,7 +80,7 @@ export function MajorsList({
       id: s.specializationId.toString(),
       name: s.name,
       departmentId: s.departmentId,
-      yearsCount: 2,
+      yearsCount: s.yearsNumber,
       studentCount: 0,
       years: [],
     }));
@@ -113,7 +113,13 @@ export function MajorsList({
   };
 
   const handleEditMajor = async () => {
-    if (!selectedMajorForAction || !newMajor.name.trim() || !departmentId)
+    if (
+      !selectedMajorForAction ||
+      !newMajor.name.trim() ||
+      !departmentId ||
+      !newMajor.yearsNumber ||
+      newMajor.yearsNumber == 0
+    )
       return;
 
     // If name and yearsNumber haven't changed, just close
@@ -139,7 +145,7 @@ export function MajorsList({
 
       setIsEditDialogOpen(false);
       setSelectedMajorForAction(null);
-      setNewMajor({ name: "", yearsNumber: 1 });
+      setNewMajor({ name: "", yearsNumber: 2 });
     } catch (error) {
       setEditError(typeof error === "string" ? error : "فشل تعديل التخصص");
     }
