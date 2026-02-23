@@ -23,14 +23,16 @@ export interface Major {
   id: string;
   name: string;
   departmentId: number;
-  yearsCount: number;
-  studentCount: number;
-  years: Array<{
-    id: string;
-    semesterId: number;
-    yearName: string;
-    studyYear: number;
-  }>;
+  // yearsCount: number;
+  yearsNumber: number;
+
+  // studentCount: number;
+  // years: Array<{
+  //   id: string;
+  //   semesterId: number;
+  //   yearName: string;
+  //   studyYear: number;
+  // }>;
 }
 
 export interface Department {

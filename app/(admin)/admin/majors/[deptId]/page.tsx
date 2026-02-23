@@ -68,10 +68,7 @@ export default function DepartmentMajorsPage() {
         id: s.specializationId.toString(),
         name: s.name,
         departmentId: s.departmentId,
-        yearsCount: 0,
-        studentCount: 0,
-        status: "active" as const,
-        years: [],
+        yearsNumber: s.yearsNumber || 1,
       }));
 
       setMajors(mappedMajors);

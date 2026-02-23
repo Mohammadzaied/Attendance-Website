@@ -80,9 +80,7 @@ export function MajorsList({
       id: s.specializationId.toString(),
       name: s.name,
       departmentId: s.departmentId,
-      yearsCount: s.yearsNumber,
-      studentCount: 0,
-      years: [],
+      yearsNumber: s.yearsNumber || 1,
     }));
 
   // Use the majors from props if provided and not empty, otherwise use Redux-derived apiMajors
@@ -125,7 +123,7 @@ export function MajorsList({
     // If name and yearsNumber haven't changed, just close
     if (
       newMajor.name === selectedMajorForAction.name &&
-      newMajor.yearsNumber === selectedMajorForAction.yearsCount
+      newMajor.yearsNumber === selectedMajorForAction.yearsNumber
     ) {
       setIsEditDialogOpen(false);
       return;
@@ -190,7 +188,7 @@ export function MajorsList({
 
   const openEditDialog = (major: Major) => {
     setSelectedMajorForAction(major);
-    setNewMajor({ name: major.name, yearsNumber: major.yearsCount });
+    setNewMajor({ name: major.name, yearsNumber: major.yearsNumber });
     setIsEditDialogOpen(true);
   };
 
