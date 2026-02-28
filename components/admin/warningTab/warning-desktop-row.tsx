@@ -57,7 +57,7 @@ export function WarningDesktopRow({
             >
               <div className="shrink-0 min-w-[140px]">
                 <p className="text-xs font-black text-gray-700">
-                  {subject.subjectName} - ({subject.numberOfHours} ساعة)
+                  {subject.subjectName} - ({subject.numberOfHours} حصة)
                 </p>
                 <div className="flex items-center gap-2 mt-1">
                   <span className="text-[8px] font-bold text-rose-500">

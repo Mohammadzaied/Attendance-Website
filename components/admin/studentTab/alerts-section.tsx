@@ -100,7 +100,7 @@ export function AlertsSection({
           >
             <h4 className="text-sm font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
               <div className="h-px flex-1 bg-gray-100" />
-              {typeGroup.subjectName} - {typeGroup.numberOfHours} ساعات -{" "}
+              {typeGroup.subjectName} - {typeGroup.numberOfHours} حصص -{" "}
               {translateAlertType(typeGroup.alertType)}
               <div className="h-px flex-1 bg-gray-100" />
             </h4>

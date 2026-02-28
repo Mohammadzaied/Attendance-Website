@@ -26,7 +26,7 @@ export function AbsenceSubjectSummary({
         </div>
         <div className="text-right min-w-0 flex-1">
           <h4 className="text-base md:text-xl font-black text-gray-900 truncate">
-            {subjectName} ({numberOfHours} ساعات)
+            {subjectName} ({numberOfHours} حصص)
           </h4>
           <span className="text-xs md:text-[14px] font-black text-blue-600/40 uppercase tracking-widest block mb-0.5 truncate">
             {teacherName}

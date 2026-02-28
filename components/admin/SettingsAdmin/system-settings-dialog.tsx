@@ -159,7 +159,7 @@ export function SystemSettingsDialog({
                     htmlFor="perc2"
                     className="text-right block text-xs font-bold"
                   >
-                    2- النسبة الأقصى للغياب (2 ساعة)
+                    2- النسبة الأقصى للغياب (2 حصة)
                   </Label>
                   <div className="relative">
                     <Input
@@ -183,7 +183,7 @@ export function SystemSettingsDialog({
                     htmlFor="perc3"
                     className="text-right block text-xs font-bold"
                   >
-                    3- النسبة الأقصى للغياب (3 ساعات)
+                    3- النسبة الأقصى للغياب (3 حصص)
                   </Label>
                   <div className="relative">
                     <Input
@@ -209,7 +209,7 @@ export function SystemSettingsDialog({
                     htmlFor="perc4"
                     className="text-right block text-xs font-bold"
                   >
-                    4- النسبة الأقصى للغياب (4 ساعات)
+                    4- النسبة الأقصى للغياب (4 حصص)
                   </Label>
                   <div className="relative">
                     <Input
@@ -233,7 +233,7 @@ export function SystemSettingsDialog({
                     htmlFor="perc5"
                     className="text-right block text-xs font-bold"
                   >
-                    5- النسبة الأقصى للغياب (5 ساعات)
+                    5- النسبة الأقصى للغياب (5 حصص)
                   </Label>
                   <div className="relative">
                     <Input

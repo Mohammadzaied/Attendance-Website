@@ -171,7 +171,7 @@ export function AddSubjectToTeacherDialog({
 
           <div className="grid gap-2 text-right">
             <Label htmlFor="numberOfHours" className="font-bold text-gray-700">
-              عدد الساعات
+              عدد الحصص
             </Label>
             <Input
               id="numberOfHours"

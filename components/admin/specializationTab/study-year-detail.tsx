@@ -562,7 +562,7 @@ export function StudyYearDetail({
                               variant="secondary"
                               className="bg-blue-50 text-blue-600 hover:bg-blue-100 font-semibold text-[10px] border-none px-2"
                             >
-                              {subject.numberOfHours} ساعات
+                              {subject.numberOfHours} حصص
                             </Badge>
                           </div>
                         </div>
@@ -592,7 +592,7 @@ export function StudyYearDetail({
                         <div className="flex items-center gap-2">
                           {subject.teacherName ? (
                             <div className="flex items-center gap-2">
-                                <div className="h-7 w-7 bg-blue-100 text-blue-700 rounded-full flex items-center justify-center text-xs font-black ring-2 ring-white">
+                              <div className="h-7 w-7 bg-blue-100 text-blue-700 rounded-full flex items-center justify-center text-xs font-black ring-2 ring-white">
                                 {subject.teacherName.charAt(0)}
                               </div>
                               <span
@@ -601,7 +601,6 @@ export function StudyYearDetail({
                               >
                                 {subject.teacherName}
                               </span>
-
                             </div>
                           ) : (
                             <span className="text-red-500 text-xs font-medium">
@@ -636,7 +635,7 @@ export function StudyYearDetail({
                     المعلم المعين
                   </TableHead>
                   <TableHead className="text-right font-bold text-gray-700 h-12">
-                    الساعات / الجدول
+                    الحصص / الجدول
                   </TableHead>
                   <TableHead className="text-center font-bold text-gray-700 h-12">
                     التحكم
@@ -676,7 +675,7 @@ export function StudyYearDetail({
                         variant="secondary"
                         className="w-fit bg-gray-100 text-gray-600 font-medium border-none"
                       >
-                        {subject.numberOfHours} ساعات
+                        {subject.numberOfHours} حصص
                       </Badge>
                     </TableCell>
                     <TableCell className="border-none">
@@ -1023,7 +1022,7 @@ export function StudyYearDetail({
             </div>
             <div className="grid gap-2">
               <Label htmlFor="s-hours" className="text-right">
-                عدد الساعات
+                عدد الحصص
               </Label>
               <Input
                 id="s-hours"

@@ -314,7 +314,10 @@ export function TeachersTable({
                       <h4 className="font-bold text-gray-900 text-lg leading-tight line-clamp-1 break-all">
                         {teacher.fullName}
                       </h4>
-                      <p dir="ltr" className="text-xs text-blue-600 font-mono font-medium mt-1 line-clamp-1 break-all">
+                      <p
+                        dir="ltr"
+                        className="text-xs text-blue-600 font-mono font-medium mt-1 line-clamp-1 break-all"
+                      >
                         {teacher.username}
                       </p>
                     </div>
@@ -396,7 +399,10 @@ export function TeachersTable({
                   </div>
 
                   <div className="text-right min-w-0 overflow-hidden w-full max-w-full">
-                    <div dir="ltr" className="text-gray-500 truncate font-mono text-xs font-medium w-full max-w-full block">
+                    <div
+                      dir="ltr"
+                      className="text-gray-500 truncate font-mono text-xs font-medium w-full max-w-full block"
+                    >
                       {teacher.username}
                     </div>
                   </div>
@@ -608,7 +614,7 @@ export function TeachersTable({
                       </div>
 
                       <div className="grid gap-2 text-right">
-                        <Label className="text-right">عدد الساعات</Label>
+                        <Label className="text-right">عدد الحصص</Label>
                         <Input
                           type="number"
                           value={subjectForm.numberOfHours}

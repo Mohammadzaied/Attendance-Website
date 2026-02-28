@@ -128,7 +128,7 @@ export function SubjectsListContent({ role }: SubjectsListContentProps) {
                           isDH && "font-medium",
                         )}
                       >
-                        {subject.numberOfHours} ساعات معتمدة
+                        {subject.numberOfHours} حصص معتمدة
                       </p>
                     </div>
                   </div>

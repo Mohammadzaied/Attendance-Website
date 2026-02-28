@@ -73,7 +73,7 @@ export function WarningMobileCard({
                 {subject.subjectName}
               </p>
               <span className="text-[10px] font-bold text-gray-400 shrink-0">
-                ({subject.numberOfHours} ساعة)
+                ({subject.numberOfHours} حصة)
               </span>
             </div>
 
