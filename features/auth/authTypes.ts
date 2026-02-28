@@ -18,6 +18,7 @@ export interface SignInResponseDto {
   roleName: string;
   departmentId: number | null;
   departmentName: string | null;
+  accessToken: string;
 }
 
 export interface AsyncState {
@@ -29,6 +30,7 @@ export interface AsyncState {
 export interface AuthState {
   user: SignInResponseDto | null;
   isAuthenticated: boolean;
+  accessToken: string;
   isInitializing: boolean;
   signInState: AsyncState;
   checkAuthSessionState: AsyncState;

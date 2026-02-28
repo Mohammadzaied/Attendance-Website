@@ -48,6 +48,7 @@ export function MajorsList({
   const {
     specializations,
     fetchSpecializationsState,
+    createSpecializationState,
     updateSpecializationState,
     deleteSpecializationState,
   } = useAppSelector((state) => state.specializations);
@@ -180,7 +181,7 @@ export function MajorsList({
     } catch (error: any) {
       setResult({
         success: false,
-        message: error || "فشل في حذف القسم",
+        message: error || "فشل في حذف التخصص",
         show: true,
       });
     }
@@ -509,9 +510,12 @@ export function MajorsList({
           <DialogFooter>
             <Button
               onClick={handleAddMajor}
+              disabled={createSpecializationState.isLoading}
               className="w-full bg-blue-600 hover:bg-blue-700 cursor-pointer"
             >
-              حفظ التخصص
+              {createSpecializationState.isLoading
+                ? "جاري الحفظ..."
+                : "حفظ التخصص"}
             </Button>
           </DialogFooter>
         </DialogContent>

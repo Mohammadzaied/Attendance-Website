@@ -15,6 +15,7 @@ const initialAsyncState = { isLoading: false, error: null };
 const initialState: AuthState = {
   user: null,
   isAuthenticated: false,
+  accessToken: "",
   isInitializing: true,
   signInState: initialAsyncState,
   checkAuthSessionState: initialAsyncState,
@@ -164,6 +165,7 @@ const AuthSlice = createSlice({
           state.signInState.isLoading = false;
           state.user = action.payload;
           state.isAuthenticated = true;
+          state.accessToken = action.payload.accessToken;
           state.signInState.error = null;
         },
       )
@@ -175,13 +177,14 @@ const AuthSlice = createSlice({
       })
       .addCase(checkAuthSession.pending, (state) => {
         state.checkAuthSessionState.isLoading = true;
-        state.isInitializing = true;
+        // state.isInitializing = true;
       })
       .addCase(
         checkAuthSession.fulfilled,
         (state, action: PayloadAction<SignInResponseDto>) => {
           state.checkAuthSessionState.isLoading = false;
           state.user = action.payload;
+          state.accessToken = action.payload.accessToken;
           state.isAuthenticated = true;
           state.checkAuthSessionState.error = null;
           state.isInitializing = false;
