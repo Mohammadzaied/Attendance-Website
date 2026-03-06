@@ -9,6 +9,14 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  async rewrites() {
+    return [
+      {
+        source: "/api/:path*",
+        destination: "https://attendance-rwtc.runasp.net/:path*",
+      },
+    ];
+  },
 };
 
 export default nextConfig;
