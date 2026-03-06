@@ -9,8 +9,6 @@ import axios, {
 
 // API Configuration
 export const API_BASE_URL = "https://attendance-rwtc.runasp.net";
-// process.env.NEXT_PUBLIC_API_BASE_URL || "https://localhost:7094";
-// Production URL is set via NEXT_PUBLIC_API_BASE_URL env variable
 
 // Public endpoints that don't require authentication cookies
 const PUBLIC_ENDPOINTS = ["/Users/SignIn"];
