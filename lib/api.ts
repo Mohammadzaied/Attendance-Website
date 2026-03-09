@@ -9,6 +9,7 @@ import axios, {
 
 // API Configuration
 export const API_BASE_URL = "https://attendance-rwtc.runasp.net";
+// export const API_BASE_URL = "https://localhost:7094";
 
 // Public endpoints that don't require authentication cookies
 const PUBLIC_ENDPOINTS = ["/Users/SignIn"];

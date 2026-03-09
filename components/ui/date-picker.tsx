@@ -52,6 +52,16 @@ export function DatePicker({ date, setDate, label }: DatePickerProps) {
             onSelect={setDate}
             initialFocus
             locale={ar}
+            classNames={{
+              weekday:
+                "text-muted-foreground rounded-md flex-1 font-normal text-[0.8rem] select-none [&:nth-child(1)]:hidden [&:nth-child(7)]:hidden",
+              day: "group relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:nth-child(1)]:hidden [&:nth-child(7)]:hidden",
+            }}
+            hidden={
+              (date) =>
+                date.getDay() === 5 || // Friday
+                date.getDay() === 6 // Saturday
+            }
             disabled={(date) =>
               date > new Date() || date < new Date("1900-01-01")
             }

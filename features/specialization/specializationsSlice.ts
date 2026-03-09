@@ -9,6 +9,9 @@ import {
   SpecializationResponse,
   CreateSpecializationDto,
   UpdateSpecializationDto,
+  MonthlyAbsencesResponse,
+  SpecializationAbsencesParams,
+  SpecializationInfoResponse,
 } from "./specializationTypes";
 import {
   AcademicYearResponse,
@@ -43,6 +46,7 @@ interface SpecializationsState {
   createSpecializationState: AsyncState;
   updateSpecializationState: AsyncState;
   deleteSpecializationState: AsyncState;
+  fetchHeadOfDepartmentSpecializationsState: AsyncState;
   academicYears: AcademicYearResponse[];
   fetchAcademicYearsState: AsyncState;
   createAcademicYearState: AsyncState;
@@ -68,6 +72,10 @@ interface SpecializationsState {
   yearsNumber: number;
   promoteStudentsState: AsyncState;
   createSubjectToTeacherState: AsyncState;
+  specializationAbsences: MonthlyAbsencesResponse[];
+  fetchSpecializationAbsencesState: AsyncState;
+  specializationInfo: SpecializationInfoResponse | null;
+  fetchSpecializationInfoState: AsyncState;
 }
 
 const initialAsyncState: AsyncState = { isLoading: false, error: null };
@@ -78,6 +86,7 @@ const initialState: SpecializationsState = {
   createSpecializationState: initialAsyncState,
   updateSpecializationState: initialAsyncState,
   deleteSpecializationState: initialAsyncState,
+  fetchHeadOfDepartmentSpecializationsState: initialAsyncState,
   academicYears: [],
   fetchAcademicYearsState: initialAsyncState,
   createAcademicYearState: initialAsyncState,
@@ -103,6 +112,10 @@ const initialState: SpecializationsState = {
   yearsNumber: 0,
   promoteStudentsState: initialAsyncState,
   createSubjectToTeacherState: initialAsyncState,
+  specializationAbsences: [],
+  fetchSpecializationAbsencesState: initialAsyncState,
+  specializationInfo: null,
+  fetchSpecializationInfoState: initialAsyncState,
 };
 
 // Async thunks
@@ -162,6 +175,59 @@ export const deleteSpecialization = createAsyncThunk(
         return rejectWithValue(error.message);
       }
       return rejectWithValue("Failed to delete specialization");
+    }
+  },
+);
+
+export const fetchHeadOfDepartmentSpecializations = createAsyncThunk(
+  "specializations/fetchHeadOfDepartmentSpecializations",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response =
+        await specializationService.getHeadOfDepartmentSpecializations();
+      return response;
+    } catch (error) {
+      if (error instanceof Error) {
+        return rejectWithValue(error.message);
+      }
+      return rejectWithValue("Failed to fetch specializations");
+    }
+  },
+);
+
+export const fetchSpecializationAbsences = createAsyncThunk(
+  "specializations/fetchSpecializationAbsences",
+  async (params: SpecializationAbsencesParams, { rejectWithValue }) => {
+    try {
+      const response =
+        await specializationService.getSpecializationAbsences(params);
+      return response;
+    } catch (error) {
+      if (error instanceof Error) {
+        return rejectWithValue(error.message);
+      }
+      return rejectWithValue("Failed to fetch specialization absences");
+    }
+  },
+);
+
+export const fetchSpecializationInfo = createAsyncThunk(
+  "specializations/fetchSpecializationInfo",
+  async (
+    { id, studyYear }: { id: number; studyYear?: number },
+    { rejectWithValue },
+  ) => {
+    try {
+      const response = await specializationService.getSpecializationInfo(
+        id,
+        studyYear,
+      );
+      return response;
+    } catch (error) {
+      if (error instanceof Error) {
+        return rejectWithValue(error.message);
+      }
+      return rejectWithValue("Failed to fetch specialization info");
     }
   },
 );
@@ -450,6 +516,7 @@ const specializationsSlice = createSlice({
       state.deleteSpecializationState.error = null;
       state.fetchAcademicYearsState.error = null;
       state.createAcademicYearState.error = null;
+      state.fetchHeadOfDepartmentSpecializationsState.error = null;
       state.deleteProgramYearState.error = null;
       state.importStudentsState.error = null;
       state.updateStudentEmailsState.error = null;
@@ -465,6 +532,8 @@ const specializationsSlice = createSlice({
       state.deleteSubjectState.error = null;
       state.promoteStudentsState.error = null;
       state.createSubjectToTeacherState.error = null;
+      state.fetchSpecializationAbsencesState.error = null;
+      state.fetchSpecializationInfoState.error = null;
     },
     clearSubjects: (state) => {
       state.subjectsBySpecialization = [];
@@ -473,6 +542,17 @@ const specializationsSlice = createSlice({
     clearEnrollments: (state) => {
       state.enrollments = [];
       state.fetchEnrollmentsState = { isLoading: false, error: null };
+    },
+    clearAbsences: (state) => {
+      state.specializationAbsences = [];
+      state.fetchSpecializationAbsencesState = {
+        isLoading: false,
+        error: null,
+      };
+    },
+    clearSpecializationInfo: (state) => {
+      state.specializationInfo = null;
+      state.fetchSpecializationInfoState = { isLoading: false, error: null };
     },
   },
   extraReducers: (builder) => {
@@ -493,6 +573,58 @@ const specializationsSlice = createSlice({
       .addCase(fetchSpecializations.rejected, (state, action) => {
         state.fetchSpecializationsState.isLoading = false;
         state.fetchSpecializationsState.error = action.payload as string;
+      })
+      .addCase(fetchHeadOfDepartmentSpecializations.pending, (state) => {
+        state.fetchHeadOfDepartmentSpecializationsState.isLoading = true;
+        state.fetchHeadOfDepartmentSpecializationsState.error = null;
+      })
+      .addCase(
+        fetchHeadOfDepartmentSpecializations.fulfilled,
+        (state, action: PayloadAction<SpecializationResponse[]>) => {
+          state.fetchHeadOfDepartmentSpecializationsState.isLoading = false;
+          state.specializations = action.payload;
+          state.fetchHeadOfDepartmentSpecializationsState.error = null;
+        },
+      )
+      .addCase(
+        fetchHeadOfDepartmentSpecializations.rejected,
+        (state, action) => {
+          state.fetchHeadOfDepartmentSpecializationsState.isLoading = false;
+          state.fetchHeadOfDepartmentSpecializationsState.error =
+            action.payload as string;
+        },
+      )
+      .addCase(fetchSpecializationAbsences.pending, (state) => {
+        state.fetchSpecializationAbsencesState.isLoading = true;
+        state.fetchSpecializationAbsencesState.error = null;
+      })
+      .addCase(
+        fetchSpecializationAbsences.fulfilled,
+        (state, action: PayloadAction<MonthlyAbsencesResponse[]>) => {
+          state.fetchSpecializationAbsencesState.isLoading = false;
+          state.specializationAbsences = action.payload;
+          state.fetchSpecializationAbsencesState.error = null;
+        },
+      )
+      .addCase(fetchSpecializationAbsences.rejected, (state, action) => {
+        state.fetchSpecializationAbsencesState.isLoading = false;
+        state.fetchSpecializationAbsencesState.error = action.payload as string;
+      })
+      .addCase(fetchSpecializationInfo.pending, (state) => {
+        state.fetchSpecializationInfoState.isLoading = true;
+        state.fetchSpecializationInfoState.error = null;
+      })
+      .addCase(
+        fetchSpecializationInfo.fulfilled,
+        (state, action: PayloadAction<SpecializationInfoResponse>) => {
+          state.fetchSpecializationInfoState.isLoading = false;
+          state.specializationInfo = action.payload;
+          state.fetchSpecializationInfoState.error = null;
+        },
+      )
+      .addCase(fetchSpecializationInfo.rejected, (state, action) => {
+        state.fetchSpecializationInfoState.isLoading = false;
+        state.fetchSpecializationInfoState.error = action.payload as string;
       })
       .addCase(createSpecialization.pending, (state) => {
         state.createSpecializationState.isLoading = true;
@@ -795,6 +927,11 @@ const specializationsSlice = createSlice({
   },
 });
 
-export const { clearError, clearSubjects, clearEnrollments } =
-  specializationsSlice.actions;
+export const {
+  clearError,
+  clearSubjects,
+  clearEnrollments,
+  clearAbsences,
+  clearSpecializationInfo,
+} = specializationsSlice.actions;
 export default specializationsSlice.reducer;

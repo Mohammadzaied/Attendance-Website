@@ -19,6 +19,7 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
     if (pathname.includes("/department-head/subjects")) return "subjects";
     if (pathname.includes("/department-head/students")) return "students";
     if (pathname.includes("/department-head/warnings")) return "warnings";
+    if (pathname.includes("/department-head/specializations")) return "specializations";
     if (pathname.includes("/department-head/entry")) return "entry";
     return "entry";
   }, [pathname]);
@@ -39,7 +40,7 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
       <div className="flex">
         <main
           className={cn(
-            "flex-1 px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8 transition-all duration-300",
+            "flex-1 min-w-0 overflow-x-hidden px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8 transition-all duration-300",
             isSidebarOpen ? "lg:mr-64" : "lg:mr-20",
           )}
         >

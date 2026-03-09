@@ -183,7 +183,7 @@ export function AbsenceEntrySection({
               htmlFor="default-lessons"
               className="text-right block text-sm font-bold text-gray-700"
             >
-              الحصص الافتراضية
+              الحصص
             </Label>
             <LessonMultiSelect
               lessons={availableLessons}

@@ -3,6 +3,9 @@ import { ApiResponse } from "@/lib/ApiResponse";
 import {
   SpecializationResponse,
   CreateSpecializationDto,
+  MonthlyAbsencesResponse,
+  SpecializationAbsencesParams,
+  SpecializationInfoResponse,
 } from "./specializationTypes";
 
 const SPECIALIZATIONS_ENDPOINT = "Specializations";
@@ -61,5 +64,48 @@ export const specializationService = {
     await apiClient.delete(`${SPECIALIZATIONS_ENDPOINT}/${data.id}`, {
       data: { Password: data.password },
     });
+  },
+
+  /**
+   * Get specializations for head of department
+   */
+  async getHeadOfDepartmentSpecializations(): Promise<
+    SpecializationResponse[]
+  > {
+    const response = await apiClient.get<ApiResponse<SpecializationResponse[]>>(
+      `${SPECIALIZATIONS_ENDPOINT}/head-of-department/specializations`,
+    );
+    return response.data;
+  },
+
+  /**
+   * Get absences for a specialization
+   */
+  async getSpecializationAbsences(
+    params: SpecializationAbsencesParams,
+  ): Promise<MonthlyAbsencesResponse[]> {
+    const { id, ...queryParams } = params;
+    const response = await apiClient.get<
+      ApiResponse<MonthlyAbsencesResponse[]>
+    >(`${SPECIALIZATIONS_ENDPOINT}/${id}/absences`, {
+      params: queryParams,
+    });
+    return response.data;
+  },
+
+  /**
+   * Get info for a specialization
+   */
+  async getSpecializationInfo(
+    id: number,
+    studyYear: number = 1,
+  ): Promise<SpecializationInfoResponse> {
+    const response = await apiClient.get<ApiResponse<SpecializationInfoResponse>>(
+      `${SPECIALIZATIONS_ENDPOINT}/${id}/info`,
+      {
+        params: { studyYear },
+      },
+    );
+    return response.data;
   },
 };
