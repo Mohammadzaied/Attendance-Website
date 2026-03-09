@@ -152,15 +152,6 @@ export function StudentAbsencesContent({
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="text-right">
-          <div className="flex items-center gap-2 mb-2">
-            <Button
-              onClick={() => router.back()}
-              variant="outline"
-              className={cn("gap-2 font-bold cursor-pointer transition-all")}
-            >
-              للخلف <ChevronRight className="h-4 w-4" />
-            </Button>
-          </div>
           <h1
             className={cn("text-2xl md:text-3xl font-bold text-gray-900 mb-1")}
           >
