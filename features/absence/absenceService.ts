@@ -1,7 +1,7 @@
 import { apiClient } from "@/lib/api";
 import { ApiResponse } from "@/lib/ApiResponse";
 import { StudentAbsenceGroupByDateResponse } from "@/features/teacher/teacherTypes";
-import { EditAbsenceStatusDto } from "./absenceTypes";
+import { EditAbsenceStatusDto, ExcuseAbsencesDto, ExcuseAbsencesResponse } from "./absenceTypes";
 
 const ABSENCES_ENDPOINT = "Absences";
 
@@ -36,5 +36,16 @@ export const absenceService = {
     data: EditAbsenceStatusDto,
   ): Promise<void> {
     await apiClient.put(`${ABSENCES_ENDPOINT}/${absenceId}/Status`, data);
+  },
+
+  /**
+   * Bulk excuse absences by date
+   */
+  async excuseAbsences(data: ExcuseAbsencesDto): Promise<ExcuseAbsencesResponse> {
+    const response = await apiClient.post<ApiResponse<ExcuseAbsencesResponse>>(
+      `${ABSENCES_ENDPOINT}/ExcuseAbsences`,
+      data,
+    );
+    return response.data;
   },
 };

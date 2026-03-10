@@ -7,7 +7,7 @@ import { AdminAllSubjectsResponse } from "@/features/student";
 
 interface SubjectTabsListProps {
   adminSubjects: AdminAllSubjectsResponse;
-  activeTypeTab: "absences" | "alerts";
+  activeTypeTab: "absences" | "alerts" | "excuse";
   isDH?: boolean;
 }
 
@@ -20,7 +20,7 @@ export function SubjectTabsList({
     <TabsList
       className={cn(
         "bg-gray-100/60 p-2 md:p-3 h-auto flex flex-col w-full rounded-xl md:rounded-2xl gap-3 md:gap-4 items-stretch border border-gray-100 transition-all duration-300",
-        activeTypeTab === "alerts" &&
+        (activeTypeTab === "alerts" || activeTypeTab === "excuse") &&
           "opacity-0 invisible h-0 overflow-hidden p-0 m-0 border-0",
       )}
     >

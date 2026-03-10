@@ -10,6 +10,7 @@ import {
   StudentAlertsBySubjectV2,
 } from "./studentTypes";
 import { StudentAbsenceGroupByDateResponse } from "@/features/teacher/teacherTypes";
+import { ExcuseAbsencesDto, ExcuseAbsencesResponse } from "@/features/absence/absenceTypes";
 
 interface AsyncState {
   isLoading: boolean;
@@ -33,6 +34,7 @@ interface StudentState {
   fetchGraduationStudentsState: AsyncState;
   deleteAbsenceState: AsyncState;
   editAbsenceState: AsyncState;
+  excuseAbsencesState: AsyncState;
 }
 
 const initialAsyncState: AsyncState = { isLoading: false, error: null };
@@ -54,6 +56,7 @@ const initialState: StudentState = {
   fetchGraduationStudentsState: initialAsyncState,
   deleteAbsenceState: initialAsyncState,
   editAbsenceState: initialAsyncState,
+  excuseAbsencesState: initialAsyncState,
 };
 
 export const fetchStudentProfile = createAsyncThunk<
@@ -273,6 +276,21 @@ export const deleteAbsenceRecord = createAsyncThunk(
   },
 );
 
+export const bulkExcuseAbsences = createAsyncThunk<
+  ExcuseAbsencesResponse,
+  ExcuseAbsencesDto
+>("student/bulkExcuseAbsences", async (data, { rejectWithValue }) => {
+  try {
+    const response = await absenceService.excuseAbsences(data);
+    return response;
+  } catch (error) {
+    if (error instanceof Error) {
+      return rejectWithValue(error.message);
+    }
+    return rejectWithValue("Failed to excuse absences");
+  }
+});
+
 const studentSlice = createSlice({
   name: "student",
   initialState,
@@ -433,6 +451,18 @@ const studentSlice = createSlice({
       .addCase(deleteAbsenceRecord.rejected, (state, action) => {
         state.deleteAbsenceState.isLoading = false;
         state.deleteAbsenceState.error = action.payload as string;
+      })
+      .addCase(bulkExcuseAbsences.pending, (state) => {
+        state.excuseAbsencesState.isLoading = true;
+        state.excuseAbsencesState.error = null;
+      })
+      .addCase(bulkExcuseAbsences.fulfilled, (state) => {
+        state.excuseAbsencesState.isLoading = false;
+        state.excuseAbsencesState.error = null;
+      })
+      .addCase(bulkExcuseAbsences.rejected, (state, action) => {
+        state.excuseAbsencesState.isLoading = false;
+        state.excuseAbsencesState.error = action.payload as string;
       });
   },
 });

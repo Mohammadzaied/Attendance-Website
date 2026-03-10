@@ -7,6 +7,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
+import { Badge } from "@/components/ui/badge";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -41,6 +42,10 @@ interface AbsencesDialogsProps {
   onConfirmDelete: () => Promise<void>;
   editLoading: boolean;
   deleteLoading: boolean;
+  excuseResult: any | null;
+  setExcuseResult: (result: any | null) => void;
+  excuseError: string | null;
+  setExcuseError: (error: string | null) => void;
 }
 
 export function AbsencesDialogs({
@@ -56,6 +61,10 @@ export function AbsencesDialogs({
   onConfirmDelete,
   editLoading,
   deleteLoading,
+  excuseResult,
+  setExcuseResult,
+  excuseError,
+  setExcuseError,
 }: AbsencesDialogsProps) {
   return (
     <>
@@ -146,6 +155,98 @@ export function AbsencesDialogs({
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Excuse Result Dialog */}
+      <Dialog open={!!excuseResult} onOpenChange={(open) => !open && setExcuseResult(null)}>
+        <DialogContent className="sm:max-w-[500px] rounded-3xl border-none shadow-2xl p-0 overflow-hidden">
+          <div className="bg-blue-600 p-8 text-center space-y-4">
+            <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mx-auto backdrop-blur-sm border border-white/20">
+              <svg className="h-10 w-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <DialogHeader>
+              <DialogTitle className="text-2xl font-black text-white text-center">تمت العملية بنجاح</DialogTitle>
+            </DialogHeader>
+            <p className="text-blue-100 font-bold">{excuseResult?.studentName}</p>
+          </div>
+          
+          <div className="p-6 text-center space-y-6 bg-white" dir="rtl">
+            <div className="space-y-4">
+              <div className="flex items-center justify-between bg-gray-50 p-4 rounded-2xl border border-gray-100">
+                <span className="text-gray-500 font-bold">تاريخ الغياب:</span>
+                <span className="text-gray-900 font-black" dir="ltr">
+                  {excuseResult?.date ? new Date(excuseResult.date).toLocaleDateString("en-GB") : ""}
+                </span>
+              </div>
+
+              <div className="space-y-2 text-right">
+                <h4 className="text-sm font-black text-gray-900 pr-2">تفاصيل المواد المتأثرة</h4>
+                <div className="max-h-[200px] overflow-y-auto space-y-2 pr-1 custom-scrollbar">
+                  {excuseResult?.subjectDetails?.map((subject: any) => (
+                    <div key={subject.subjectId} className="flex items-center justify-between p-3 bg-blue-50/50 rounded-xl border border-blue-100/50">
+                      <span className="text-gray-700 font-bold text-sm">{subject.subjectName}</span>
+                      <Badge variant="secondary" className="bg-blue-600 text-white border-none font-black">
+                        {subject.convertedAbsencesCount} حصص
+                      </Badge>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex items-center justify-center gap-4 pt-2">
+                <div className="bg-gray-50 px-4 py-3 rounded-2xl border border-gray-100 flex-1">
+                  <span className="block text-[10px] text-gray-400 font-bold mb-1">إجمالي الحصص</span>
+                  <span className="text-2xl font-black text-gray-900">{excuseResult?.totalExcusedAbsencesCount || 0}</span>
+                </div>
+                <div className="bg-blue-50 px-4 py-3 rounded-2xl border border-blue-100 flex-1">
+                  <span className="block text-[10px] text-blue-400 font-bold mb-1">عدد المواد</span>
+                  <span className="text-2xl font-black text-blue-600">{excuseResult?.totalSubjectsAffected || 0}</span>
+                </div>
+              </div>
+            </div>
+
+            <Button
+              onClick={() => setExcuseResult(null)}
+              className="w-full h-12 rounded-xl bg-gray-900 hover:bg-black text-white font-bold transition-all"
+            >
+              إغلاق
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Excuse Error Dialog */}
+      <Dialog open={!!excuseError} onOpenChange={(open) => !open && setExcuseError(null)}>
+        <DialogContent className="sm:max-w-[400px] rounded-3xl border-none shadow-2xl p-0 overflow-hidden">
+          <div className="bg-red-600 p-8 text-center space-y-4">
+            <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mx-auto backdrop-blur-sm border border-white/20">
+              <svg className="h-10 w-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </div>
+            <DialogHeader>
+              <DialogTitle className="text-2xl font-black text-white text-center">عذراً، حدث خطأ</DialogTitle>
+            </DialogHeader>
+          </div>
+          
+          <div className="p-8 text-center space-y-6 bg-white" dir="rtl">
+            <div className="space-y-2">
+              <p className="text-gray-600 font-bold">فشلت عملية تحويل الغيابات:</p>
+              <div className="p-4 bg-red-50 rounded-2xl border border-red-100">
+                <p className="text-red-600 font-black text-sm">{excuseError}</p>
+              </div>
+            </div>
+
+            <Button
+              onClick={() => setExcuseError(null)}
+              className="w-full h-12 rounded-xl bg-gray-900 hover:bg-black text-white font-bold transition-all"
+            >
+              إغلاق
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

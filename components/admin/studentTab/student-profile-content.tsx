@@ -12,7 +12,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { useState, useEffect, useMemo } from "react";
-import { format } from "date-fns";
+import { format, startOfDay } from "date-fns";
 import { ar } from "date-fns/locale";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
@@ -22,8 +22,10 @@ import {
   fetchStudentAbsenceDetails,
   editAbsenceStatus,
   deleteAbsenceRecord,
+  bulkExcuseAbsences,
   resetStudentDetails,
 } from "@/features/student";
+import { studentService } from "@/features/student/studentService";
 import { Spinner } from "@/components/ui/spinner";
 import { cn } from "@/lib/utils";
 
@@ -53,11 +55,18 @@ export function StudentProfileContent({
   const [selectedYearId, setSelectedYearId] = useState<string>("");
   const [selectedSemesterId, setSelectedSemesterId] = useState<string>("");
   const [activeSubjectId, setActiveSubjectId] = useState<string>("");
-  const [activeTypeTab, setActiveTypeTab] = useState<"absences" | "alerts">(
-    "absences",
-  );
+  const [activeTypeTab, setActiveTypeTab] = useState<
+    "absences" | "alerts" | "excuse"
+  >("absences");
   const [selectedAlertSubjectId, setSelectedAlertSubjectId] =
     useState<string>("all");
+
+  // Excuse Tab States
+  const [excuseDate, setExcuseDate] = useState<Date | undefined>(undefined);
+  const [excuseReason, setExcuseReason] = useState("");
+  const [excuseResult, setExcuseResult] = useState<any | null>(null);
+  const [excuseError, setExcuseError] = useState<string | null>(null);
+  const [isExcusing, setIsExcusing] = useState(false);
 
   const {
     profile,
@@ -70,6 +79,7 @@ export function StudentProfileContent({
     fetchAbsenceDetailsState,
     deleteAbsenceState,
     editAbsenceState,
+    excuseAbsencesState,
   } = useAppSelector((state) => state.student);
 
   // Edit/Delete States (Admin only)
@@ -196,6 +206,36 @@ export function StudentProfileContent({
       ).unwrap();
       setIsDeleteDialogOpen(false);
       setAbsenceToDelete(null);
+    }
+  };
+
+  useEffect(() => {
+    if (activeTypeTab === "excuse") {
+      setExcuseDate(undefined);
+      setExcuseReason("");
+      setExcuseResult(null);
+      setExcuseError(null);
+    }
+  }, [activeTypeTab]);
+
+  const handleExcuseAbsencesByDate = async () => {
+    if (!excuseDate || isDH) return;
+
+    try {
+      const result = await dispatch(
+        bulkExcuseAbsences({
+          studentAcademicInfoId: allSubjects[0].studentAcademicInfoId, // Use first info ID as they all belong to same student
+          date: format(excuseDate, "yyyy-MM-dd"),
+          reason: excuseReason || null,
+        }),
+      ).unwrap();
+
+      setExcuseResult(result);
+      setExcuseReason("");
+      setExcuseDate(undefined);
+    } catch (error: any) {
+      console.error("Failed to excuse absences:", error);
+      setExcuseError(error || "حدث خطأ غير متوقع أثناء عملية التحويل");
     }
   };
 
@@ -330,6 +370,17 @@ export function StudentProfileContent({
                   >
                     الانذارات
                   </button>
+                  <button
+                    onClick={() => setActiveTypeTab("excuse")}
+                    className={cn(
+                      "flex-1 md:flex-none px-4 py-2 md:py-1.5 rounded-lg text-sm font-bold transition-all duration-200 cursor-pointer",
+                      activeTypeTab === "excuse"
+                        ? "bg-white text-blue-600 shadow-sm"
+                        : "text-gray-500 hover:text-gray-700",
+                    )}
+                  >
+                    معالجة الأعذار
+                  </button>
                 </div>
               </div>
             </div>
@@ -349,7 +400,98 @@ export function StudentProfileContent({
               </div>
 
               <ScrollArea className="flex-1">
-                {allSubjects.length > 0 ? (
+                {activeTypeTab === "excuse" ? (
+                  <div className="m-0 p-4 md:p-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
+                    <div className="flex flex-col items-center justify-center py-10 md:py-16">
+                      <Card className="w-full max-w-lg p-6 md:p-8 border-2 border-dashed border-blue-100 bg-blue-50/30 rounded-[2.5rem] shadow-none">
+                        <div className="text-center space-y-6">
+                          <div className="w-20 h-20 bg-blue-600 rounded-3xl flex items-center justify-center mx-auto shadow-lg shadow-blue-200">
+                            <CalendarDays className="h-10 w-10 text-white" />
+                          </div>
+
+                          <div className="space-y-2">
+                            <h3 className="text-xl font-black text-gray-900">
+                              تحويل الغيابات إلى أعذار
+                            </h3>
+                            <p className="text-sm text-gray-500 font-medium">
+                              اختر التاريخ لإعفاء كافة غيابات الطالب في ذلك
+                              اليوم
+                            </p>
+                          </div>
+
+                          <div className="space-y-4 text-right" dir="rtl">
+                            <div className="space-y-2">
+                              <label className="text-sm font-bold text-gray-700 block pr-1">
+                                التاريخ
+                              </label>
+                              <Popover>
+                                <PopoverTrigger asChild>
+                                  <Button
+                                    variant="outline"
+                                    className={cn(
+                                      "w-full h-12 justify-start text-right font-bold rounded-2xl border-gray-200 bg-white",
+                                      !excuseDate &&
+                                        "text-muted-foreground font-medium",
+                                    )}
+                                  >
+                                    <CalendarDays className="ml-2 h-5 w-5 text-blue-600" />
+                                    {excuseDate
+                                      ? format(excuseDate, "PPP", {
+                                          locale: ar,
+                                        })
+                                      : "اختر التاريخ"}
+                                  </Button>
+                                </PopoverTrigger>
+                                <PopoverContent
+                                  className="w-auto p-0 rounded-2xl overflow-hidden border-none shadow-2xl"
+                                  align="center"
+                                >
+                                  <Calendar
+                                    mode="single"
+                                    selected={excuseDate}
+                                    onSelect={setExcuseDate}
+                                    initialFocus
+                                    dir="rtl"
+                                    locale={ar}
+                                    className="bg-white p-3"
+                                  />
+                                </PopoverContent>
+                              </Popover>
+                            </div>
+
+                            <div className="space-y-2">
+                              <label className="text-sm font-bold text-gray-700 block pr-1">
+                                السبب (اختياري)
+                              </label>
+                              <textarea
+                                className="w-full min-h-[100px] p-4 rounded-2xl border-2 border-gray-100 bg-white focus:border-blue-500 focus:ring-0 transition-all text-sm font-medium outline-none resize-none"
+                                placeholder="اكتب ملاحظاتك هنا..."
+                                value={excuseReason}
+                                onChange={(e) =>
+                                  setExcuseReason(e.target.value)
+                                }
+                              />
+                            </div>
+
+                            <Button
+                              disabled={
+                                !excuseDate || excuseAbsencesState.isLoading
+                              }
+                              onClick={handleExcuseAbsencesByDate}
+                              className="w-full h-14 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-black text-lg shadow-lg shadow-blue-200 transition-all active:scale-[0.98]"
+                            >
+                              {excuseAbsencesState.isLoading ? (
+                                <Loader2 className="h-6 w-6 animate-spin" />
+                              ) : (
+                                "تحويل إلى غياب بعذر"
+                              )}
+                            </Button>
+                          </div>
+                        </div>
+                      </Card>
+                    </div>
+                  </div>
+                ) : allSubjects.length > 0 ? (
                   allSubjects.map((subject) => (
                     <TabsContent
                       dir="rtl"
@@ -392,51 +534,50 @@ export function StudentProfileContent({
                                 }
                               />
 
-                              {activeTypeTab === "absences" && (
-                                <div className="px-3 md:px-6 py-3 bg-gray-50/50 border-b border-gray-100 flex flex-wrap items-center gap-2 md:gap-3 rounded-2xl mb-4 overflow-hidden">
-                                  <Popover>
-                                    <PopoverTrigger asChild>
-                                      <Button
-                                        variant="outline"
-                                        size="sm"
-                                        className={`gap-2 h-9 border-gray-200 cursor-pointer bg-white text-xs md:text-sm flex-1 md:flex-none ${selectedDate ? "border-blue-200 bg-blue-50 text-blue-600" : ""}`}
-                                      >
-                                        <CalendarDays className="h-4 w-4" />
-                                        {selectedDate
-                                          ? format(selectedDate, "PPP", {
-                                              locale: ar,
-                                            })
-                                          : "تصفية بالتاريخ"}
-                                      </Button>
-                                    </PopoverTrigger>
-                                    <PopoverContent
-                                      className="w-auto p-0 border-none shadow-2xl"
-                                      align="start"
-                                    >
-                                      <Calendar
-                                        mode="single"
-                                        selected={selectedDate}
-                                        onSelect={setSelectedDate}
-                                        initialFocus
-                                        dir="rtl"
-                                        locale={ar}
-                                        className="bg-white rounded-xl"
-                                      />
-                                    </PopoverContent>
-                                  </Popover>
-                                  {selectedDate && (
+                              <div className="px-3 md:px-6 py-3 bg-gray-50/50 border-b border-gray-100 flex flex-wrap items-center gap-2 md:gap-3 rounded-2xl mb-4 overflow-hidden">
+                                <Popover>
+                                  <PopoverTrigger asChild>
                                     <Button
-                                      variant="ghost"
+                                      variant="outline"
                                       size="sm"
-                                      onClick={() => setSelectedDate(undefined)}
-                                      className="text-blue-600 hover:text-blue-600 hover:bg-blue-50 gap-1 h-9 font-bold text-xs md:text-sm"
+                                      className={`gap-2 h-9 border-gray-200 cursor-pointer bg-white text-xs md:text-sm flex-1 md:flex-none ${selectedDate ? "border-blue-200 bg-blue-50 text-blue-600" : ""}`}
                                     >
-                                      <X className="h-4 w-4" />
-                                      إلغاء الفلتر
+                                      <CalendarDays className="h-4 w-4" />
+                                      {selectedDate
+                                        ? format(selectedDate, "PPP", {
+                                            locale: ar,
+                                          })
+                                        : "تصفية بالتاريخ"}
                                     </Button>
-                                  )}
-                                </div>
-                              )}
+                                  </PopoverTrigger>
+                                  <PopoverContent
+                                    className="w-auto p-0 border-none shadow-2xl"
+                                    align="start"
+                                  >
+                                    <Calendar
+                                      mode="single"
+                                      selected={selectedDate}
+                                      onSelect={setSelectedDate}
+                                      initialFocus
+                                      dir="rtl"
+                                      locale={ar}
+                                      className="bg-white rounded-xl"
+                                    />
+                                  </PopoverContent>
+                                </Popover>
+                                {selectedDate && (
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => setSelectedDate(undefined)}
+                                    className="text-blue-600 hover:text-blue-600 hover:bg-blue-50 gap-1 h-9 font-bold text-xs md:text-sm"
+                                  >
+                                    <X className="h-4 w-4" />
+                                    إلغاء الفلتر
+                                  </Button>
+                                )}
+                              </div>
+
                               <AbsenceLogsList
                                 filteredLogs={
                                   activeSubjectId ===
@@ -532,6 +673,10 @@ export function StudentProfileContent({
           onConfirmDelete={handleDeleteAbsence}
           editLoading={editAbsenceState.isLoading}
           deleteLoading={deleteAbsenceState.isLoading}
+          excuseResult={excuseResult}
+          setExcuseResult={setExcuseResult}
+          excuseError={excuseError}
+          setExcuseError={setExcuseError}
         />
       )}
     </div>
