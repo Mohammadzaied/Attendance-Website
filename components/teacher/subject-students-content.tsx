@@ -37,6 +37,7 @@ export function SubjectStudentsContent({ role }: SubjectStudentsContentProps) {
     subjectName,
     fetchStudentsState,
     subjectAbsenceData,
+    audiencePercent,
     fetchSubjectAbsenceDataState,
   } = useAppSelector((state) => state.teacher);
 
@@ -160,9 +161,67 @@ export function SubjectStudentsContent({ role }: SubjectStudentsContentProps) {
               />
             </div>
             <div className="flex items-center gap-3 self-end md:self-center">
+              {/* Audience Percentage Circular Progress */}
+              <div
+                className="flex items-center gap-2 bg-indigo-50/50 rounded-xl p-2 pr-3"
+                title="نسبة الحضور المتوقعة"
+              >
+                <div className="flex flex-col text-right">
+                  <span className="text-xs font-bold text-slate-600">
+                    نسبة الحضور
+                  </span>
+                </div>
+                <div className="relative h-11 w-11 shrink-0 flex items-center justify-center">
+                  <svg
+                    className="h-full w-full -rotate-90 transform"
+                    viewBox="0 0 36 36"
+                  >
+                    {/* Background Circle */}
+                    <circle
+                      cx="18"
+                      cy="18"
+                      r="16"
+                      fill="none"
+                      className="stroke-indigo-100"
+                      strokeWidth="3.5"
+                    />
+                    {/* Progress Circle */}
+                    <circle
+                      cx="18"
+                      cy="18"
+                      r="16"
+                      fill="none"
+                      className={cn(
+                        "transition-all duration-1000 ease-out",
+                        fetchStudentsState.isLoading
+                          ? "stroke-indigo-200"
+                          : audiencePercent >= 80
+                            ? "stroke-emerald-500"
+                            : audiencePercent >= 50
+                              ? "stroke-amber-500"
+                              : "stroke-red-500",
+                      )}
+                      strokeWidth="3.5"
+                      strokeDasharray="100 100"
+                      strokeDashoffset={fetchStudentsState.isLoading ? 100 : 100 - audiencePercent}
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    {fetchStudentsState.isLoading ? (
+                      <div className="h-3 w-3 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin"></div>
+                    ) : (
+                      <span className="text-[10px] font-bold text-slate-700" dir="ltr">
+                        {audiencePercent.toFixed(1)}%
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
+
               <Badge
                 className={cn(
-                  "bg-blue-50 text-blue-700 border-blue-200 px-4 py-2 text-sm font-bold",
+                  "bg-blue-50 text-blue-700 border-blue-200 px-4 py-2 h-11 flex items-center text-sm font-bold",
                   isDH && "font-black rounded-xl",
                 )}
               >

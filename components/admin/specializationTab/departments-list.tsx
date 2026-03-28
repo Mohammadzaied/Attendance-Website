@@ -862,7 +862,7 @@ export function DepartmentsList({
                   <SelectValue placeholder="اختر السنة الأكاديمية" />
                 </SelectTrigger>
                 <SelectContent>
-                  {activeAcademicYears.map((year) => (
+                  {/* {activeAcademicYears.map((year) => (
                     <SelectItem
                       key={year.academicYearId}
                       value={year.academicYearId.toString()}
@@ -870,7 +870,16 @@ export function DepartmentsList({
                     >
                       {year.year}
                     </SelectItem>
-                  ))}
+                  ))} */}
+                  {activeAcademicYears[0] && (
+                    <SelectItem
+                      key={activeAcademicYears[0].academicYearId}
+                      value={activeAcademicYears[0].academicYearId.toString()}
+                      className="justify-end"
+                    >
+                      {activeAcademicYears[0].year}
+                    </SelectItem>
+                  )}
                 </SelectContent>
               </Select>
             </div>

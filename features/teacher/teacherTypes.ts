@@ -31,6 +31,7 @@ export interface SubjectStudentsResponse {
   semesterId: number;
   specializationId: number;
   studyYear: number;
+  audiencePercent: number;
   students: SubjectStudentItem[];
   totalStudents: number;
 }
@@ -196,6 +197,7 @@ export interface TeacherState {
   subjects: DetailedSubjectResponse[];
   students: SubjectStudentItem[];
   subjectName: string;
+  audiencePercent: number;
   absences: AbsenceRecord[];
   absenceSession: AbsenceSessionResponse | null;
   subjectAbsenceData: SubjectAbsenceDataResponse | null;
@@ -243,6 +245,10 @@ export interface TeacherState {
     deletingId: number | null;
   };
   fetchFavoriteLessonsState: {
+    isLoading: boolean;
+    error: string | null;
+  };
+  createAbsenceSessionState: {
     isLoading: boolean;
     error: string | null;
   };

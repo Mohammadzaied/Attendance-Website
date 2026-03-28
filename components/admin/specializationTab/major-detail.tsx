@@ -255,27 +255,84 @@ export function MajorDetail({ major, onSelectYear }: MajorDetailProps) {
                         </div>
                       </div>
 
-                      <div className="space-y-3 mb-6">
+                      <div className="space-y-4 mb-6">
                         <div className="flex justify-between items-center text-sm">
                           <span className="text-right text-gray-500 font-medium">
                             المواد الدراسية
                           </span>
-                          <div className="flex justify-center border border-gray-200 px-3 py-1.5 rounded-lg  min-w-20 w-fit">
+                          <div className="flex justify-center bg-gray-50/50 border border-gray-100 px-3 py-1.5 rounded-lg min-w-20">
                             <span className="font-bold text-gray-900">
                               {semesterStats[sem.semesterId]?.subjectCount || 0}{" "}
-                              مواد
+                              <span className="text-gray-500 font-normal text-xs mx-1">
+                                مواد
+                              </span>
                             </span>
                           </div>
                         </div>
+
                         <div className="flex justify-between items-center text-sm">
                           <span className="text-right text-gray-500 font-medium">
                             الطلاب المسجلين
                           </span>
-                          <div className="flex justify-center border border-gray-200 px-3 py-1.5 rounded-lg  min-w-20 w-fit">
+                          <div className="flex justify-center bg-gray-50/50 border border-gray-100 px-3 py-1.5 rounded-lg min-w-20">
                             <span className="text-right font-bold text-gray-900">
                               {semesterStats[sem.semesterId]?.studentCount || 0}{" "}
-                              طالب
+                              <span className="text-gray-500 font-normal text-xs mx-1">
+                                طالب
+                              </span>
                             </span>
+                          </div>
+                        </div>
+
+                        {/* Beautiful Audience Percent Line */}
+                        <div className="flex justify-between items-center text-sm pt-2 border-t border-gray-50">
+                          <span className="text-right text-gray-500 font-medium">
+                            نسبة الحضور التراكمية
+                          </span>
+                          <div className="relative w-12 h-12 flex items-center justify-center">
+                            <svg
+                              className="w-full h-full transform -rotate-90"
+                              viewBox="0 0 36 36"
+                            >
+                              {/* Background Circle */}
+                              <path
+                                className="text-gray-100"
+                                strokeWidth="3"
+                                stroke="currentColor"
+                                fill="none"
+                                d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                              />
+                              {/* Foreground Progress Circle */}
+                              <path
+                                className={
+                                  (semesterStats[sem.semesterId]
+                                    ?.audiencePercent || 0) >= 80
+                                    ? "text-emerald-500"
+                                    : (semesterStats[sem.semesterId]
+                                          ?.audiencePercent || 0) >= 50
+                                      ? "text-amber-500"
+                                      : "text-red-500"
+                                }
+                                strokeWidth="3"
+                                strokeDasharray={`${semesterStats[sem.semesterId]?.audiencePercent || 0}, 100`}
+                                strokeLinecap="round"
+                                stroke="currentColor"
+                                fill="none"
+                                d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                                style={{
+                                  transition: "stroke-dasharray 1s ease-out",
+                                }}
+                              />
+                            </svg>
+                            <div className="absolute flex  flex-col items-center justify-center text-center">
+                              <span className="text-[10px] font-extrabold text-gray-800">
+                                {Number(
+                                  semesterStats[sem.semesterId]
+                                    ?.audiencePercent || 0,
+                                ).toFixed(1)}
+                                %
+                              </span>
+                            </div>
                           </div>
                         </div>
                       </div>

@@ -22,6 +22,7 @@ import {
   submitBatchAttendance,
   clearError,
   fetchFavoriteLessons,
+  createAbsenceSession,
 } from "@/features/teacher";
 import { fetchLessons } from "@/features/lesson";
 import {
@@ -56,6 +57,7 @@ export function AbsenceEntryContent({ role }: AbsenceEntryContentProps) {
     fetchSubjectsState,
     submitAttendanceState,
     favoriteLessonIds,
+    createAbsenceSessionState,
   } = useAppSelector((state) => state.teacher);
 
   const { lessons: apiLessons } = useAppSelector((state) => state.lesson);
@@ -64,7 +66,12 @@ export function AbsenceEntryContent({ role }: AbsenceEntryContentProps) {
     number | null
   >(null);
   const [selectedSection, setSelectedSection] = useState<string>("");
-  const [currentDate, setCurrentDate] = useState<Date>(new Date());
+  const [currentDate, setCurrentDate] = useState<Date>(() => {
+    const today = new Date();
+    if (today.getDay() === 5) today.setDate(today.getDate() - 1); // If Friday, default to Thursday
+    else if (today.getDay() === 6) today.setDate(today.getDate() + 1); // If Saturday, default to Sunday
+    return today;
+  });
   const [absentStudents, setAbsentStudents] = useState<Set<string>>(new Set());
   const [absentReason, setAbsentReason] = useState<ReasonMap>({});
   const [absenceType, setAbsenceType] = useState<AbsenceTypeMap>({});
@@ -101,6 +108,9 @@ export function AbsenceEntryContent({ role }: AbsenceEntryContentProps) {
 
     return true;
   }, [selectedSection, absentStudents, selectedLessonIds, defaultLessonIds]);
+
+  // True when lessons are picked but no students are marked as absent
+  const isAllPresent = defaultLessonIds.length > 0 && absentStudents.size === 0;
 
   // Load favorite lessons when subject or date changes
   useEffect(() => {
@@ -265,6 +275,12 @@ export function AbsenceEntryContent({ role }: AbsenceEntryContentProps) {
   const handleSubmitClick = () => {
     if (!canRecordAttendance) return;
 
+    // "All present" path: lessons selected but no absent students — show confirm first
+    if (isAllPresent) {
+      setShowConfirmDialog(true);
+      return;
+    }
+
     const studentsMissingLessons = Array.from(absentStudents).filter(
       (studentId) => {
         const lessonIds = selectedLessonIds[studentId] || [];
@@ -283,6 +299,28 @@ export function AbsenceEntryContent({ role }: AbsenceEntryContentProps) {
 
   const handleConfirmSubmit = async () => {
     setShowConfirmDialog(false);
+
+    // "All present" path: call createAbsenceSession
+    if (isAllPresent) {
+      try {
+        await dispatch(
+          createAbsenceSession({
+            subjectId: Number(selectedSection),
+            date: formatDate(currentDate),
+            lessonIds: defaultLessonIds,
+          }),
+        ).unwrap();
+        setSubmittedAbsentCount(0);
+        setShowSuccessDialog(true);
+      } catch (error: any) {
+        let errorMsg = "فشل في تسجيل الحضور. يرجى المحاولة مرة أخرى.";
+        if (typeof error === "string") errorMsg = error;
+        else if (error?.message) errorMsg = error.message;
+        setErrorMessage(errorMsg);
+        setShowErrorDialog(true);
+      }
+      return;
+    }
 
     try {
       const attendanceItems: StudentAttendanceItem[] = Array.from(
@@ -392,6 +430,8 @@ export function AbsenceEntryContent({ role }: AbsenceEntryContentProps) {
         defaultLessonIds={defaultLessonIds}
         onDefaultLessonIdsChange={handleDefaultLessonIdsChange}
         isSubmitting={submitAttendanceState.isLoading}
+        isCreatingSession={createAbsenceSessionState.isLoading}
+        isAllPresent={isAllPresent}
         subjectHelperText={
           fetchSubjectsState.error
             ? fetchSubjectsState.error

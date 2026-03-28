@@ -12,6 +12,8 @@ import {
   SubjectAbsenceDataResponse,
 } from "./teacherTypes";
 import { DetailedSubjectResponse } from "@/features/subject/subjectTypes";
+import { absenceService } from "@/features/absence/absenceService";
+import { CreateAbsenceSessionDto } from "@/features/absence/absenceTypes";
 
 const initialState: TeacherState = {
   activeAcademicYears: [],
@@ -19,6 +21,7 @@ const initialState: TeacherState = {
   subjects: [],
   students: [],
   absences: [],
+  audiencePercent: 0,
   absenceSession: null,
   subjectName: "",
   serverTime: null,
@@ -57,6 +60,10 @@ const initialState: TeacherState = {
     deletingId: null,
   },
   fetchFavoriteLessonsState: {
+    isLoading: false,
+    error: null,
+  },
+  createAbsenceSessionState: {
     isLoading: false,
     error: null,
   },
@@ -168,7 +175,7 @@ export const updateAbsenceBatch = createAsyncThunk(
       dispatch(
         fetchAbsenceSession({
           subjectId: data.subjectId,
-          date: data.date,
+          date: new Date(data.date).toISOString().split("T")[0],
           academicYearId: data.academicYearId,
         }),
       );
@@ -268,6 +275,20 @@ export const fetchFavoriteLessons = createAsyncThunk(
         return rejectWithValue(error.message);
       }
       return rejectWithValue("Failed to fetch favorite lessons");
+    }
+  },
+);
+
+export const createAbsenceSession = createAsyncThunk(
+  "teacher/createAbsenceSession",
+  async (data: CreateAbsenceSessionDto, { rejectWithValue }) => {
+    try {
+      await absenceService.createAbsenceSession(data);
+    } catch (error) {
+      if (error instanceof Error) {
+        return rejectWithValue(error.message);
+      }
+      return rejectWithValue("Failed to create absence session");
     }
   },
 );
@@ -374,6 +395,7 @@ const teacherSlice = createSlice({
           state.fetchStudentsState.isLoading = false;
           state.students = action.payload.students;
           state.subjectName = action.payload.subjectName;
+          state.audiencePercent = action.payload.audiencePercent;
           state.fetchStudentsState.error = null;
         },
       )
@@ -486,7 +508,20 @@ const teacherSlice = createSlice({
           state.fetchSubjectAbsenceDataState.isLoading = false;
           state.fetchSubjectAbsenceDataState.error = action.payload as string;
         },
-      );
+      )
+      // createAbsenceSession
+      .addCase(createAbsenceSession.pending, (state) => {
+        state.createAbsenceSessionState.isLoading = true;
+        state.createAbsenceSessionState.error = null;
+      })
+      .addCase(createAbsenceSession.fulfilled, (state) => {
+        state.createAbsenceSessionState.isLoading = false;
+        state.createAbsenceSessionState.error = null;
+      })
+      .addCase(createAbsenceSession.rejected, (state, action) => {
+        state.createAbsenceSessionState.isLoading = false;
+        state.createAbsenceSessionState.error = action.payload as string;
+      });
   },
 });
 

@@ -65,6 +65,9 @@ type AbsenceEntrySectionProps = {
   defaultLessonIds: number[];
   onDefaultLessonIdsChange: (lessonIds: number[]) => void;
   isSubmitting?: boolean;
+  isCreatingSession?: boolean;
+  /** When lessons are selected but no students are marked absent */
+  isAllPresent?: boolean;
   /** Shown under subject dropdown when no subjects or fetch error */
   subjectHelperText?: string | null;
   /** When true, helper text is styled as error (red); otherwise amber for info */
@@ -97,6 +100,8 @@ export function AbsenceEntrySection({
   defaultLessonIds,
   onDefaultLessonIdsChange,
   isSubmitting = false,
+  isCreatingSession = false,
+  isAllPresent = false,
   subjectHelperText,
   subjectHelperIsError = false,
 }: AbsenceEntrySectionProps) {
@@ -322,13 +327,20 @@ export function AbsenceEntrySection({
           <Button
             onClick={onSubmit}
             disabled={
-              !canRecordAttendance || isSubmitting || absentStudents.size === 0
+              !canRecordAttendance ||
+              isSubmitting ||
+              isCreatingSession ||
+              (defaultLessonIds.length === 0 && absentStudents.size === 0)
             }
             className="w-full md:w-auto h-12 md:h-11 bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-md shadow-blue-200 transition-all font-bold active:scale-[0.98]"
           >
-            {isSubmitting
+            {isCreatingSession
               ? "جاري الحفظ..."
-              : `حفظ الغياب (${absentStudents.size})`}
+              : isSubmitting
+                ? "جاري الحفظ..."
+                : isAllPresent
+                  ? "الجميع حضور"
+                  : `حفظ الغياب (${absentStudents.size})`}
           </Button>
           <Button
             variant="outline"

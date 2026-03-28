@@ -101,6 +101,7 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
     if (pathname.includes("/admin/students")) return "students";
     if (pathname.includes("/admin/teachers")) return "teachers";
     if (pathname.includes("/admin/warnings")) return "warnings";
+    if (pathname.includes("/admin/analytics")) return "analytics";
     return "majors";
   }, [pathname]);
 

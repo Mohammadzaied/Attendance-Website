@@ -98,7 +98,7 @@ export function AbsenceMatrix({
           </div>
           <div>
             <h3 className="text-sm font-black text-gray-900">
-              تقرير الحضور — {monthYear}
+              تقرير الغياب — {monthYear}
             </h3>
             <p className="text-[10px] text-blue-600 font-black uppercase tracking-widest mt-0.5">
               {subjectName}
@@ -133,8 +133,12 @@ export function AbsenceMatrix({
           <thead className="sticky top-0 z-30">
             <tr className="bg-white">
               <th
-                className="sticky right-0 z-40 bg-white pr-3 pl-1 py-3 text-right font-black text-gray-900 text-[10px] border-b-2 border-l-2 border-slate-100"
-                style={{ minWidth: "150px" }}
+                className="sticky right-0 z-40 bg-white px-2 py-3 text-right font-black text-gray-900 text-[10px] border-b-2 border-l-2 border-slate-100"
+                style={
+                  isMobile
+                    ? { width: "70px", minWidth: "70px", maxWidth: "70px" }
+                    : { minWidth: "150px", maxWidth: "150px" }
+                }
               >
                 اسم الطالب
               </th>
@@ -164,8 +168,18 @@ export function AbsenceMatrix({
                 className={`group transition-colors ${idx % 2 === 0 ? "bg-white" : "bg-slate-50/30"}`}
               >
                 {/* Name */}
-                <td className="sticky right-0 z-20 bg-white pr-3 pl-1 py-2 text-right border-l-2 border-b border-slate-50 transition-colors group-hover:bg-blue-50/30">
-                  <span className="text-[11px] font-black text-gray-900 whitespace-nowrap">
+                <td
+                  className="sticky right-0 z-20 bg-white px-2 py-2 text-right border-l-2 border-b border-slate-50 transition-colors group-hover:bg-blue-50/30"
+                  style={
+                    isMobile
+                      ? { width: "70px", minWidth: "70px", maxWidth: "70px" }
+                      : { minWidth: "150px", maxWidth: "150px" }
+                  }
+                >
+                  <div
+                    className="text-[11px] font-black text-gray-900 truncate"
+                    title={row.studentName}
+                  >
                     {isMobile
                       ? (() => {
                           const parts = row.studentName.split(" ");
@@ -174,7 +188,7 @@ export function AbsenceMatrix({
                             : parts[0];
                         })()
                       : row.studentName}
-                  </span>
+                  </div>
                 </td>
 
                 {/* Day cells */}

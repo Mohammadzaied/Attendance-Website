@@ -1,4 +1,4 @@
-import { FileUser } from "lucide-react";
+import { FileUser, BarChart3 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useMemo } from "react";
 
@@ -73,6 +73,13 @@ export const useAdminSidebarItems = (
         href: "/admin/warnings",
         onClick: () => router.push("/admin/warnings"),
         isActive: activeSection === "warnings",
+      },
+      {
+        label: "الإحصائيات",
+        icon: <BarChart3 className="h-5 w-5" />,
+        href: "/admin/analytics",
+        onClick: () => router.push("/admin/analytics"),
+        isActive: activeSection === "analytics",
       },
     ],
     [activeSection, router],
@@ -290,6 +297,13 @@ export const useDepartmentHeadSidebarItems = (
         href: "/department-head/warnings",
         onClick: () => router.push("/department-head/warnings"),
         isActive: activeSection === "warnings",
+      },
+      {
+        label: "الإحصائيات",
+        icon: <BarChart3 className="h-5 w-5" />,
+        href: "/department-head/analytics",
+        onClick: () => router.push("/department-head/analytics"),
+        isActive: activeSection === "analytics",
       },
     ],
     [activeSection, router],

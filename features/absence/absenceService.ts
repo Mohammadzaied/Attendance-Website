@@ -1,7 +1,7 @@
 import { apiClient } from "@/lib/api";
 import { ApiResponse } from "@/lib/ApiResponse";
 import { StudentAbsenceGroupByDateResponse } from "@/features/teacher/teacherTypes";
-import { EditAbsenceStatusDto, ExcuseAbsencesDto, ExcuseAbsencesResponse } from "./absenceTypes";
+import { EditAbsenceStatusDto, ExcuseAbsencesDto, ExcuseAbsencesResponse, CreateAbsenceSessionDto } from "./absenceTypes";
 
 const ABSENCES_ENDPOINT = "Absences";
 
@@ -47,5 +47,12 @@ export const absenceService = {
       data,
     );
     return response.data;
+  },
+
+  /**
+   * Create a new absence session
+   */
+  async createAbsenceSession(data: CreateAbsenceSessionDto): Promise<void> {
+    await apiClient.post(`${ABSENCES_ENDPOINT}/Session`, data);
   },
 };

@@ -98,4 +98,5 @@ export interface AcademicStatisticsResponse {
   studentCountSpecialization: number;
   subjectCount: number;
   studentCount: number;
+  audiencePercent: number;
 }

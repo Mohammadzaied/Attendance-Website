@@ -49,7 +49,7 @@ export function SpecializationSearchSelect({
           role="combobox"
           aria-expanded={open}
           disabled={disabled}
-          className="w-full justify-between text-right font-normal h-11 border-gray-200 bg-gray-50/30"
+          className="w-full justify-between text-right font-normal h-9! border-gray-200 bg-gray-50/30"
         >
           {selectedSpecialization ? (
             <span className="truncate">{selectedSpecialization.name}</span>

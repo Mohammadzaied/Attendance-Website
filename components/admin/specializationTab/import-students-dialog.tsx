@@ -186,7 +186,7 @@ export function ImportStudentsDialog({
         <Button
           variant="outline"
           size="sm"
-          className="bg-green-600 hover:bg-green-700 text-white border-green-700 gap-2 cursor-pointer shadow-sm"
+          className="bg-green-600 hover:bg-green-700 text-white h-10 md:h-9  border-green-700 gap-2 cursor-pointer shadow-sm"
           disabled={disabled}
         >
           <FileUp className="h-4 w-4" />

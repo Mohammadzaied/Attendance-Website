@@ -36,3 +36,9 @@ export interface ExcuseAbsencesResponse {
   totalSubjectsAffected: number;
   subjectDetails: ExcuseAbsenceSubjectDetail[];
 }
+
+export interface CreateAbsenceSessionDto {
+  subjectId: number;
+  date: string;
+  lessonIds?: number[] | null;
+}

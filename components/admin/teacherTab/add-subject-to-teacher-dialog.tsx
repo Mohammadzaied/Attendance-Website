@@ -18,11 +18,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { BookOpen, Plus, Loader2 } from "lucide-react";
+import { BookOpen, Plus, Loader2, Trash2 } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   fetchSpecializations,
-  createSubjectToTeacherThunk,
+  createSubjectsToTeacherBatchThunk,
 } from "@/features/specialization/specializationsSlice";
 import { SpecializationSearchSelect } from "./specialization-search-select";
 import { TeacherResponse } from "@/features/admin";
@@ -45,66 +45,96 @@ export function AddSubjectToTeacherDialog({
     (state) => state.specializations,
   );
 
-  const [formData, setFormData] = useState({
+  type SubjectRow = {
+    name: string;
+    specializationId: number | "";
+    studyYear: string;
+    numberOfHours: number;
+  };
+  const emptyRow = (): SubjectRow => ({
     name: "",
-    specializationId: "" as number | "",
+    specializationId: "",
     studyYear: "1",
-    numberOfHours: "3",
+    numberOfHours: 3,
   });
 
+  const [subjectRows, setSubjectRows] = useState<SubjectRow[]>([emptyRow()]);
   const [error, setError] = useState<string | null>(null);
+
+  const updateSubjectRow = (
+    index: number,
+    field: keyof SubjectRow,
+    value: string | number,
+  ) => {
+    setSubjectRows((rows) =>
+      rows.map((r, i) => (i === index ? { ...r, [field]: value } : r)),
+    );
+  };
+
+  const addSubjectRow = () => {
+    setSubjectRows((rows) => [...rows, emptyRow()]);
+  };
+
+  const removeSubjectRow = (index: number) => {
+    setSubjectRows((rows) => rows.filter((_, i) => i !== index));
+  };
 
   useEffect(() => {
     if (open) {
       dispatch(fetchSpecializations());
       // Reset form
-      setFormData({
-        name: "",
-        specializationId: "" as number | "",
-        studyYear: "1",
-        numberOfHours: "3",
-      });
+      setSubjectRows([emptyRow()]);
       setError(null);
     }
   }, [open, dispatch]);
 
   const handleSubmit = async () => {
     if (!teacher) return;
-    if (!formData.name || !formData.specializationId) {
-      setError("يرجى ملء جميع الحقول المطلوبة");
+
+    // Validate all rows
+    const invalidRow = subjectRows.find(
+      (r) =>
+        !r.name.trim() ||
+        r.specializationId === "" ||
+        !r.studyYear ||
+        !r.numberOfHours,
+    );
+
+    if (invalidRow) {
+      setError("يرجى إدخال اسم المادة والتخصص لجميع الصفوف");
       return;
     }
 
     try {
       await dispatch(
-        createSubjectToTeacherThunk({
-          name: formData.name,
-          specializationId: Number(formData.specializationId),
-          studyYear: Number(formData.studyYear),
-          teacherId: teacher.userId,
-          numberOfHours: Number(formData.numberOfHours),
-        }),
+        createSubjectsToTeacherBatchThunk(
+          subjectRows.map((r) => ({
+            name: r.name,
+            specializationId: Number(r.specializationId),
+            studyYear: Number(r.studyYear),
+            teacherId: teacher.userId,
+            numberOfHours: Number(r.numberOfHours),
+          })),
+        ),
       ).unwrap();
 
       // Reset form to allow adding more subjects
-      setFormData({
-        name: "",
-        specializationId: "" as number | "",
-        studyYear: "1",
-        numberOfHours: "3",
-      });
+      setSubjectRows([emptyRow()]);
       setError(null);
 
       onSuccess?.();
-      // Removed onOpenChange(false) to keep dialog open
+      onOpenChange(false); // Close dialog on success
     } catch (err: any) {
-      setError(err || "فشل في إضافة المادة للمعلم");
+      setError(err || "فشل في إضافة المواد للمعلم");
     }
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px]" dir="rtl">
+      <DialogContent
+        className="sm:max-w-[800px] w-[95vw] max-h-[90vh] overflow-y-auto"
+        dir="rtl"
+      >
         <DialogHeader>
           <DialogTitle className="text-right flex items-center gap-2 text-xl font-bold">
             <BookOpen className="h-5 w-5 text-blue-600" />
@@ -119,74 +149,104 @@ export function AddSubjectToTeacherDialog({
             </div>
           )}
 
-          <div className="grid gap-2 text-right">
-            <Label htmlFor="specialization" className="font-bold text-gray-700">
-              التخصص
-            </Label>
-            <SpecializationSearchSelect
-              specializations={specializations}
-              value={formData.specializationId}
-              onValueChange={(val) => {
-                setFormData({ ...formData, specializationId: val });
-              }}
-            />
+          {/* Column headers */}
+          <div className="grid grid-cols-[1fr_2fr_100px_80px_36px] gap-2 mb-2 px-1 text-right">
+            <span className="text-sm font-bold text-gray-600">
+              التخصص <span className="text-red-500">*</span>
+            </span>
+            <span className="text-sm font-bold text-gray-600">
+              اسم المادة <span className="text-red-500">*</span>
+            </span>
+            <span className="text-sm font-bold text-gray-600">السنة</span>
+            <span className="text-sm font-bold text-gray-600">عدد الحصص</span>
+            <span />
           </div>
 
-          <div className="grid gap-2 text-right">
-            <Label htmlFor="studyYear" className="font-bold text-gray-700">
-              السنة الدراسية
-            </Label>
-            <Select
-              dir="rtl"
-              value={formData.studyYear}
-              onValueChange={(val) => {
-                setFormData({ ...formData, studyYear: val });
-              }}
-            >
-              <SelectTrigger className="h-11 bg-gray-50/30 border-gray-200">
-                <SelectValue placeholder="اختر السنة الدراسية" />
-              </SelectTrigger>
-              <SelectContent dir="rtl">
-                <SelectItem value="1">سنة أولى</SelectItem>
-                <SelectItem value="2">سنة ثانية</SelectItem>
-              </SelectContent>
-            </Select>
+          <div className="space-y-2 max-h-[50vh] overflow-y-auto pr-1">
+            {subjectRows.map((row, index) => (
+              <div
+                key={index}
+                className="grid grid-cols-[1fr_2fr_100px_80px_36px] gap-2 items-center bg-gray-50/60 rounded-lg p-2 border border-gray-100 text-right"
+              >
+                <div className="w-[180px]">
+                  <SpecializationSearchSelect
+                    specializations={specializations}
+                    value={row.specializationId}
+                    onValueChange={(val) => {
+                      updateSubjectRow(index, "specializationId", val);
+                    }}
+                  />
+                </div>
+
+                <Input
+                  id="name"
+                  placeholder="مثال: برمجة الويب"
+                  value={row.name}
+                  onChange={(e) => {
+                    updateSubjectRow(index, "name", e.target.value);
+                  }}
+                  className="h-9! bg-white border-gray-200 text-right w-full"
+                  dir="rtl"
+                />
+
+                <Select
+                  dir="rtl"
+                  value={row.studyYear}
+                  onValueChange={(val) => {
+                    updateSubjectRow(index, "studyYear", val);
+                  }}
+                >
+                  <SelectTrigger className="h-11 bg-white border-gray-200">
+                    <SelectValue placeholder="سنة" />
+                  </SelectTrigger>
+                  <SelectContent dir="rtl">
+                    <SelectItem value="1">سنة أولى</SelectItem>
+                    <SelectItem value="2">سنة ثانية</SelectItem>
+                  </SelectContent>
+                </Select>
+
+                <Input
+                  id="numberOfHours"
+                  type="number"
+                  min="1"
+                  max="100"
+                  placeholder="3"
+                  value={row.numberOfHours}
+                  onChange={(e) => {
+                    updateSubjectRow(
+                      index,
+                      "numberOfHours",
+                      Number(e.target.value),
+                    );
+                  }}
+                  className="h-9! bg-white border-gray-200 text-right w-full"
+                  dir="rtl"
+                />
+
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  disabled={subjectRows.length === 1}
+                  onClick={() => removeSubjectRow(index)}
+                  className="h-9 w-9 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg disabled:opacity-30"
+                  type="button"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
+            ))}
           </div>
 
-          <div className="grid gap-2 text-right">
-            <Label htmlFor="name" className="font-bold text-gray-700">
-              اسم المادة
-            </Label>
-            <Input
-              id="name"
-              placeholder="مثال: برمجة الويب"
-              value={formData.name}
-              onChange={(e) => {
-                setFormData({ ...formData, name: e.target.value });
-              }}
-              className="h-11 bg-gray-50/30 border-gray-200 text-right"
-              dir="rtl"
-            />
-          </div>
-
-          <div className="grid gap-2 text-right">
-            <Label htmlFor="numberOfHours" className="font-bold text-gray-700">
-              عدد الحصص
-            </Label>
-            <Input
-              id="numberOfHours"
-              type="number"
-              min="1"
-              max="100"
-              placeholder="مثال: 3"
-              value={formData.numberOfHours}
-              onChange={(e) => {
-                setFormData({ ...formData, numberOfHours: e.target.value });
-              }}
-              className="h-11 bg-gray-50/30 border-gray-200 text-right"
-              dir="rtl"
-            />
-          </div>
+          {/* Add another row button */}
+          <Button
+            type="button"
+            variant="outline"
+            onClick={addSubjectRow}
+            className="mt-3 w-full border-dashed border-blue-300 text-blue-600 hover:bg-blue-50 hover:border-blue-400 gap-2 h-10 font-bold"
+          >
+            <Plus className="h-4 w-4" />
+            إضافة مادة أخرى
+          </Button>
         </div>
 
         <DialogFooter className="flex flex-col-reverse sm:flex-row sm:justify-end gap-3 mt-6">
@@ -212,7 +272,10 @@ export function AddSubjectToTeacherDialog({
             ) : (
               <>
                 <Plus className="ml-2 h-4 w-4" />
-                إضافة المادة
+                حفظ{" "}
+                {subjectRows.length > 1
+                  ? subjectRows.length + " مواد"
+                  : "المادة"}
               </>
             )}
           </Button>

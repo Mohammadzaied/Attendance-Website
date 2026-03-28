@@ -227,7 +227,6 @@ export function AbsencesList({
         const allLessonIds = student.lessons.map((l) => l.lessonId);
         const stateKey = `${student.studentAcademicInfoId}-${student.status}`;
 
-        console.log(availableLessons);
         // Separate valid and orphaned lessons
         const validLessonIds = allLessonIds.filter((id) =>
           availableLessonIds.has(id),
@@ -236,9 +235,6 @@ export function AbsencesList({
           (id) => !availableLessonIds.has(id),
         );
 
-        console.log(allLessonIds);
-        console.log(availableLessonIds);
-        console.log(orphanedLessonIds);
         // Get names of orphaned lessons from the original data
         const orphanedLessonNames = student.lessons
           .filter((l) => orphanedLessonIds.includes(l.lessonId))

@@ -20,6 +20,7 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
     if (pathname.includes("/department-head/students")) return "students";
     if (pathname.includes("/department-head/warnings")) return "warnings";
     if (pathname.includes("/department-head/specializations")) return "specializations";
+    if (pathname.includes("/department-head/analytics")) return "analytics";
     if (pathname.includes("/department-head/entry")) return "entry";
     return "entry";
   }, [pathname]);

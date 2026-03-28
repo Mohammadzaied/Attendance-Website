@@ -396,32 +396,62 @@ export const fetchAcademicStatistics = createAsyncThunk(
   },
 );
 
-export const createSubjectThunk = createAsyncThunk(
-  "specializations/createSubject",
-  async (data: CreateSubjectDto, { rejectWithValue }) => {
+// export const createSubjectThunk = createAsyncThunk(
+//   "specializations/createSubject",
+//   async (data: CreateSubjectDto, { rejectWithValue }) => {
+//     try {
+//       const response = await subjectService.createSubject(data);
+//       return response;
+//     } catch (error) {
+//       if (error instanceof Error) {
+//         return rejectWithValue(error.message);
+//       }
+//       return rejectWithValue("Failed to create subject");
+//     }
+//   },
+// );
+
+export const createSubjectsBatchThunk = createAsyncThunk(
+  "specializations/createSubjectsBatch",
+  async (data: CreateSubjectDto[], { rejectWithValue }) => {
     try {
-      const response = await subjectService.createSubject(data);
+      const response = await subjectService.createSubjectsBatch(data);
       return response;
     } catch (error) {
       if (error instanceof Error) {
         return rejectWithValue(error.message);
       }
-      return rejectWithValue("Failed to create subject");
+      return rejectWithValue("Failed to create subjects");
     }
   },
 );
 
-export const createSubjectToTeacherThunk = createAsyncThunk(
-  "specializations/createSubjectToTeacher",
-  async (data: CreateSubjectToTeacherDto, { rejectWithValue }) => {
+// export const createSubjectToTeacherThunk = createAsyncThunk(
+//   "specializations/createSubjectToTeacher",
+//   async (data: CreateSubjectToTeacherDto, { rejectWithValue }) => {
+//     try {
+//       const response = await subjectService.createSubjectToTeacher(data);
+//       return response;
+//     } catch (error) {
+//       if (error instanceof Error) {
+//         return rejectWithValue(error.message);
+//       }
+//       return rejectWithValue("Failed to create subject for teacher");
+//     }
+//   },
+// );
+
+export const createSubjectsToTeacherBatchThunk = createAsyncThunk(
+  "specializations/createSubjectsToTeacherBatch",
+  async (data: CreateSubjectToTeacherDto[], { rejectWithValue }) => {
     try {
-      const response = await subjectService.createSubjectToTeacher(data);
+      const response = await subjectService.createSubjectsToTeacherBatch(data);
       return response;
     } catch (error) {
       if (error instanceof Error) {
         return rejectWithValue(error.message);
       }
-      return rejectWithValue("Failed to create subject for teacher");
+      return rejectWithValue("Failed to create subjects for teacher");
     }
   },
 );
@@ -830,27 +860,51 @@ const specializationsSlice = createSlice({
         state.fetchStatsState.isLoading = false;
         state.fetchStatsState.error = action.payload as string;
       })
-      .addCase(createSubjectThunk.pending, (state) => {
+      // .addCase(createSubjectThunk.pending, (state) => {
+      //   state.createSubjectState.isLoading = true;
+      //   state.createSubjectState.error = null;
+      // })
+      // .addCase(createSubjectThunk.fulfilled, (state) => {
+      //   state.createSubjectState.isLoading = false;
+      //   state.createSubjectState.error = null;
+      // })
+      // .addCase(createSubjectThunk.rejected, (state, action) => {
+      //   state.createSubjectState.isLoading = false;
+      //   state.createSubjectState.error = action.payload as string;
+      // })
+      .addCase(createSubjectsBatchThunk.pending, (state) => {
         state.createSubjectState.isLoading = true;
         state.createSubjectState.error = null;
       })
-      .addCase(createSubjectThunk.fulfilled, (state) => {
+      .addCase(createSubjectsBatchThunk.fulfilled, (state) => {
         state.createSubjectState.isLoading = false;
         state.createSubjectState.error = null;
       })
-      .addCase(createSubjectThunk.rejected, (state, action) => {
+      .addCase(createSubjectsBatchThunk.rejected, (state, action) => {
         state.createSubjectState.isLoading = false;
         state.createSubjectState.error = action.payload as string;
       })
-      .addCase(createSubjectToTeacherThunk.pending, (state) => {
+      // .addCase(createSubjectToTeacherThunk.pending, (state) => {
+      //   state.createSubjectToTeacherState.isLoading = true;
+      //   state.createSubjectToTeacherState.error = null;
+      // })
+      // .addCase(createSubjectToTeacherThunk.fulfilled, (state) => {
+      //   state.createSubjectToTeacherState.isLoading = false;
+      //   state.createSubjectToTeacherState.error = null;
+      // })
+      // .addCase(createSubjectToTeacherThunk.rejected, (state, action) => {
+      //   state.createSubjectToTeacherState.isLoading = false;
+      //   state.createSubjectToTeacherState.error = action.payload as string;
+      // })
+      .addCase(createSubjectsToTeacherBatchThunk.pending, (state) => {
         state.createSubjectToTeacherState.isLoading = true;
         state.createSubjectToTeacherState.error = null;
       })
-      .addCase(createSubjectToTeacherThunk.fulfilled, (state) => {
+      .addCase(createSubjectsToTeacherBatchThunk.fulfilled, (state) => {
         state.createSubjectToTeacherState.isLoading = false;
         state.createSubjectToTeacherState.error = null;
       })
-      .addCase(createSubjectToTeacherThunk.rejected, (state, action) => {
+      .addCase(createSubjectsToTeacherBatchThunk.rejected, (state, action) => {
         state.createSubjectToTeacherState.isLoading = false;
         state.createSubjectToTeacherState.error = action.payload as string;
       })

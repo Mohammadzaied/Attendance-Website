@@ -80,7 +80,8 @@ import {
   fetchAcademicYears,
   fetchSpecializations,
   fetchSubjectsBySpecializationThunk,
-  createSubjectThunk,
+  // createSubjectThunk,
+  createSubjectsBatchThunk,
   updateSubjectThunk,
   deleteSubjectThunk,
   clearSubjects,
@@ -140,6 +141,39 @@ export function StudyYearDetail({
     teacherName: "",
     numberOfHours: 3,
   });
+
+  // Multi-subject add rows
+  type SubjectRow = {
+    name: string;
+    teacherId: string;
+    teacherName: string;
+    numberOfHours: number;
+  };
+  const emptyRow = (): SubjectRow => ({
+    name: "",
+    teacherId: "",
+    teacherName: "",
+    numberOfHours: 3,
+  });
+  const [subjectRows, setSubjectRows] = useState<SubjectRow[]>([emptyRow()]);
+
+  const updateSubjectRow = (
+    index: number,
+    field: keyof SubjectRow,
+    value: string | number,
+  ) => {
+    setSubjectRows((rows) =>
+      rows.map((r, i) => (i === index ? { ...r, [field]: value } : r)),
+    );
+  };
+
+  const addSubjectRow = () => {
+    setSubjectRows((rows) => [...rows, emptyRow()]);
+  };
+
+  const removeSubjectRow = (index: number) => {
+    setSubjectRows((rows) => rows.filter((_, i) => i !== index));
+  };
 
   // No longer needed: availableLessons, availableDays, loadSubjectData useEffect
 
@@ -201,30 +235,73 @@ export function StudyYearDetail({
   }, [activeTab, major.id, year.semesterId, year.studyYear, dispatch]);
 
   const handleSaveSubject = async () => {
-    // Validation for name and teacher
-    if (!subjectForm.name.trim() || !subjectForm.teacherId) {
-      setStatusDialog({
-        isOpen: true,
-        title: "تنبيه التحقق",
-        message: "يرجى إدخال اسم المادة واختيار المعلم",
-        type: "warning",
-      });
-      return;
-    }
+    if (!editingSubject) {
+      // Batch add mode — validate all rows
+      const invalidRow = subjectRows.find(
+        (r) => !r.name.trim() || !r.teacherId,
+      );
+      if (invalidRow) {
+        setStatusDialog({
+          isOpen: true,
+          title: "تنبيه التحقق",
+          message: "يرجى إدخال اسم المادة واختيار المعلم لجميع الصفوف",
+          type: "warning",
+        });
+        return;
+      }
 
-    try {
-      if (!editingSubject) {
+      try {
         await dispatch(
-          createSubjectThunk({
-            name: subjectForm.name,
+          createSubjectsBatchThunk(
+            subjectRows.map((r) => ({
+              name: r.name,
+              specializationId: Number(major.id),
+              semesterId: year.semesterId,
+              studyYear: year.studyYear,
+              teacherId: r.teacherId,
+              numberOfHours: r.numberOfHours,
+            })),
+          ),
+        ).unwrap();
+
+        setIsSubjectDialogOpen(false);
+        setSubjectRows([emptyRow()]);
+        dispatch(
+          fetchSubjectsBySpecializationThunk({
             specializationId: Number(major.id),
             semesterId: year.semesterId,
             studyYear: year.studyYear,
-            teacherId: subjectForm.teacherId,
-            numberOfHours: subjectForm.numberOfHours,
           }),
-        ).unwrap();
-      } else {
+        );
+        onUpdateYear(year);
+        setStatusDialog({
+          isOpen: true,
+          title: "تمت العملية بنجاح",
+          message: `تم إضافة ${subjectRows.length} مادة بنجاح`,
+          type: "success",
+        });
+      } catch (error: any) {
+        console.error("Failed to save subjects:", error);
+        setStatusDialog({
+          isOpen: true,
+          title: "خطأ في إضافة المواد",
+          message: error || "حدث خطأ غير متوقع أثناء معالجة طلبك",
+          type: "error",
+        });
+      }
+    } else {
+      // Edit single subject
+      if (!subjectForm.name.trim() || !subjectForm.teacherId) {
+        setStatusDialog({
+          isOpen: true,
+          title: "تنبيه التحقق",
+          message: "يرجى إدخال اسم المادة واختيار المعلم",
+          type: "warning",
+        });
+        return;
+      }
+
+      try {
         await dispatch(
           updateSubjectThunk({
             id: editingSubject.subjectId,
@@ -235,42 +312,38 @@ export function StudyYearDetail({
             },
           }),
         ).unwrap();
+
+        setIsSubjectDialogOpen(false);
+        setEditingSubject(null);
+        setSubjectForm({
+          name: "",
+          teacherId: "",
+          teacherName: "",
+          numberOfHours: 3,
+        });
+        dispatch(
+          fetchSubjectsBySpecializationThunk({
+            specializationId: Number(major.id),
+            semesterId: year.semesterId,
+            studyYear: year.studyYear,
+          }),
+        );
+        onUpdateYear(year);
+        setStatusDialog({
+          isOpen: true,
+          title: "تمت العملية بنجاح",
+          message: "تم تعديل المادة بنجاح",
+          type: "success",
+        });
+      } catch (error: any) {
+        console.error("Failed to save subject:", error);
+        setStatusDialog({
+          isOpen: true,
+          title: "خطأ في تعديل المادة",
+          message: error || "حدث خطأ غير متوقع أثناء معالجة طلبك",
+          type: "error",
+        });
       }
-
-      setIsSubjectDialogOpen(false);
-      setEditingSubject(null);
-      setSubjectForm({
-        name: "",
-        teacherId: "",
-        teacherName: "",
-        numberOfHours: 3,
-      });
-      // Refresh the subjects list from backend
-      dispatch(
-        fetchSubjectsBySpecializationThunk({
-          specializationId: Number(major.id),
-          semesterId: year.semesterId,
-          studyYear: year.studyYear,
-        }),
-      );
-      onUpdateYear(year);
-
-      setStatusDialog({
-        isOpen: true,
-        title: editingSubject ? "تمت العملية بنجاح" : "تمت العملية بنجاح",
-        message: editingSubject
-          ? "تم تعديل المادة بنجاح"
-          : "تم إضافة المادة الجديدة بنجاح",
-        type: "success",
-      });
-    } catch (error: any) {
-      console.error("Failed to save subject:", error);
-      setStatusDialog({
-        isOpen: true,
-        title: editingSubject ? "خطأ في تعديل المادة" : "خطأ في إضافة المادة",
-        message: error || "حدث خطأ غير متوقع أثناء معالجة طلبك",
-        type: "error",
-      });
     }
   };
 
@@ -944,34 +1017,33 @@ export function StudyYearDetail({
                 teacherName: "",
                 numberOfHours: 3,
               });
+              setSubjectRows([emptyRow()]);
               setIsEditMode(false);
             }, 100);
           }
         }}
       >
         <DialogContent
-          className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto"
+          className="sm:max-w-[900px] w-[95vw] max-h-[90vh] overflow-y-auto"
           onInteractOutside={(e) => e.preventDefault()}
         >
           <DialogHeader>
-            <DialogTitle className="text-right flex items-center justify-between gap-2">
-              <div className="flex items-center gap-2">
-                {editingSubject ? <div>تفاصيل المادة</div> : "إضافة مادة جديدة"}
-              </div>
+            <DialogTitle className="text-right flex items-center gap-2">
+              {editingSubject ? "تفاصيل المادة" : "إضافة مواد جديدة"}
             </DialogTitle>
           </DialogHeader>
-          <div className="grid gap-6 py-4" dir="rtl">
-            {editingSubject && (
-              <div className="flex items-center justify-between bg-amber-50/50 p-3 rounded-xl border border-amber-100 mb-2">
+
+          {/* EDIT MODE — single subject */}
+          {editingSubject && (
+            <div className="grid gap-4 py-4" dir="rtl">
+              <div className="flex items-center justify-between bg-amber-50/50 p-3 rounded-xl border border-amber-100">
                 <div className="flex items-center gap-2">
                   <Checkbox
                     id="edit-mode"
                     checked={isEditMode}
                     onCheckedChange={(val) => {
                       setIsEditMode(!!val);
-                      if (!!val) {
-                        dispatch(fetchTeachersList());
-                      }
+                      if (!!val) dispatch(fetchTeachersList());
                     }}
                     className="border-amber-400 data-[state=checked]:bg-amber-600 data-[state=checked]:border-amber-600"
                   />
@@ -983,64 +1055,142 @@ export function StudyYearDetail({
                   </Label>
                 </div>
                 <p className="text-xs text-amber-700">
-                  قم بتفعيل الخيار لتتمكن من تعديل الجدول أو بيانات المادة
+                  قم بتفعيل الخيار لتتمكن من تعديل بيانات المادة
                 </p>
               </div>
-            )}
-
-            <div className="grid gap-2">
-              <Label htmlFor="s-name" className="text-right">
-                اسم المادة
-              </Label>
-              <Input
-                id="s-name"
-                value={subjectForm.name}
-                disabled={!!editingSubject && !isEditMode}
-                onChange={(e) =>
-                  setSubjectForm({ ...subjectForm, name: e.target.value })
-                }
-                className="text-right"
-              />
+              <div className="grid grid-cols-3 gap-3">
+                <div className="grid gap-1.5">
+                  <Label className="text-right text-sm">اسم المادة</Label>
+                  <Input
+                    value={subjectForm.name}
+                    disabled={!isEditMode}
+                    onChange={(e) =>
+                      setSubjectForm({ ...subjectForm, name: e.target.value })
+                    }
+                    className="text-right h-10"
+                  />
+                </div>
+                <div className="grid gap-1.5">
+                  <Label className="text-right text-sm">المعلم</Label>
+                  <TeacherSearchSelect
+                    teachers={teachersList}
+                    value={subjectForm.teacherId}
+                    disabled={!isEditMode}
+                    onValueChange={(val) => {
+                      const teacher = teachersList.find((t) => t.id === val);
+                      setSubjectForm({
+                        ...subjectForm,
+                        teacherId: val,
+                        teacherName: teacher?.name || "",
+                      });
+                    }}
+                  />
+                </div>
+                <div className="grid gap-1.5">
+                  <Label className="text-right text-sm">عدد الحصص</Label>
+                  <Input
+                    type="number"
+                    value={subjectForm.numberOfHours}
+                    disabled={!isEditMode}
+                    onChange={(e) =>
+                      setSubjectForm({
+                        ...subjectForm,
+                        numberOfHours: Number(e.target.value),
+                      })
+                    }
+                    className="text-right h-10"
+                  />
+                </div>
+              </div>
             </div>
-            <div className="grid gap-2">
-              <Label htmlFor="s-teacher" className="text-right">
-                اسم المعلم
-              </Label>
-              <TeacherSearchSelect
-                teachers={teachersList}
-                value={subjectForm.teacherId}
-                disabled={!!editingSubject && !isEditMode}
-                onValueChange={(val) => {
-                  const teacher = teachersList.find((t) => t.id === val);
-                  setSubjectForm({
-                    ...subjectForm,
-                    teacherId: val,
-                    teacherName: teacher?.name || "",
-                  });
+          )}
+
+          {/* ADD MODE — multiple subject rows */}
+          {!editingSubject && (
+            <div className="py-4" dir="rtl">
+              {/* Column headers */}
+              <div className="grid grid-cols-[1fr_1fr_100px_36px] gap-2 mb-2 px-1">
+                <span className="text-sm font-bold text-gray-600">
+                  اسم المادة <span className="text-red-500">*</span>
+                </span>
+                <span className="text-sm font-bold text-gray-600">
+                  المعلم <span className="text-red-500">*</span>
+                </span>
+                <span className="text-sm font-bold text-gray-600">
+                  عدد الحصص
+                </span>
+                <span />
+              </div>
+
+              {/* Subject rows */}
+              <div className="space-y-2">
+                {subjectRows.map((row, index) => (
+                  <div
+                    key={index}
+                    className="grid grid-cols-[1fr_1fr_100px_36px] gap-2 items-center bg-gray-50/60 rounded-lg p-2 border border-gray-100"
+                  >
+                    <Input
+                      placeholder="اسم المادة"
+                      value={row.name}
+                      onChange={(e) =>
+                        updateSubjectRow(index, "name", e.target.value)
+                      }
+                      className="text-right h-9 bg-white"
+                    />
+                    <TeacherSearchSelect
+                      teachers={teachersList}
+                      value={row.teacherId}
+                      onValueChange={(val) => {
+                        const teacher = teachersList.find((t) => t.id === val);
+                        updateSubjectRow(index, "teacherId", val);
+                        updateSubjectRow(
+                          index,
+                          "teacherName",
+                          teacher?.name || "",
+                        );
+                      }}
+                    />
+                    <Input
+                      type="number"
+                      min={1}
+                      value={row.numberOfHours}
+                      onChange={(e) =>
+                        updateSubjectRow(
+                          index,
+                          "numberOfHours",
+                          Number(e.target.value),
+                        )
+                      }
+                      className="text-right h-9 bg-white"
+                    />
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      disabled={subjectRows.length === 1}
+                      onClick={() => removeSubjectRow(index)}
+                      className="h-9 w-9 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg disabled:opacity-30"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+
+              {/* Add another row button */}
+              <Button
+                variant="outline"
+                onClick={() => {
+                  addSubjectRow();
+                  dispatch(fetchTeachersList());
                 }}
-              />
+                className="mt-3 w-full border-dashed border-blue-300 text-blue-600 hover:bg-blue-50 hover:border-blue-400 gap-2 h-10 font-bold"
+              >
+                <Plus className="h-4 w-4" />
+                إضافة مادة أخرى
+              </Button>
             </div>
-            <div className="grid gap-2">
-              <Label htmlFor="s-hours" className="text-right">
-                عدد الحصص
-              </Label>
-              <Input
-                id="s-hours"
-                type="number"
-                value={subjectForm.numberOfHours}
-                disabled={!!editingSubject && !isEditMode}
-                onChange={(e) =>
-                  setSubjectForm({
-                    ...subjectForm,
-                    numberOfHours: Number(e.target.value),
-                  })
-                }
-                className="text-right"
-              />
-            </div>
+          )}
 
-            {/* Scheduling removed per user request */}
-          </div>
           <DialogFooter className="flex flex-row gap-2">
             {(!editingSubject || isEditMode) && (
               <>
@@ -1062,7 +1212,7 @@ export function StudyYearDetail({
                     ? "جاري الحفظ..."
                     : editingSubject
                       ? "حفظ التعديلات"
-                      : "حفظ المادة"}
+                      : `حفظ ${subjectRows.length > 1 ? subjectRows.length + " مواد" : "المادة"}`}
                 </Button>
               </>
             )}
