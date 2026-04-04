@@ -35,6 +35,16 @@ export interface TeacherResponse {
   departmentName: string;
 }
 
+export interface PaginatedTeacherResponse {
+  totalCount: number;
+  pageNumber: number;
+  pageSize: number;
+  totalPages: number;
+  teachers: TeacherResponse[];
+  hasPreviousPage: boolean;
+  hasNextPage: boolean;
+}
+
 export interface ImportResponse {
   created: number;
   failed: number;
@@ -96,6 +106,17 @@ export interface AdminState {
   teacherLastActiveSemester: DetailedSubjectResponse[];
   isUpdateDialogOpen: boolean;
   isDeleteDialogOpen: boolean;
+
+  // Pagination state
+  teachersPagination: {
+    totalCount: number;
+    totalPages: number;
+    currentPage: number;
+    pageSize: number;
+    searchTerm: string | null;
+    hasPreviousPage: boolean;
+    hasNextPage: boolean;
+  };
 
   // Granular async states
   fetchTeachersState: AsyncState;

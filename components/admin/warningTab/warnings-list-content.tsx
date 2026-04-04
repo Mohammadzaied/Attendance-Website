@@ -19,7 +19,17 @@ import { fetchDepartments } from "@/features/admin";
 import { getAllAcademicYears } from "@/features/teacher";
 import { exportWarningsToExcel } from "@/lib/utils/warnings-excel-export";
 import { Button } from "@/components/ui/button";
-import { Filter, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  Filter,
+  ChevronLeft,
+  ChevronRight,
+  CheckCircle2,
+  XCircle,
+  X,
+  CheckSquare,
+  Users,
+  AlertTriangle,
+} from "lucide-react";
 import { Spinner } from "@/components/ui/spinner";
 import { useIsMobile } from "@/hooks/use-mobile";
 import {
@@ -72,6 +82,9 @@ export function WarningsListContent({
   );
   const { user } = useAppSelector((state) => state.AuthSlice);
 
+  // Selection state
+  const [selectedAlertIds, setSelectedAlertIds] = useState<number[]>([]);
+
   // Filter state
   const [studentName, setStudentName] = useState("");
   const [academicYearId, setAcademicYearId] = useState<string>("");
@@ -106,6 +119,19 @@ export function WarningsListContent({
   };
 
   const debouncedStudentName = useDebounce(studentName, 500);
+
+  // Reset selection on filter or page change
+  useEffect(() => {
+    setSelectedAlertIds([]);
+  }, [
+    debouncedStudentName,
+    academicYearId,
+    semesterId,
+    alertType,
+    alertStatus,
+    departmentName,
+    page,
+  ]);
 
   useEffect(() => {
     setSidebarItems(sidebarItems);
@@ -287,31 +313,101 @@ export function WarningsListContent({
     }
   };
 
-  const handleReviewAlert = (alertId: number) => {
-    setSelectedAlertId(alertId);
+  const translateStatus = (status: number | string): string => {
+    const s = Number(status);
+    switch (s) {
+      case 1:
+        return "معلق";
+      case 2:
+        return "موافق عليه";
+      case 3:
+        return "مرفوض";
+      default:
+        return String(status);
+    }
+  };
+
+  // Only show selection UI for Admin + Dismissal type + Pending status
+  const canShowSelectionUI = !isDH && alertType === "3";
+
+  const eligibleAlertIds = useMemo(() => {
+    if (!canShowSelectionUI || !alertsByStudent?.students) return [];
+
+    const ids: number[] = [];
+    alertsByStudent.students.forEach((student: any) => {
+      student.studentAlerts.forEach((subject: any) => {
+        subject.alerts.forEach((alert: any) => {
+          if (Number(alert.type) === 3 && Number(alert.status) === 1) {
+            ids.push(alert.id);
+          }
+        });
+      });
+    });
+    return ids;
+  }, [alertsByStudent, canShowSelectionUI]);
+
+  const totalAlerts = useMemo(() => {
+    if (!alertsByStudent?.students) return 0;
+    let count = 0;
+    alertsByStudent.students.forEach((student: any) => {
+      student.studentAlerts.forEach((subject: any) => {
+        count += subject.alerts.length;
+      });
+    });
+    return count;
+  }, [alertsByStudent]);
+
+  const handleToggleSelection = (alertId: number) => {
+    setSelectedAlertIds((prev) =>
+      prev.includes(alertId)
+        ? prev.filter((id) => id !== alertId)
+        : [...prev, alertId],
+    );
+  };
+
+  const handleSelectAll = () => {
+    if (selectedAlertIds.length === eligibleAlertIds.length) {
+      setSelectedAlertIds([]);
+    } else {
+      setSelectedAlertIds(eligibleAlertIds);
+    }
+  };
+
+  const handleBulkApprove = () => {
+    if (selectedAlertIds.length === 0 || isDH) return;
+    setIsApproveDialogOpen(true);
+  };
+
+  const handleBulkReject = () => {
+    if (selectedAlertIds.length === 0) return;
     setRejectionReason("");
     setExtensionClasses(0);
     setIsReviewDialogOpen(true);
   };
 
   const handleConfirmReview = async () => {
-    if (!selectedAlertId) return;
+    if (selectedAlertIds.length === 0 && !selectedAlertId) return;
     if (extensionClasses < 0) {
       showResult("خطأ", "عدد الحصص يجب أن يكون 0 أو أكثر", "destructive");
       return;
     }
 
     try {
-      const response = await dispatch(
-        rejectAlerts([
-          {
-            alertId: selectedAlertId,
-            rejectionReason: rejectionReason,
-            extensionExtraClasses: extensionClasses,
-          },
-        ]),
-      ).unwrap();
+      const idsToReject =
+        selectedAlertIds.length > 0
+          ? selectedAlertIds
+          : [selectedAlertId as number];
+      const models = idsToReject.map((id) => ({
+        alertId: id,
+        rejectionReason: rejectionReason,
+        extensionExtraClasses: extensionClasses,
+      }));
+
+      const response = await dispatch(rejectAlerts(models)).unwrap();
       setIsReviewDialogOpen(false);
+      setSelectedAlertIds([]);
+      setSelectedAlertId(null);
+
       setTimeout(() => {
         setResultDialog({
           open: true,
@@ -331,30 +427,29 @@ export function WarningsListContent({
     }
   };
 
-  const handleApproveAlert = (alertId: number) => {
-    if (isDH) return;
-    setSelectedAlertId(alertId);
-    setIsApproveDialogOpen(true);
-  };
-
   const handleConfirmApprove = async () => {
-    if (!selectedAlertId || isDH) return;
+    if ((selectedAlertIds.length === 0 && !selectedAlertId) || isDH) return;
     if (!user?.userId) {
       showResult("خطأ", "حدث خطأ في تحديد المستخدم المتصل", "destructive");
       return;
     }
 
     try {
-      const response = await dispatch(
-        approveAlerts([
-          {
-            alertId: selectedAlertId,
-            approvedBy: user.userId.toString(),
-          },
-        ]),
-      ).unwrap();
+      const idsToApprove =
+        selectedAlertIds.length > 0
+          ? selectedAlertIds
+          : [selectedAlertId as number];
+      const models = idsToApprove.map((id) => ({
+        alertId: id,
+        approvedBy: user.userId.toString(),
+      }));
+
+      const response = await dispatch(approveAlerts(models)).unwrap();
 
       setIsApproveDialogOpen(false);
+      setSelectedAlertIds([]);
+      setSelectedAlertId(null);
+
       setResultDialog({
         open: true,
         title: "تم بنجاح",
@@ -376,6 +471,19 @@ export function WarningsListContent({
     }
   };
 
+  const handleReviewAlert = (alertId: number) => {
+    setSelectedAlertId(alertId);
+    setRejectionReason("");
+    setExtensionClasses(0);
+    setIsReviewDialogOpen(true);
+  };
+
+  const handleApproveAlert = (alertId: number) => {
+    if (isDH) return;
+    setSelectedAlertId(alertId);
+    setIsApproveDialogOpen(true);
+  };
+
   const translateType = (type: number) => {
     switch (type) {
       case 1:
@@ -386,20 +494,6 @@ export function WarningsListContent({
         return "حرمان";
       default:
         return `إنذار ${type}`;
-    }
-  };
-
-  const translateStatus = (status: number | string): string => {
-    const s = Number(status);
-    switch (s) {
-      case 1:
-        return "معلق";
-      case 2:
-        return "موافق عليه";
-      case 3:
-        return "مرفوض";
-      default:
-        return String(status);
     }
   };
 
@@ -447,7 +541,260 @@ export function WarningsListContent({
       />
 
       <div className="space-y-6">
-        {fetchAlertsByStudentState.isLoading ? (
+        {/* Floating Bottom Action Bar */}
+        {selectedAlertIds.length > 0 && (
+          <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 animate-in slide-in-from-bottom-4 duration-300">
+            <div className="bg-gray-900/90 backdrop-blur-xl text-white px-5 py-3 rounded-2xl shadow-2xl shadow-black/20 border border-white/10 flex items-center gap-3">
+              <div className="flex items-center gap-2 pl-3 border-l border-white/15">
+                <CheckSquare className="h-4 w-4 text-blue-400" />
+                <span className="text-sm font-bold tabular-nums">
+                  {selectedAlertIds.length}
+                </span>
+                <span className="text-xs text-gray-400 hidden md:inline">
+                  محدد
+                </span>
+              </div>
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => setSelectedAlertIds([])}
+                className="text-gray-400 hover:text-white hover:bg-white/10 rounded-xl h-8 px-2 gap-1 text-xs"
+              >
+                <X className="h-3.5 w-3.5" />
+                إلغاء
+              </Button>
+              <div className="h-5 w-px bg-white/15" />
+              <Button
+                size="sm"
+                onClick={handleBulkReject}
+                className="bg-rose-500/90 hover:bg-rose-500 text-white border-none rounded-xl h-8 px-3 gap-1.5 text-xs font-bold shadow-lg shadow-rose-500/20 transition-all"
+              >
+                <XCircle className="h-3.5 w-3.5" />
+                رفض
+              </Button>
+              <Button
+                size="sm"
+                onClick={handleBulkApprove}
+                className="bg-emerald-500/90 hover:bg-emerald-500 text-white border-none rounded-xl h-8 px-3 gap-1.5 text-xs font-bold shadow-lg shadow-emerald-500/20 transition-all"
+              >
+                <CheckCircle2 className="h-3.5 w-3.5" />
+                تأكيد
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {/* Summary Stats */}
+        {!fetchAlertsByStudentState.isLoading &&
+          alertsByStudent?.students &&
+          alertsByStudent.students.length > 0 && (
+            <>
+              {isMobile ? (
+                <div className="space-y-4">
+                  {/* Mobile Stats + Select All */}
+                  <div className="flex items-center gap-3 flex-wrap">
+                    <div className="flex items-center gap-2 bg-white px-3 py-2 rounded-2xl border border-gray-100 shadow-sm">
+                      <Users className="h-3.5 w-3.5 text-blue-600" />
+                      <span className="text-xs font-black text-gray-700">
+                        {alertsByStudent.totalCount}
+                      </span>
+                      <span className="text-[10px] text-gray-400 font-bold">
+                        طالب
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2 bg-white px-3 py-2 rounded-2xl border border-gray-100 shadow-sm">
+                      <AlertTriangle className="h-3.5 w-3.5 text-amber-600" />
+                      <span className="text-xs font-black text-gray-700">
+                        {totalAlerts}
+                      </span>
+                      <span className="text-[10px] text-gray-400 font-bold">
+                        إنذار
+                      </span>
+                    </div>
+                  </div>
+                  {canShowSelectionUI && eligibleAlertIds.length > 0 && (
+                    <div className="flex items-center justify-between bg-linear-to-l from-blue-50 to-white p-4 rounded-2xl border border-blue-100/60 shadow-sm">
+                      <div className="flex items-center gap-2">
+                        <CheckSquare className="h-4 w-4 text-blue-500" />
+                        <span className="text-sm font-bold text-gray-700">
+                          تحديد الكل
+                        </span>
+                        <span className="text-xs text-gray-400">
+                          ({eligibleAlertIds.length})
+                        </span>
+                      </div>
+                      <input
+                        type="checkbox"
+                        className="w-5 h-5 rounded-lg border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer accent-blue-600"
+                        checked={
+                          selectedAlertIds.length === eligibleAlertIds.length &&
+                          eligibleAlertIds.length > 0
+                        }
+                        onChange={handleSelectAll}
+                      />
+                    </div>
+                  )}
+                  {alertsByStudent.students.map((student) => (
+                    <WarningMobileCard
+                      key={student.studentId}
+                      student={student}
+                      translateType={translateType}
+                      translateStatus={translateStatus}
+                      onReview={handleReviewAlert}
+                      onApprove={handleApproveAlert}
+                      isApproving={approveAlertsState.isLoading}
+                      isReadOnly={isDH}
+                      userRole={user?.roleName}
+                      selectedIds={
+                        canShowSelectionUI && eligibleAlertIds.length > 0
+                          ? selectedAlertIds
+                          : []
+                      }
+                      onToggleSelection={
+                        canShowSelectionUI && eligibleAlertIds.length > 0
+                          ? handleToggleSelection
+                          : undefined
+                      }
+                    />
+                  ))}
+                </div>
+              ) : (
+                <div className="bg-white rounded-4xl border border-gray-100 shadow-sm overflow-hidden">
+                  {/* Integrated Stats Toolbar */}
+                  <div className="flex items-center justify-between px-5 py-3 border-b border-gray-100 bg-gray-50/30">
+                    {canShowSelectionUI && eligibleAlertIds.length > 0 && (
+                      <button
+                        onClick={handleSelectAll}
+                        className={cn(
+                          "flex items-center gap-2 px-3 py-1.5 rounded-xl border transition-all duration-200 cursor-pointer text-xs font-bold",
+                          selectedAlertIds.length === eligibleAlertIds.length &&
+                            eligibleAlertIds.length > 0
+                            ? "bg-blue-50 border-blue-200 text-blue-600 ring-1 ring-blue-100"
+                            : "bg-white border-gray-200 text-gray-600 hover:border-blue-200 hover:bg-blue-50/50 hover:text-blue-600",
+                        )}
+                      >
+                        <CheckSquare className="h-3.5 w-3.5" />
+                        <span>تحديد الكل</span>
+                        <span className="tabular-nums text-[10px] font-black opacity-60">
+                          ({eligibleAlertIds.length})
+                        </span>
+                      </button>
+                    )}
+                    <div className="flex items-center gap-5">
+                      <div className="flex items-center gap-2">
+                        <div className="h-7 w-7 rounded-lg bg-blue-50 flex items-center justify-center">
+                          <Users className="h-3.5 w-3.5 text-blue-600" />
+                        </div>
+                        <span className="text-xs font-bold text-gray-500">
+                          عدد الطلاب
+                        </span>
+                        <span className="text-sm font-black text-gray-900 tabular-nums">
+                          {alertsByStudent.totalCount}
+                        </span>
+                      </div>
+                      <div className="h-5 w-px bg-gray-200" />
+                      <div className="flex items-center gap-2">
+                        <div className="h-7 w-7 rounded-lg bg-amber-50 flex items-center justify-center">
+                          <AlertTriangle className="h-3.5 w-3.5 text-amber-600" />
+                        </div>
+                        <span className="text-xs font-bold text-gray-500">
+                          عدد الإنذارات
+                        </span>
+                        <span className="text-sm font-black text-gray-900 tabular-nums">
+                          {totalAlerts}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="overflow-x-auto">
+                    <table className="w-full border-collapse">
+                      <thead>
+                        <tr className="bg-gray-50/50 border-b border-gray-100">
+                          <th className="p-4 text-right text-xs font-black text-gray-500 uppercase tracking-wider w-64">
+                            الطالب
+                          </th>
+                          <th className="p-4 text-right text-xs font-black text-gray-500 uppercase tracking-wider">
+                            تفاصيل المواد والإنذارات
+                          </th>
+                          <th className="p-4 text-center text-xs font-black text-gray-500 uppercase tracking-wider w-32">
+                            الإجراءات
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-50">
+                        {alertsByStudent?.students.map((student) => (
+                          <WarningDesktopRow
+                            key={student.studentId}
+                            student={student}
+                            translateType={translateType}
+                            translateStatus={translateStatus}
+                            onReview={handleReviewAlert}
+                            onApprove={handleApproveAlert}
+                            isApproving={approveAlertsState.isLoading}
+                            isReadOnly={isDH}
+                            userRole={user?.roleName}
+                            selectedIds={
+                              canShowSelectionUI && eligibleAlertIds.length > 0
+                                ? selectedAlertIds
+                                : []
+                            }
+                            onToggleSelection={
+                              canShowSelectionUI && eligibleAlertIds.length > 0
+                                ? handleToggleSelection
+                                : undefined
+                            }
+                          />
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
+              {alertsByStudent && alertsByStudent.totalPages > 1 && (
+                <div className="flex justify-center mt-8">
+                  <Pagination dir="rtl">
+                    <PaginationContent>
+                      {page > 1 && (
+                        <PaginationItem>
+                          <PaginationPrevious
+                            onClick={() => setPage(page - 1)}
+                            className="cursor-pointer"
+                          />
+                        </PaginationItem>
+                      )}
+
+                      {Array.from(
+                        { length: alertsByStudent.totalPages },
+                        (_, i) => i + 1,
+                      ).map((pageNum) => (
+                        <PaginationItem key={pageNum}>
+                          <PaginationLink
+                            onClick={() => setPage(pageNum)}
+                            isActive={page === pageNum}
+                            className="cursor-pointer"
+                          >
+                            {pageNum}
+                          </PaginationLink>
+                        </PaginationItem>
+                      ))}
+
+                      {page < alertsByStudent.totalPages && (
+                        <PaginationItem>
+                          <PaginationNext
+                            onClick={() => setPage(page + 1)}
+                            className="cursor-pointer"
+                          />
+                        </PaginationItem>
+                      )}
+                    </PaginationContent>
+                  </Pagination>
+                </div>
+              )}
+            </>
+          )}
+
+        {fetchAlertsByStudentState.isLoading && (
           <div className="flex flex-col items-center justify-center py-24 bg-white rounded-3xl border border-gray-100 shadow-sm">
             <Spinner className="h-10 w-10 text-blue-600" />
             <p
@@ -459,127 +806,35 @@ export function WarningsListContent({
               جاري تحميل البيانات...
             </p>
           </div>
-        ) : alertsByStudent?.students && alertsByStudent.students.length > 0 ? (
-          <>
-            {isMobile ? (
-              <div className="space-y-4">
-                {alertsByStudent.students.map((student) => (
-                  <WarningMobileCard
-                    key={student.studentId}
-                    student={student}
-                    translateType={translateType}
-                    translateStatus={translateStatus}
-                    onReview={handleReviewAlert}
-                    onApprove={handleApproveAlert}
-                    isApproving={approveAlertsState.isLoading}
-                    isReadOnly={isDH}
-                    userRole={user?.roleName}
-                  />
-                ))}
-              </div>
-            ) : (
-              <div className="bg-white rounded-4xl border border-gray-100 shadow-sm overflow-hidden">
-                <div className="overflow-x-auto">
-                  <table className="w-full border-collapse">
-                    <thead>
-                      <tr className="bg-gray-50/50 border-b border-gray-100">
-                        <th className="p-4 text-right text-xs font-black text-gray-500 uppercase tracking-wider w-64">
-                          الطالب
-                        </th>
-                        <th className="p-4 text-right text-xs font-black text-gray-500 uppercase tracking-wider">
-                          تفاصيل المواد والإنذارات
-                        </th>
-                        <th className="p-4 text-center text-xs font-black text-gray-500 uppercase tracking-wider w-32">
-                          الإجراءات
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-50">
-                      {alertsByStudent?.students.map((student) => (
-                        <WarningDesktopRow
-                          key={student.studentId}
-                          student={student}
-                          translateType={translateType}
-                          translateStatus={translateStatus}
-                          onReview={handleReviewAlert}
-                          onApprove={handleApproveAlert}
-                          isApproving={approveAlertsState.isLoading}
-                          isReadOnly={isDH}
-                          userRole={user?.roleName}
-                        />
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            )}
+        )}
 
-            {alertsByStudent && alertsByStudent.totalPages > 1 && (
-              <div className="flex justify-center mt-8">
-                <Pagination dir="rtl">
-                  <PaginationContent>
-                    {page > 1 && (
-                      <PaginationItem>
-                        <PaginationPrevious
-                          onClick={() => setPage(page - 1)}
-                          className="cursor-pointer"
-                        />
-                      </PaginationItem>
-                    )}
-
-                    {Array.from(
-                      { length: alertsByStudent.totalPages },
-                      (_, i) => i + 1,
-                    ).map((pageNum) => (
-                      <PaginationItem key={pageNum}>
-                        <PaginationLink
-                          onClick={() => setPage(pageNum)}
-                          isActive={page === pageNum}
-                          className="cursor-pointer"
-                        >
-                          {pageNum}
-                        </PaginationLink>
-                      </PaginationItem>
-                    ))}
-
-                    {page < alertsByStudent.totalPages && (
-                      <PaginationItem>
-                        <PaginationNext
-                          onClick={() => setPage(page + 1)}
-                          className="cursor-pointer"
-                        />
-                      </PaginationItem>
-                    )}
-                  </PaginationContent>
-                </Pagination>
-              </div>
-            )}
-          </>
-        ) : hasAttemptedLoad &&
+        {hasAttemptedLoad &&
           !fetchAlertsByStudentState.isLoading &&
-          alertsByStudent ? (
-          <div className="flex flex-col items-center justify-center py-24 bg-white rounded-3xl border border-gray-100 shadow-sm opacity-60">
-            <div className="h-20 w-20 rounded-full bg-gray-50 flex items-center justify-center mb-4">
-              <Filter className="h-10 w-10 text-gray-300" />
+          alertsByStudent &&
+          (!alertsByStudent.students ||
+            alertsByStudent.students.length === 0) && (
+            <div className="flex flex-col items-center justify-center py-24 bg-white rounded-3xl border border-gray-100 shadow-sm opacity-60">
+              <div className="h-20 w-20 rounded-full bg-gray-50 flex items-center justify-center mb-4">
+                <Filter className="h-10 w-10 text-gray-300" />
+              </div>
+              <h3
+                className={cn(
+                  "text-xl font-bold text-gray-900",
+                  isDH && "font-black",
+                )}
+              >
+                لا توجد نتائج
+              </h3>
+              <p
+                className={cn(
+                  "text-sm text-gray-500 mt-2",
+                  isDH && "font-medium italic",
+                )}
+              >
+                جرب تعديل فلاتر البحث للعثور على ما تبحث عنه
+              </p>
             </div>
-            <h3
-              className={cn(
-                "text-xl font-bold text-gray-900",
-                isDH && "font-black",
-              )}
-            >
-              لا توجد نتائج
-            </h3>
-            <p
-              className={cn(
-                "text-sm text-gray-500 mt-2",
-                isDH && "font-medium italic",
-              )}
-            >
-              جرب تعديل فلاتر البحث للعثور على ما تبحث عنه
-            </p>
-          </div>
-        ) : null}
+          )}
       </div>
 
       <WarningManagementDialogs
@@ -597,6 +852,8 @@ export function WarningsListContent({
         isApproving={approveAlertsState.isLoading}
         resultDialog={resultDialog}
         setResultDialog={setResultDialog}
+        isBulk={selectedAlertIds.length > 0}
+        selectedCount={selectedAlertIds.length}
       />
     </div>
   );

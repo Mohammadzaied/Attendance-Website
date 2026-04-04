@@ -97,7 +97,6 @@ export default function YearDetailPage() {
               departmentId: specData.departmentId,
               yearsCount: years.length,
               studentCount: 0,
-              // status: "active" as const,
               years: years,
             });
 

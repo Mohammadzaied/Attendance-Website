@@ -16,6 +16,8 @@ interface WarningMobileCardProps {
   isApproving: boolean;
   isReadOnly?: boolean;
   userRole?: string;
+  selectedIds?: number[];
+  onToggleSelection?: (alertId: number) => void;
 }
 
 export function WarningMobileCard({
@@ -27,6 +29,8 @@ export function WarningMobileCard({
   isApproving,
   isReadOnly,
   userRole,
+  selectedIds = [],
+  onToggleSelection,
 }: WarningMobileCardProps) {
   return (
     <Card className="border-none shadow-xl shadow-blue-500/5 bg-white rounded-3xl overflow-hidden">
@@ -107,81 +111,102 @@ export function WarningMobileCard({
             </div>
 
             <div className="flex flex-wrap gap-2 pt-1 border-t border-gray-100 mt-2">
-              {subject.alerts.map((alert: any) => (
-                <div
-                  key={alert.id}
-                  className="flex flex-col gap-1.5 bg-white p-2.5 rounded-xl border border-gray-100 shadow-sm w-full"
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <span
-                        className={cn(
-                          "font-black text-[10px] px-2 py-1 rounded-lg",
-                          Number(alert.type) === 1
-                            ? "bg-blue-50 text-blue-600"
-                            : Number(alert.type) === 2
-                              ? "bg-amber-50 text-amber-600"
-                              : "bg-rose-50 text-rose-600",
-                        )}
-                      >
-                        {translateType(Number(alert.type))}
-                      </span>
-                      {!isReadOnly &&
-                        Number(alert.type) === 3 &&
-                        Number(alert.status) === 1 && (
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => onReview(alert.id)}
-                            className="h-6 px-2 text-[10px] font-bold border-rose-200 text-rose-600 hover:bg-rose-50"
-                          >
-                            مراجعة
-                          </Button>
-                        )}
-                      {!isReadOnly && Number(alert.status) === 1 && (
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => onApprove(alert.id)}
-                          disabled={isApproving}
-                          className="h-6 px-2 text-[10px] font-bold border-emerald-200 text-emerald-600 hover:bg-emerald-50"
-                        >
-                          {isApproving ? (
-                            <Spinner className="h-3 w-3" />
-                          ) : (
-                            <CheckCircle className="h-3 w-3 mr-1" />
-                          )}
-                          تأكيد
-                        </Button>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-1.5 text-gray-400">
-                      <Clock className="h-3 w-3" />
-                      <span className="text-[10px] font-medium">
-                        {new Date(alert.createdAt).toLocaleDateString("en-GB")}
-                      </span>
-                    </div>
-                  </div>
+                {subject.alerts.map((alert: any) => {
+                  const isEligible =
+                    Number(alert.type) === 3 && Number(alert.status) === 1;
+                  const isSelected = selectedIds.includes(alert.id);
 
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-black text-rose-500 tabular-nums">
-                      {alert.limitAtIssue} غياب
-                    </span>
-                    <span
+                  return (
+                    <div
+                      key={alert.id}
                       className={cn(
-                        "text-xs font-bold",
-                        alert.status === 1
-                          ? "text-gray-400"
-                          : alert.status === 2
-                            ? "text-emerald-500"
-                            : "text-rose-500",
+                        "flex flex-col gap-1.5 bg-white p-2.5 rounded-xl border shadow-sm w-full transition-all duration-200",
+                        isSelected
+                          ? "border-blue-200 bg-blue-50/20 ring-1 ring-blue-50"
+                          : "border-gray-100",
                       )}
                     >
-                      {translateStatus(alert.status)}
-                    </span>
-                  </div>
-                </div>
-              ))}
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          {isEligible && onToggleSelection && (
+                            <input
+                              type="checkbox"
+                              checked={isSelected}
+                              onChange={() => onToggleSelection(alert.id)}
+                              className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                            />
+                          )}
+                          <span
+                            className={cn(
+                              "font-black text-[10px] px-2 py-1 rounded-lg",
+                              Number(alert.type) === 1
+                                ? "bg-blue-50 text-blue-600"
+                                : Number(alert.type) === 2
+                                  ? "bg-amber-50 text-amber-600"
+                                  : "bg-rose-50 text-rose-600",
+                            )}
+                          >
+                            {translateType(Number(alert.type))}
+                          </span>
+                          {!isReadOnly &&
+                            Number(alert.type) === 3 &&
+                            Number(alert.status) === 1 && (
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => onReview(alert.id)}
+                                className="h-6 px-2 text-[10px] font-bold border-rose-200 text-rose-600 hover:bg-rose-50"
+                              >
+                                مراجعة
+                              </Button>
+                            )}
+                          {!isReadOnly && Number(alert.status) === 1 && (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => onApprove(alert.id)}
+                              disabled={isApproving}
+                              className="h-6 px-2 text-[10px] font-bold border-emerald-200 text-emerald-600 hover:bg-emerald-50"
+                            >
+                              {isApproving ? (
+                                <Spinner className="h-3 w-3" />
+                              ) : (
+                                <CheckCircle className="h-3 w-3 mr-1" />
+                              )}
+                              تأكيد
+                            </Button>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-1.5 text-gray-400">
+                          <Clock className="h-3 w-3" />
+                          <span className="text-[10px] font-medium">
+                            {new Date(alert.createdAt).toLocaleDateString(
+                              "en-GB",
+                            )}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-black text-rose-500 tabular-nums">
+                          {alert.limitAtIssue} غياب
+                        </span>
+                        <span
+                          className={cn(
+                            "text-xs font-bold",
+                            alert.status === 1
+                              ? "text-gray-400"
+                              : alert.status === 2
+                                ? "text-emerald-500"
+                                : "text-rose-500",
+                          )}
+                        >
+                          {translateStatus(alert.status)}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
             </div>
           </div>
         ))}

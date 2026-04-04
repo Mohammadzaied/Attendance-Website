@@ -83,38 +83,39 @@ export function ImportStudentsDialog({
         const ws = wb.Sheets[wsname];
         const data = XLSX.utils.sheet_to_json(ws) as any[];
 
-        console.log("📋 Department ID received in dialog:", departmentId);
-        console.log("📋 Specialization ID:", specializationId);
-        console.log("📋 Study Year:", studyYear);
-        console.log("📋 Semester ID:", semesterId);
-
         // Map data to ImportStudentDto
         const mappedData: ImportStudentDto[] = data.map((item, index) => {
-          const username =
-            item.Username ||
-            item.username ||
-            item.Email ||
-            item["البريد الإلكتروني"] ||
-            item["البريد الالكتروني"] ||
-            item.email;
-          const fullName =
-            item.Name ||
-            item["الاسم"] ||
-            item["الإسم"] ||
-            item.name ||
-            item.FullName ||
-            item.fullname ||
-            item.fullname;
+          const normalizedItem: any = {};
+          Object.keys(item).forEach((key) => {
+            normalizedItem[key.trim()] = item[key];
+          });
 
-          if (!fullName) {
+          const rawUsername =
+            normalizedItem.Username ||
+            normalizedItem.username ||
+            normalizedItem.Email ||
+            normalizedItem["البريد الإلكتروني"] ||
+            normalizedItem["البريد الالكتروني"] ||
+            normalizedItem.email;
+
+          const rawFullName =
+            normalizedItem.Name ||
+            normalizedItem["الاسم"] ||
+            normalizedItem["الإسم"] ||
+            normalizedItem["Student Name"] ||
+            normalizedItem.name ||
+            normalizedItem.FullName ||
+            normalizedItem.fullname;
+
+          if (!rawFullName) {
             throw new Error(`السطر ${index + 2}: الاسم مفقود (Name/الاسم)`);
           }
 
           return {
-            fullName: fullName.toString(),
+            fullName: rawFullName.toString().trim(),
             departmentId,
             specializationId,
-            username: username ? username.toString() : "",
+            username: rawUsername ? rawUsername.toString().trim() : "",
             academicYearId,
             semesterId: Number(semesterId),
             studyYear: Number(studyYear),
@@ -123,8 +124,7 @@ export function ImportStudentsDialog({
 
         // Filter out empty rows
         const filteredData = mappedData.filter((u) => u.fullName);
-        // console.log("📋 Mapped student data (first item):", filteredData[0]);
-        // console.log("📋 Total students to import:", filteredData.length);
+
         setImportedData(filteredData);
       } catch (error: any) {
         setResult({
@@ -140,12 +140,6 @@ export function ImportStudentsDialog({
 
   const handleImport = async () => {
     if (importedData.length === 0) return;
-
-    // console.log("🚀 Sending import request with data:", importedData);
-    // console.log(
-    //   "🚀 First student data:",
-    //   JSON.stringify(importedData[0], null, 2),
-    // );
 
     try {
       await dispatch(importStudentsThunk(importedData)).unwrap();
@@ -243,14 +237,14 @@ export function ImportStudentsDialog({
               </div>
 
               <div className="flex-1 border border-gray-200 rounded-b-lg overflow-hidden">
-                <ScrollArea className="h-full max-h-[400px]">
+                <ScrollArea className="h-[400px] w-full ">
                   <Table dir="rtl">
                     <TableHeader className="bg-gray-50 sticky top-0 z-10">
                       <TableRow>
                         <TableHead className="text-right whitespace-nowrap">
                           الاسم (FullName)
                         </TableHead>
-                        <TableHead className="text-right whitespace-nowrap">
+                        <TableHead className="text-right whitespace-nowrap hidden md:table-cell">
                           اسم المستخدم (اختياري)
                         </TableHead>
                       </TableRow>
@@ -262,7 +256,7 @@ export function ImportStudentsDialog({
                             <TableCell className="text-right">
                               {user.fullName}
                             </TableCell>
-                            <TableCell className="text-right font-medium">
+                            <TableCell className="text-right font-medium hidden md:table-cell">
                               {user.username || (
                                 <span className="text-gray-400 italic">
                                   غير محدد
@@ -348,12 +342,12 @@ export function ImportStudentsDialog({
                   : "text-red-600",
               )}
             >
-              {result?.title}
               {result?.variant === "success" ? (
                 <CheckCircle2 className="h-5 w-5" />
               ) : (
                 <AlertCircle className="h-5 w-5" />
               )}
+              {result?.title}
             </DialogTitle>
             <DialogDescription asChild className="text-right pt-2">
               <div>

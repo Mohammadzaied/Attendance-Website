@@ -37,7 +37,6 @@ export function RecordedAbsencesContent({
     activeAcademicYears: academicYears,
     subjects,
     absenceSession,
-    fetchActiveAcademicYearsState,
     fetchAbsenceSessionState,
     fetchSubjectsState,
   } = useAppSelector((state) => state.teacher);
@@ -48,9 +47,17 @@ export function RecordedAbsencesContent({
     number | null
   >(null);
   const [selectedSection, setSelectedSection] = useState<string>("");
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(
-    new Date(),
-  );
+  // const [selectedDate, setSelectedDate] = useState<Date | undefined>(
+  //   new Date(),
+  // );
+
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(() => {
+    const today = new Date();
+    if (today.getDay() === 5)
+      today.setDate(today.getDate() - 1); // If Friday, default to Thursday
+    else if (today.getDay() === 6) today.setDate(today.getDate() + 1); // If Saturday, default to Sunday
+    return today;
+  });
 
   // Load academic years and lessons on mount
   useEffect(() => {

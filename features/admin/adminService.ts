@@ -12,6 +12,7 @@ import {
   UpdateDepartmentDto,
   TeacherListResponse,
   SystemSettings,
+  PaginatedTeacherResponse,
 } from "./adminTypes";
 
 const TEACHER_ENDPOINT = "Users";
@@ -31,9 +32,22 @@ export const adminService = {
   /**
    * Get all teachers
    */
-  async getAllTeachers(): Promise<TeacherResponse[]> {
+  async getAllTeachers(params?: {
+    pageNumber?: number;
+    pageSize?: number;
+    searchTerm?: string | null;
+  }): Promise<PaginatedTeacherResponse> {
+    const queryParams = new URLSearchParams();
+    if (params?.pageNumber)
+      queryParams.append("pageNumber", params.pageNumber.toString());
+    if (params?.pageSize)
+      queryParams.append("pageSize", params.pageSize.toString());
+    if (params?.searchTerm) queryParams.append("searchTerm", params.searchTerm);
+
+    const endpoint = `${TEACHER_ENDPOINT}/Teachers?${queryParams.toString()}`;
+
     const response =
-      await apiClient.get<ApiResponse<TeacherResponse[]>>(TEACHER_ENDPOINT);
+      await apiClient.get<ApiResponse<PaginatedTeacherResponse>>(endpoint);
     return response.data;
   },
 

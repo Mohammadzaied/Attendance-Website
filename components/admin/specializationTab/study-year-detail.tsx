@@ -1,103 +1,40 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import {
-  Plus,
-  Edit,
-  Trash2,
-  Book,
-  Users,
-  UserPlus,
-  MoveRight,
-  FileText,
-  User,
-  Settings,
-  ShieldCheck,
-} from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Plus, Users, UserPlus, Settings, Book, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Checkbox } from "@/components/ui/checkbox";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-  DialogDescription,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Major,
-  specializationService as specializationsService,
-} from "@/features/specialization";
-import {
-  StudyYear,
-  Subject,
-  DetailedSubjectResponse,
-} from "@/features/subject";
 import { Badge } from "@/components/ui/badge";
 import { ImportStudentsDialog } from "./import-students-dialog";
 import { EmailImportDialog } from "./email-import-dialog";
 import { EditStudentDialog } from "./edit-student-dialog";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import Link from "next/link";
+import { useIsMobile } from "@/hooks/use-mobile";
 import {
-  fetchDepartments,
-  clearError as clearAdminErrors,
-} from "@/features/admin/adminSlice";
-import {
-  fetchEnrollmentsBySemester,
-  createAndEnrollStudentThunk,
-  deleteStudentThunk,
-  clearError as clearSpecializationErrors,
+  Major,
   fetchAcademicYears,
   fetchSpecializations,
   fetchSubjectsBySpecializationThunk,
-  // createSubjectThunk,
-  createSubjectsBatchThunk,
-  updateSubjectThunk,
   deleteSubjectThunk,
   clearSubjects,
   clearEnrollments,
+  fetchEnrollmentsBySemester,
+  deleteStudentsThunk,
 } from "@/features/specialization";
-// specializationsService imported above
-import { fetchTeachersList } from "@/features/admin/adminSlice";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { StudyYear, DetailedSubjectResponse } from "@/features/subject";
+import { MajorStudent, StudentEnrollmentItem } from "@/features/student";
 import {
-  MajorStudent,
-  StudentEnrollmentItem,
-  SemesterEnrollmentsResponse,
-} from "@/features/student";
-import { TeacherSearchSelect } from "./teacher-search-select";
+  fetchTeachersList,
+  fetchDepartments,
+} from "@/features/admin/adminSlice";
 
-// toast removed
+// New Extracted Components
+import { StatusDialog, StatusType } from "./status-dialog";
+import { DeleteConfirmDialog } from "./delete-confirm-dialog";
+import { StudentDialog } from "./student-dialog";
+import { SubjectDialog } from "./subject-dialog";
+import { SubjectsList } from "./subjects-list";
+import { StudentsList } from "./students-list";
 
 interface StudyYearDetailProps {
   major: Major;
@@ -114,6 +51,45 @@ export function StudyYearDetail({
   const isMobile = useIsMobile();
   const [activeTab, setActiveTab] = useState("students");
   const [isEmailDialogOpen, setIsEmailDialogOpen] = useState(false);
+  const [students, setStudents] = useState<MajorStudent[]>([]);
+  const [loadingStudents, setLoadingStudents] = useState(false);
+  const [canEdit, setCanEdit] = useState(false);
+
+  // Dialog States
+  const [isSubjectDialogOpen, setIsSubjectDialogOpen] = useState(false);
+  const [editingSubject, setEditingSubject] =
+    useState<DetailedSubjectResponse | null>(null);
+  const [isStudentDialogOpen, setIsStudentDialogOpen] = useState(false);
+  const [isEditStudentDialogOpen, setIsEditStudentDialogOpen] = useState(false);
+  const [editingStudent, setEditingStudent] = useState<MajorStudent | null>(
+    null,
+  );
+  const [studentToDelete, setStudentToDelete] = useState<MajorStudent | null>(
+    null,
+  );
+  const [subjectToDelete, setSubjectToDelete] = useState<string | null>(null);
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+  const [isDeleteAllStudentsConfirmOpen, setIsDeleteAllStudentsConfirmOpen] =
+    useState(false);
+  const [isDeleteSubjectConfirmOpen, setIsDeleteSubjectConfirmOpen] =
+    useState(false);
+  const [statusDialog, setStatusDialog] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    type: StatusType;
+  }>({
+    isOpen: false,
+    title: "",
+    message: "",
+    type: "error",
+  });
+
+  const {
+    academicYears = [],
+    subjectsBySpecialization = [],
+    fetchDetailedSubjectsState = { isLoading: false, error: null },
+  } = useAppSelector((state) => state.specializations);
 
   useEffect(() => {
     refreshStudents();
@@ -127,101 +103,6 @@ export function StudyYearDetail({
     };
   }, [year.semesterId, dispatch]);
 
-  const [students, setStudents] = useState<MajorStudent[]>([]);
-  const [loadingStudents, setLoadingStudents] = useState(false);
-
-  // Subject Dialogs State
-  const [isSubjectDialogOpen, setIsSubjectDialogOpen] = useState(false);
-  const [editingSubject, setEditingSubject] =
-    useState<DetailedSubjectResponse | null>(null);
-  const [isEditMode, setIsEditMode] = useState(false);
-  const [subjectForm, setSubjectForm] = useState({
-    name: "",
-    teacherId: "",
-    teacherName: "",
-    numberOfHours: 3,
-  });
-
-  // Multi-subject add rows
-  type SubjectRow = {
-    name: string;
-    teacherId: string;
-    teacherName: string;
-    numberOfHours: number;
-  };
-  const emptyRow = (): SubjectRow => ({
-    name: "",
-    teacherId: "",
-    teacherName: "",
-    numberOfHours: 3,
-  });
-  const [subjectRows, setSubjectRows] = useState<SubjectRow[]>([emptyRow()]);
-
-  const updateSubjectRow = (
-    index: number,
-    field: keyof SubjectRow,
-    value: string | number,
-  ) => {
-    setSubjectRows((rows) =>
-      rows.map((r, i) => (i === index ? { ...r, [field]: value } : r)),
-    );
-  };
-
-  const addSubjectRow = () => {
-    setSubjectRows((rows) => [...rows, emptyRow()]);
-  };
-
-  const removeSubjectRow = (index: number) => {
-    setSubjectRows((rows) => rows.filter((_, i) => i !== index));
-  };
-
-  // No longer needed: availableLessons, availableDays, loadSubjectData useEffect
-
-  // Student Dialogs State
-  const [isStudentDialogOpen, setIsStudentDialogOpen] = useState(false);
-  const [studentForm, setStudentForm] = useState({
-    name: "",
-    username: "",
-  });
-
-  const [isEditStudentDialogOpen, setIsEditStudentDialogOpen] = useState(false);
-  const [editingStudent, setEditingStudent] = useState<MajorStudent | null>(
-    null,
-  );
-
-  const [studentToDelete, setStudentToDelete] = useState<string | null>(null);
-  const [subjectToDelete, setSubjectToDelete] = useState<string | null>(null);
-  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
-  const [isDeleteSubjectConfirmOpen, setIsDeleteSubjectConfirmOpen] =
-    useState(false);
-
-  const [statusDialog, setStatusDialog] = useState<{
-    isOpen: boolean;
-    title: string;
-    message: string;
-    type: "success" | "error" | "warning";
-  }>({
-    isOpen: false,
-    title: "",
-    message: "",
-    type: "error",
-  });
-
-  const {
-    createAndEnrollStudentState = { isLoading: false, error: null },
-    academicYears = [],
-    specializationAcademicYears = [],
-    createSubjectState = { isLoading: false, error: null },
-    updateSubjectState = { isLoading: false, error: null },
-    deleteSubjectState = { isLoading: false, error: null },
-    subjectsBySpecialization = [],
-    fetchDetailedSubjectsState = { isLoading: false, error: null },
-  } = useAppSelector((state) => state.specializations);
-
-  const { departments, teachersList, fetchTeachersListState } = useAppSelector(
-    (state) => state.admin,
-  );
-
   useEffect(() => {
     if (activeTab === "subjects") {
       dispatch(
@@ -234,165 +115,12 @@ export function StudyYearDetail({
     }
   }, [activeTab, major.id, year.semesterId, year.studyYear, dispatch]);
 
-  const handleSaveSubject = async () => {
-    if (!editingSubject) {
-      // Batch add mode — validate all rows
-      const invalidRow = subjectRows.find(
-        (r) => !r.name.trim() || !r.teacherId,
-      );
-      if (invalidRow) {
-        setStatusDialog({
-          isOpen: true,
-          title: "تنبيه التحقق",
-          message: "يرجى إدخال اسم المادة واختيار المعلم لجميع الصفوف",
-          type: "warning",
-        });
-        return;
-      }
-
-      try {
-        await dispatch(
-          createSubjectsBatchThunk(
-            subjectRows.map((r) => ({
-              name: r.name,
-              specializationId: Number(major.id),
-              semesterId: year.semesterId,
-              studyYear: year.studyYear,
-              teacherId: r.teacherId,
-              numberOfHours: r.numberOfHours,
-            })),
-          ),
-        ).unwrap();
-
-        setIsSubjectDialogOpen(false);
-        setSubjectRows([emptyRow()]);
-        dispatch(
-          fetchSubjectsBySpecializationThunk({
-            specializationId: Number(major.id),
-            semesterId: year.semesterId,
-            studyYear: year.studyYear,
-          }),
-        );
-        onUpdateYear(year);
-        setStatusDialog({
-          isOpen: true,
-          title: "تمت العملية بنجاح",
-          message: `تم إضافة ${subjectRows.length} مادة بنجاح`,
-          type: "success",
-        });
-      } catch (error: any) {
-        console.error("Failed to save subjects:", error);
-        setStatusDialog({
-          isOpen: true,
-          title: "خطأ في إضافة المواد",
-          message: error || "حدث خطأ غير متوقع أثناء معالجة طلبك",
-          type: "error",
-        });
-      }
-    } else {
-      // Edit single subject
-      if (!subjectForm.name.trim() || !subjectForm.teacherId) {
-        setStatusDialog({
-          isOpen: true,
-          title: "تنبيه التحقق",
-          message: "يرجى إدخال اسم المادة واختيار المعلم",
-          type: "warning",
-        });
-        return;
-      }
-
-      try {
-        await dispatch(
-          updateSubjectThunk({
-            id: editingSubject.subjectId,
-            data: {
-              name: subjectForm.name,
-              teacherId: subjectForm.teacherId,
-              numberOfHours: subjectForm.numberOfHours,
-            },
-          }),
-        ).unwrap();
-
-        setIsSubjectDialogOpen(false);
-        setEditingSubject(null);
-        setSubjectForm({
-          name: "",
-          teacherId: "",
-          teacherName: "",
-          numberOfHours: 3,
-        });
-        dispatch(
-          fetchSubjectsBySpecializationThunk({
-            specializationId: Number(major.id),
-            semesterId: year.semesterId,
-            studyYear: year.studyYear,
-          }),
-        );
-        onUpdateYear(year);
-        setStatusDialog({
-          isOpen: true,
-          title: "تمت العملية بنجاح",
-          message: "تم تعديل المادة بنجاح",
-          type: "success",
-        });
-      } catch (error: any) {
-        console.error("Failed to save subject:", error);
-        setStatusDialog({
-          isOpen: true,
-          title: "خطأ في تعديل المادة",
-          message: error || "حدث خطأ غير متوقع أثناء معالجة طلبك",
-          type: "error",
-        });
-      }
-    }
-  };
-
-  const handleDeleteSubject = (id: string) => {
-    setSubjectToDelete(id);
-    setIsDeleteSubjectConfirmOpen(true);
-  };
-
-  const confirmDeleteSubject = async () => {
-    if (!subjectToDelete) return;
-    try {
-      await dispatch(deleteSubjectThunk(Number(subjectToDelete))).unwrap();
-      dispatch(
-        fetchSubjectsBySpecializationThunk({
-          specializationId: Number(major.id),
-          semesterId: year.semesterId,
-          studyYear: year.studyYear,
-        }),
-      );
-      setIsDeleteSubjectConfirmOpen(false);
-      setSubjectToDelete(null);
-
-      // Show success dialog
-      setStatusDialog({
-        isOpen: true,
-        title: "تم الحذف بنجاح",
-        message: "تم حذف المادة بنجاح من النظام",
-        type: "success",
-      });
-    } catch (error: any) {
-      console.error("Failed to delete subject:", error);
-      setStatusDialog({
-        isOpen: true,
-        title: "خطأ في حذف المادة",
-        message: error || "حدث خطأ غير متوقع أثناء حذف المادة",
-        type: "error",
-      });
-    }
-  };
-
-  const [canEdit, setCanEdit] = useState(false);
   const refreshStudents = async () => {
     try {
       setLoadingStudents(true);
-
-      const semesterId = year.semesterId;
       const result = await dispatch(
         fetchEnrollmentsBySemester({
-          semesterId,
+          semesterId: year.semesterId,
           specializationId: Number(major.id),
           studyYear: year.studyYear,
         }),
@@ -407,7 +135,6 @@ export function StudyYearDetail({
         }),
       );
       setCanEdit(result.canEdit);
-
       setStudents(updatedStudents);
     } catch (error) {
       console.error("Failed to refresh students:", error);
@@ -416,39 +143,82 @@ export function StudyYearDetail({
     }
   };
 
-  const handleAddStudent = async () => {
-    if (!studentForm.name.trim()) return;
-
+  const refreshSubjects = async () => {
     try {
       await dispatch(
-        createAndEnrollStudentThunk({
-          fullName: studentForm.name,
-          departmentId: major.departmentId,
+        fetchSubjectsBySpecializationThunk({
           specializationId: Number(major.id),
-          studyYear: year.studyYear,
-          username: studentForm.username || undefined,
           semesterId: year.semesterId,
+          studyYear: year.studyYear,
         }),
       ).unwrap();
-
-      // Refresh the student list
-      await refreshStudents();
-
-      setIsStudentDialogOpen(false);
-      setStudentForm({ name: "", username: "" });
     } catch (error: any) {
-      console.error("Failed to add student:", error);
+      if (error !== "لم يتم العثور على مواد ") {
+        console.error("Failed to refresh subjects:", error);
+      }
     }
   };
 
-  const handleDeleteStudent = async (id: string) => {
+  const handleOpenAddSubject = () => {
+    setEditingSubject(null);
+    dispatch(fetchTeachersList());
+    setIsSubjectDialogOpen(true);
+  };
+
+  const handleOpenEditSubject = (subject: DetailedSubjectResponse) => {
+    setEditingSubject(subject);
+    setIsSubjectDialogOpen(true);
+  };
+
+  const handleOpenDeleteSubject = (id: string) => {
+    setSubjectToDelete(id);
+    setIsDeleteSubjectConfirmOpen(true);
+  };
+
+  const confirmDeleteSubject = async () => {
+    if (!subjectToDelete) return;
     try {
-      await dispatch(deleteStudentThunk(Number(id))).unwrap();
+      await dispatch(deleteSubjectThunk(Number(subjectToDelete))).unwrap();
+      await refreshSubjects();
+      setIsDeleteSubjectConfirmOpen(false);
+      setSubjectToDelete(null);
+      setStatusDialog({
+        isOpen: true,
+        title: "تم الحذف بنجاح",
+        message: "تم حذف المادة بنجاح من النظام",
+        type: "success",
+      });
+      onUpdateYear(year);
+    } catch (error: any) {
+      setStatusDialog({
+        isOpen: true,
+        title: "خطأ في حذف المادة",
+        message: error || "حدث خطأ غير متوقع أثناء حذف المادة",
+        type: "error",
+      });
+    }
+  };
+
+  const handleOpenEditStudent = (student: MajorStudent) => {
+    setEditingStudent(student);
+    setIsEditStudentDialogOpen(true);
+  };
+
+  const handleOpenDeleteStudent = (student: MajorStudent) => {
+    setStudentToDelete(student);
+    setIsDeleteConfirmOpen(true);
+  };
+
+  const confirmDeleteStudent = async () => {
+    if (!studentToDelete) return;
+    try {
+      await dispatch(
+        deleteStudentsThunk([Number(studentToDelete.studentId)]),
+      ).unwrap();
       await refreshStudents();
       setIsDeleteConfirmOpen(false);
       setStudentToDelete(null);
     } catch (error: any) {
-      console.error("Failed to delete student:", error);
       setStatusDialog({
         isOpen: true,
         title: "خطأ في حذف الطالب",
@@ -457,33 +227,33 @@ export function StudyYearDetail({
       });
     }
   };
+  const confirmDeleteAllStudents = async () => {
+    const ids = students.map((s) => Number(s.studentId));
+    if (ids.length === 0) return;
 
-  const confirmDelete = (id: string) => {
-    setStudentToDelete(id);
-    setIsDeleteConfirmOpen(true);
-  };
-
-  const openEditSubject = (subject: DetailedSubjectResponse) => {
-    if (editingSubject?.subjectId !== subject.subjectId) {
-      setEditingSubject(subject);
-      setSubjectForm({
-        name: subject.name,
-        teacherId: subject.teacherId || "",
-        teacherName: subject.teacherName || "",
-        numberOfHours: subject.numberOfHours,
+    try {
+      await dispatch(deleteStudentsThunk(ids)).unwrap();
+      await refreshStudents();
+      setIsDeleteAllStudentsConfirmOpen(false);
+      setStatusDialog({
+        isOpen: true,
+        title: "تم الحذف بنجاح",
+        message: "تم حذف جميع الطلاب بنجاح",
+        type: "success",
       });
-      setIsEditMode(false);
+    } catch (error: any) {
+      setStatusDialog({
+        isOpen: true,
+        title: "خطأ في حذف الطلاب",
+        message: error || "حدث خطأ غير متوقع أثناء حذف الطلاب",
+        type: "error",
+      });
     }
-    setIsSubjectDialogOpen(true);
-  };
-
-  const handleEditStudent = (student: MajorStudent) => {
-    setEditingStudent(student);
-    setIsEditStudentDialogOpen(true);
   };
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+      {/* Header */}
       <div className="p-4 md:p-6 border-b border-gray-50">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="space-y-1.5">
@@ -504,7 +274,7 @@ export function StudyYearDetail({
             </p>
           </div>
           <Badge className="bg-blue-50 text-blue-700 border-blue-100 px-3 py-1.5 text-xs md:text-sm font-semibold w-fit shadow-sm">
-            {major.name}
+            {`${major.name} (${students.length} طالب)`}
           </Badge>
         </div>
       </div>
@@ -515,6 +285,7 @@ export function StudyYearDetail({
         onValueChange={setActiveTab}
         dir="rtl"
       >
+        {/* Tab Controls and Actions */}
         <div className="px-4 md:px-6 flex flex-col lg:flex-row items-stretch lg:items-center justify-between bg-gray-50/50 py-3 lg:py-0 border-b border-gray-100 gap-4">
           <TabsList className="bg-gray-200/50 p-1.5 h-auto w-full lg:w-auto self-center lg:self-auto rounded-xl grid grid-cols-2 gap-1 lg:flex lg:h-12">
             <TabsTrigger
@@ -536,20 +307,7 @@ export function StudyYearDetail({
           <div className="flex flex-wrap items-center gap-2 pb-1 lg:pb-0">
             {activeTab === "subjects" ? (
               <Button
-                onClick={() => {
-                  if (editingSubject !== null) {
-                    setEditingSubject(null);
-                    setSubjectForm({
-                      name: "",
-                      teacherId: "",
-                      teacherName: "",
-                      numberOfHours: 3,
-                    });
-                    setIsEditMode(false);
-                  }
-                  dispatch(fetchTeachersList());
-                  setIsSubjectDialogOpen(true);
-                }}
+                onClick={handleOpenAddSubject}
                 size="sm"
                 disabled={!canEdit}
                 className="bg-blue-600 hover:bg-blue-700 gap-2 cursor-pointer shadow-sm rounded-lg flex-1 md:flex-none justify-center h-10 md:h-9 font-bold transition-all active:scale-95"
@@ -598,710 +356,78 @@ export function StudyYearDetail({
                   <UserPlus className="h-4 w-4" />
                   <span className="whitespace-nowrap">إضافة طالب</span>
                 </Button>
+                {students.length > 0 && (
+                  <Button
+                    onClick={() => setIsDeleteAllStudentsConfirmOpen(true)}
+                    variant="destructive"
+                    size="sm"
+                    disabled={!canEdit || loadingStudents}
+                    className="bg-red-600 hover:bg-red-700 gap-2 cursor-pointer shadow-sm rounded-lg w-full sm:w-auto justify-center h-10 md:h-9 font-bold transition-all active:scale-95"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                    <span className="whitespace-nowrap">حذف الكل</span>
+                  </Button>
+                )}
               </div>
             )}
           </div>
         </div>
 
+        {/* Subjects Tab Content */}
         <TabsContent
           value="subjects"
           className="mt-0 p-0 border-t border-gray-100"
         >
-          {fetchDetailedSubjectsState.isLoading ? (
-            <div className="flex flex-col items-center justify-center py-20 text-gray-400 gap-4">
-              <div className="h-16 w-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-              <p className="font-medium">جاري تحميل المواد...</p>
-            </div>
-          ) : isMobile ? (
-            <div className="p-4 space-y-3 bg-gray-50/30">
-              {subjectsBySpecialization.length > 0 ? (
-                subjectsBySpecialization.map((subject) => (
-                  <div
-                    key={subject.subjectId}
-                    className="bg-white rounded-xl p-4 border border-gray-100 shadow-sm relative overflow-hidden group"
-                  >
-                    <div className="absolute top-0 right-0 w-1 h-full bg-blue-500 opacity-0 group-hover:opacity-100 transition-opacity" />
-                    <div className="flex flex-col gap-4">
-                      <div className="flex justify-between items-start">
-                        <div className="space-y-1 text-right">
-                          <h4
-                            className="font-bold text-gray-900 text-lg leading-tight truncate"
-                            title={subject.name}
-                          >
-                            {subject.name}
-                          </h4>
-                          <div className="flex flex-wrap gap-2 justify-end mt-1">
-                            <Badge
-                              variant="secondary"
-                              className="bg-blue-50 text-blue-600 hover:bg-blue-100 font-semibold text-[10px] border-none px-2"
-                            >
-                              {subject.numberOfHours} حصص
-                            </Badge>
-                          </div>
-                        </div>
-                        <div className="flex gap-1">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => {
-                              handleDeleteSubject(subject.subjectId.toString());
-                            }}
-                            className="h-8 w-8 text-red-500 hover:bg-red-50 hover:text-red-600 rounded-lg"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => openEditSubject(subject)}
-                            className="h-8 w-8 text-blue-600 hover:bg-blue-50 rounded-lg"
-                          >
-                            <Settings className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center justify-between pt-3 border-t border-gray-50 bg-gray-50/50 -mx-4 px-4 py-2 mt-auto">
-                        <div className="flex items-center gap-2">
-                          {subject.teacherName ? (
-                            <div className="flex items-center gap-2">
-                              <div className="h-7 w-7 bg-blue-100 text-blue-700 rounded-full flex items-center justify-center text-xs font-black ring-2 ring-white">
-                                {subject.teacherName.charAt(0)}
-                              </div>
-                              <span
-                                className="text-gray-700 text-sm font-bold truncate max-w-[150px]"
-                                title={subject.teacherName}
-                              >
-                                {subject.teacherName}
-                              </span>
-                            </div>
-                          ) : (
-                            <span className="text-red-500 text-xs font-medium">
-                              لم يعين معلم
-                            </span>
-                          )}
-                        </div>
-                        {/* <span className="text-[10px] text-gray-400 font-medium">
-                          ID: {subject.subjectId}
-                        </span> */}
-                      </div>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <div className="flex flex-col items-center justify-center py-20 text-gray-400 gap-4">
-                  <div className="h-16 w-16 bg-gray-100 rounded-full flex items-center justify-center">
-                    <Book className="h-8 w-8 opacity-20" />
-                  </div>
-                  <p className="font-medium">لا توجد مواد مضافة حالياً</p>
-                </div>
-              )}
-            </div>
-          ) : (
-            <Table dir="rtl">
-              <TableHeader className="bg-gray-50/80">
-                <TableRow>
-                  <TableHead className="text-right font-bold text-gray-700 h-12">
-                    اسم المادة
-                  </TableHead>
-                  <TableHead className="text-right font-bold text-gray-700 h-12">
-                    المعلم المعين
-                  </TableHead>
-                  <TableHead className="text-right font-bold text-gray-700 h-12">
-                    الحصص / الجدول
-                  </TableHead>
-                  <TableHead className="text-center font-bold text-gray-700 h-12">
-                    التحكم
-                  </TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {subjectsBySpecialization.map((subject) => (
-                  <TableRow
-                    key={subject.subjectId}
-                    className="hover:bg-blue-50/10 transition-colors border-b border-gray-50"
-                  >
-                    <TableCell className="text-right font-bold text-gray-900 border-none overflow-hidden max-w-[250px]">
-                      <div className="truncate" title={subject.name}>
-                        {subject.name}
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-right border-none">
-                      {subject.teacherName ? (
-                        <div className="flex items-center gap-2">
-                          <div className="h-7 w-7 bg-blue-100 text-blue-700 rounded-full flex items-center justify-center text-xs font-bold ring-2 ring-white shadow-sm">
-                            {subject.teacherName.charAt(0)}
-                          </div>
-                          <span
-                            className="text-gray-700 font-medium truncate max-w-[150px]"
-                            title={subject.teacherName}
-                          >
-                            {subject.teacherName}
-                          </span>
-                        </div>
-                      ) : (
-                        <span className="text-red-400 text-sm">لم يعين</span>
-                      )}
-                    </TableCell>
-                    <TableCell className="text-right border-none">
-                      <Badge
-                        variant="secondary"
-                        className="w-fit bg-gray-100 text-gray-600 font-medium border-none"
-                      >
-                        {subject.numberOfHours} حصص
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="border-none">
-                      <div className="flex items-center justify-center gap-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => {
-                            openEditSubject(subject);
-                          }}
-                          className="h-9 px-4 gap-2 border-gray-200 text-blue-600 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200 cursor-pointer transition-all shadow-sm rounded-lg"
-                        >
-                          <Settings className="h-3.5 w-3.5" />
-                          إدارة
-                        </Button>
-
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => {
-                            handleDeleteSubject(subject.subjectId.toString());
-                          }}
-                          className="h-8 w-8 text-red-500 hover:bg-red-50 rounded-lg cursor-pointer transition-all focus-visible:ring-red-500"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-                {subjectsBySpecialization.length === 0 && (
-                  <TableRow>
-                    <TableCell colSpan={4} className="h-40 text-center">
-                      <div className="flex flex-col items-center justify-center text-gray-400 gap-2">
-                        <Book className="h-8 w-8 opacity-20" />
-                        <p>لا توجد مواد مضافة حالياً</p>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          )}
+          <SubjectsList
+            subjects={subjectsBySpecialization}
+            isLoading={fetchDetailedSubjectsState.isLoading}
+            isMobile={isMobile}
+            canEdit={canEdit}
+            onEdit={handleOpenEditSubject}
+            onDelete={handleOpenDeleteSubject}
+          />
         </TabsContent>
 
+        {/* Students Tab Content */}
         <TabsContent
           value="students"
           className="mt-0 p-0 border-t border-gray-100"
         >
-          {isMobile ? (
-            <div className="p-4 space-y-3 bg-gray-50/30 ">
-              {loadingStudents && (
-                <div className="flex flex-col items-center justify-center py-12 text-gray-400 gap-4">
-                  <div className="h-10 w-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
-                  <span className="font-bold text-sm">
-                    جاري تحميل الطلاب...
-                  </span>
-                </div>
-              )}
-              {!loadingStudents && students.length > 0
-                ? students.map((student) => (
-                    <div
-                      key={String(student.studentId)}
-                      className="bg-white rounded-xl p-4 border border-gray-100 shadow-sm  overflow-hidden group"
-                    >
-                      <div className="bg-indigo-500 opacity-0 group-hover:opacity-100 transition-opacity" />
-                      <div className="flex items-center gap-4 ">
-                        <div className="h-14 w-14 bg-indigo-50 text-indigo-700 rounded-full flex items-center justify-center text-xl font-black shadow-sm ring-4 ring-white shrink-0">
-                          {student.fullName ? student.fullName.charAt(0) : "?"}
-                        </div>
-                        <div className="text-right flex-col  overflow-hidden!">
-                          <div
-                            className="font-bold text-gray-900 text-lg truncate max-w-[150px] leading-tight"
-                            title={student.fullName}
-                          >
-                            {student.fullName}
-                          </div>
-                          <div
-                            className="text-right text-xs text-gray-400 font-medium truncate max-w-[150px] mt-0.5"
-                            title={student.username || undefined}
-                            dir="ltr"
-                          >
-                            {student.username || "لا يوجد بريد إلكتروني"}
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="flex gap-2 pt-4 mt-4 border-t border-gray-50 h-10">
-                        <Link
-                          href={`/admin/students/${student.studentId}`}
-                          target="_blank"
-                          className="flex-1"
-                        >
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="w-full gap-2 border-gray-100 text-blue-600 hover:bg-blue-50 hover:border-blue-200 cursor-pointer h-full rounded-lg text-xs font-bold"
-                          >
-                            <FileText className="h-3.5 w-3.5" />
-                            الملف
-                          </Button>
-                        </Link>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          disabled={!canEdit}
-                          onClick={() => handleEditStudent(student)}
-                          className="flex-1 gap-2 border-gray-100 text-amber-600 hover:bg-amber-50 hover:border-amber-200 cursor-pointer h-full rounded-lg text-xs font-bold"
-                        >
-                          <Edit className="h-3.5 w-3.5" />
-                          تعديل
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          disabled={!canEdit}
-                          onClick={() =>
-                            confirmDelete(String(student.studentId))
-                          }
-                          className="h-full w-10 text-red-500 hover:bg-red-50 rounded-lg shrink-0"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  ))
-                : null}
-              {!loadingStudents && students.length === 0 && (
-                <div className="flex flex-col items-center justify-center py-20 text-gray-400 gap-4">
-                  <div className="h-16 w-16 bg-gray-100 rounded-full flex items-center justify-center">
-                    <Users className="h-8 w-8 opacity-20" />
-                  </div>
-                  <p className="font-medium text-center">
-                    لا يوجد طلاب مسجلين في هذه السنة
-                  </p>
-                </div>
-              )}
-            </div>
-          ) : (
-            <Table dir="rtl">
-              <TableHeader className="bg-gray-50/80">
-                <TableRow>
-                  <TableHead className="text-right font-bold text-gray-700 h-12">
-                    اسم الطالب
-                  </TableHead>
-                  {/* <TableHead className="text-right font-bold text-gray-700 h-12">
-                    الرقم الجامعي
-                  </TableHead> */}
-                  <TableHead className="text-center font-bold text-gray-700 h-12">
-                    البريد الإلكتروني
-                  </TableHead>
-                  <TableHead className="text-center font-bold text-gray-700 h-12">
-                    الإجراءات
-                  </TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {loadingStudents && (
-                  <TableRow>
-                    <TableCell
-                      colSpan={4}
-                      className="h-40 text-center text-gray-400"
-                    >
-                      جاري تحميل الطلاب...
-                    </TableCell>
-                  </TableRow>
-                )}
-                {!loadingStudents &&
-                  students.map((student) => (
-                    <TableRow
-                      key={student.studentId}
-                      className="hover:bg-gray-50/50 transition-colors"
-                    >
-                      <TableCell className="py-4 font-semibold text-gray-900 overflow-hidden max-w-[250px]">
-                        <div className="flex items-center gap-3">
-                          <div className="h-8 w-8 bg-indigo-50 text-indigo-700 rounded-full flex items-center justify-center text-xs font-bold shadow-sm shrink-0">
-                            {student.fullName
-                              ? student.fullName.charAt(0)
-                              : "?"}
-                          </div>
-                          <span className="truncate" title={student.fullName}>
-                            {student.fullName}
-                          </span>
-                        </div>
-                      </TableCell>
-
-                      <TableCell className="py-4 text-gray-500 text-sm overflow-hidden max-w-[200px]">
-                        <div
-                          className="truncate"
-                          title={student.username || undefined}
-                          dir="ltr"
-                        >
-                          {student.username || (
-                            <span className="text-gray-300 italic">
-                              لا يوجد
-                            </span>
-                          )}
-                        </div>
-                      </TableCell>
-                      <TableCell className="py-4">
-                        <div className="flex items-center justify-center gap-2">
-                          <Link
-                            href={`/admin/students/${student.studentId}`}
-                            target="_blank"
-                          >
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="h-9 px-4 gap-2 text-blue-600 hover:bg-blue-50 rounded-lg cursor-pointer transition-all"
-                            >
-                              <FileText className="h-4 w-4" />
-                              ملف الطالب
-                            </Button>
-                          </Link>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            disabled={!canEdit}
-                            onClick={() => handleEditStudent(student)}
-                            className="h-9 w-9 text-amber-600 hover:bg-amber-50 rounded-lg cursor-pointer transition-all focus-visible:ring-amber-500"
-                          >
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            disabled={!canEdit}
-                            onClick={() =>
-                              confirmDelete(String(student.studentId))
-                            }
-                            className="h-9 w-9 text-red-500 hover:bg-red-50 rounded-lg cursor-pointer transition-all"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                {!loadingStudents && students.length === 0 && (
-                  <TableRow>
-                    <TableCell colSpan={4} className="h-40 text-center">
-                      <div className="flex flex-col items-center justify-center text-gray-400 gap-2">
-                        <Users className="h-8 w-8 opacity-20" />
-                        <p>لا يوجد طلاب مسجلين في هذه السنة</p>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          )}
+          <StudentsList
+            students={students}
+            isLoading={loadingStudents}
+            isMobile={isMobile}
+            canEdit={canEdit}
+            onEdit={handleOpenEditStudent}
+            onDelete={handleOpenDeleteStudent}
+          />
         </TabsContent>
       </Tabs>
 
-      {/* Subject Dialog */}
-      <Dialog
-        open={isSubjectDialogOpen}
-        onOpenChange={(open) => {
-          setIsSubjectDialogOpen(open);
-          if (!open) {
-            setTimeout(() => {
-              setEditingSubject(null);
-              setSubjectForm({
-                name: "",
-                teacherId: "",
-                teacherName: "",
-                numberOfHours: 3,
-              });
-              setSubjectRows([emptyRow()]);
-              setIsEditMode(false);
-            }, 100);
+      {/* Dialogs */}
+      <SubjectDialog
+        isOpen={isSubjectDialogOpen}
+        onOpenChange={setIsSubjectDialogOpen}
+        major={major}
+        year={year}
+        editingSubject={editingSubject}
+        onSuccess={(status) => {
+          setStatusDialog({ isOpen: true, ...status });
+          if (status.type === "success") {
+            refreshSubjects();
+            onUpdateYear(year);
           }
         }}
-      >
-        <DialogContent
-          className="sm:max-w-[900px] w-[95vw] max-h-[90vh] overflow-y-auto"
-          onInteractOutside={(e) => e.preventDefault()}
-        >
-          <DialogHeader>
-            <DialogTitle className="text-right flex items-center gap-2">
-              {editingSubject ? "تفاصيل المادة" : "إضافة مواد جديدة"}
-            </DialogTitle>
-          </DialogHeader>
+      />
 
-          {/* EDIT MODE — single subject */}
-          {editingSubject && (
-            <div className="grid gap-4 py-4" dir="rtl">
-              <div className="flex items-center justify-between bg-amber-50/50 p-3 rounded-xl border border-amber-100">
-                <div className="flex items-center gap-2">
-                  <Checkbox
-                    id="edit-mode"
-                    checked={isEditMode}
-                    onCheckedChange={(val) => {
-                      setIsEditMode(!!val);
-                      if (!!val) dispatch(fetchTeachersList());
-                    }}
-                    className="border-amber-400 data-[state=checked]:bg-amber-600 data-[state=checked]:border-amber-600"
-                  />
-                  <Label
-                    htmlFor="edit-mode"
-                    className="text-amber-800 font-bold cursor-pointer"
-                  >
-                    تعديل البيانات
-                  </Label>
-                </div>
-                <p className="text-xs text-amber-700">
-                  قم بتفعيل الخيار لتتمكن من تعديل بيانات المادة
-                </p>
-              </div>
-              <div className="grid grid-cols-3 gap-3">
-                <div className="grid gap-1.5">
-                  <Label className="text-right text-sm">اسم المادة</Label>
-                  <Input
-                    value={subjectForm.name}
-                    disabled={!isEditMode}
-                    onChange={(e) =>
-                      setSubjectForm({ ...subjectForm, name: e.target.value })
-                    }
-                    className="text-right h-10"
-                  />
-                </div>
-                <div className="grid gap-1.5">
-                  <Label className="text-right text-sm">المعلم</Label>
-                  <TeacherSearchSelect
-                    teachers={teachersList}
-                    value={subjectForm.teacherId}
-                    disabled={!isEditMode}
-                    onValueChange={(val) => {
-                      const teacher = teachersList.find((t) => t.id === val);
-                      setSubjectForm({
-                        ...subjectForm,
-                        teacherId: val,
-                        teacherName: teacher?.name || "",
-                      });
-                    }}
-                  />
-                </div>
-                <div className="grid gap-1.5">
-                  <Label className="text-right text-sm">عدد الحصص</Label>
-                  <Input
-                    type="number"
-                    value={subjectForm.numberOfHours}
-                    disabled={!isEditMode}
-                    onChange={(e) =>
-                      setSubjectForm({
-                        ...subjectForm,
-                        numberOfHours: Number(e.target.value),
-                      })
-                    }
-                    className="text-right h-10"
-                  />
-                </div>
-              </div>
-            </div>
-          )}
+      <StudentDialog
+        isOpen={isStudentDialogOpen}
+        onOpenChange={setIsStudentDialogOpen}
+        major={major}
+        year={year}
+        onSuccess={refreshStudents}
+      />
 
-          {/* ADD MODE — multiple subject rows */}
-          {!editingSubject && (
-            <div className="py-4" dir="rtl">
-              {/* Column headers */}
-              <div className="grid grid-cols-[1fr_1fr_100px_36px] gap-2 mb-2 px-1">
-                <span className="text-sm font-bold text-gray-600">
-                  اسم المادة <span className="text-red-500">*</span>
-                </span>
-                <span className="text-sm font-bold text-gray-600">
-                  المعلم <span className="text-red-500">*</span>
-                </span>
-                <span className="text-sm font-bold text-gray-600">
-                  عدد الحصص
-                </span>
-                <span />
-              </div>
-
-              {/* Subject rows */}
-              <div className="space-y-2">
-                {subjectRows.map((row, index) => (
-                  <div
-                    key={index}
-                    className="grid grid-cols-[1fr_1fr_100px_36px] gap-2 items-center bg-gray-50/60 rounded-lg p-2 border border-gray-100"
-                  >
-                    <Input
-                      placeholder="اسم المادة"
-                      value={row.name}
-                      onChange={(e) =>
-                        updateSubjectRow(index, "name", e.target.value)
-                      }
-                      className="text-right h-9 bg-white"
-                    />
-                    <TeacherSearchSelect
-                      teachers={teachersList}
-                      value={row.teacherId}
-                      onValueChange={(val) => {
-                        const teacher = teachersList.find((t) => t.id === val);
-                        updateSubjectRow(index, "teacherId", val);
-                        updateSubjectRow(
-                          index,
-                          "teacherName",
-                          teacher?.name || "",
-                        );
-                      }}
-                    />
-                    <Input
-                      type="number"
-                      min={1}
-                      value={row.numberOfHours}
-                      onChange={(e) =>
-                        updateSubjectRow(
-                          index,
-                          "numberOfHours",
-                          Number(e.target.value),
-                        )
-                      }
-                      className="text-right h-9 bg-white"
-                    />
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      disabled={subjectRows.length === 1}
-                      onClick={() => removeSubjectRow(index)}
-                      className="h-9 w-9 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg disabled:opacity-30"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                ))}
-              </div>
-
-              {/* Add another row button */}
-              <Button
-                variant="outline"
-                onClick={() => {
-                  addSubjectRow();
-                  dispatch(fetchTeachersList());
-                }}
-                className="mt-3 w-full border-dashed border-blue-300 text-blue-600 hover:bg-blue-50 hover:border-blue-400 gap-2 h-10 font-bold"
-              >
-                <Plus className="h-4 w-4" />
-                إضافة مادة أخرى
-              </Button>
-            </div>
-          )}
-
-          <DialogFooter className="flex flex-row gap-2">
-            {(!editingSubject || isEditMode) && (
-              <>
-                <Button
-                  variant="outline"
-                  onClick={() => setIsSubjectDialogOpen(false)}
-                  className="flex-1 cursor-pointer border-gray-200 text-gray-600 hover:bg-gray-50"
-                >
-                  إلغاء
-                </Button>
-                <Button
-                  onClick={handleSaveSubject}
-                  disabled={
-                    createSubjectState.isLoading || updateSubjectState.isLoading
-                  }
-                  className="flex-1 bg-blue-600 hover:bg-blue-700 cursor-pointer"
-                >
-                  {createSubjectState.isLoading || updateSubjectState.isLoading
-                    ? "جاري الحفظ..."
-                    : editingSubject
-                      ? "حفظ التعديلات"
-                      : `حفظ ${subjectRows.length > 1 ? subjectRows.length + " مواد" : "المادة"}`}
-                </Button>
-              </>
-            )}
-            {editingSubject && !isEditMode && (
-              <Button
-                onClick={() => setIsSubjectDialogOpen(false)}
-                className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 border-none cursor-pointer h-10 rounded-lg font-medium"
-              >
-                إغلاق
-              </Button>
-            )}
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Student Dialog */}
-      <Dialog
-        open={isStudentDialogOpen}
-        onOpenChange={(val) => {
-          setIsStudentDialogOpen(val);
-          if (!val) {
-            dispatch(clearSpecializationErrors());
-            dispatch(clearAdminErrors());
-          }
-        }}
-      >
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle className="text-right">
-              إضافة طالب جديد للسنة الدراسية
-            </DialogTitle>
-            <DialogDescription className="text-right text-sm text-gray-500">
-              البريد الإلكتروني اختياري
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
-              <Label htmlFor="st-name" className="text-right">
-                اسم الطالب <span className="text-red-500">*</span>
-              </Label>
-              <Input
-                id="st-name"
-                value={studentForm.name}
-                onChange={(e) =>
-                  setStudentForm({ ...studentForm, name: e.target.value })
-                }
-                className="text-right"
-                placeholder="أدخل اسم الطالب"
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="st-username" className="text-right">
-                البريد الإلكتروني (اختياري)
-              </Label>
-              <Input
-                id="st-username"
-                type="text"
-                value={studentForm.username}
-                onChange={(e) =>
-                  setStudentForm({ ...studentForm, username: e.target.value })
-                }
-                className="text-right"
-                placeholder="example@email.com"
-              />
-            </div>
-            {createAndEnrollStudentState.error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded text-sm text-right">
-                {createAndEnrollStudentState.error}
-              </div>
-            )}
-          </div>
-          <DialogFooter>
-            <Button
-              onClick={handleAddStudent}
-              disabled={
-                createAndEnrollStudentState.isLoading ||
-                !studentForm.name.trim()
-              }
-              className="w-full bg-blue-600 hover:bg-blue-700 cursor-pointer"
-            >
-              {createAndEnrollStudentState.isLoading
-                ? "جاري الإضافة..."
-                : "إضافة الطالب"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Edit/Transfer Student Dialog */}
       <EditStudentDialog
         open={isEditStudentDialogOpen}
         onOpenChange={setIsEditStudentDialogOpen}
@@ -1311,126 +437,48 @@ export function StudyYearDetail({
         onSuccess={refreshStudents}
       />
 
-      {/* Delete Confirmation Dialog */}
-      <Dialog open={isDeleteConfirmOpen} onOpenChange={setIsDeleteConfirmOpen}>
-        <DialogContent className="sm:max-w-[400px]">
-          <DialogHeader>
-            <DialogTitle className="text-right text-red-600">
-              تأكيد الحذف
-            </DialogTitle>
-            <DialogDescription className="text-right py-4">
-              هل أنت متأكد من رغبتك في حذف هذا الطالب؟ لا يمكن التراجع عن هذا
-              الإجراء.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter className="flex flex-row gap-2">
-            <Button
-              variant="outline"
-              onClick={() => setIsDeleteConfirmOpen(false)}
-              className="flex-1 cursor-pointer"
-            >
-              إلغاء
-            </Button>
-            <Button
-              variant="destructive"
-              onClick={() =>
-                studentToDelete && handleDeleteStudent(studentToDelete)
-              }
-              className="flex-1 bg-red-600 hover:bg-red-700 cursor-pointer"
-            >
-              حذف
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <DeleteConfirmDialog
+        isOpen={isDeleteConfirmOpen}
+        onOpenChange={setIsDeleteConfirmOpen}
+        onConfirm={confirmDeleteStudent}
+        description={
+          <span>
+            هل أنت متأكد من رغبتك في حذف الطالب{" "}
+            <span className="font-bold underline text-gray-900 mx-1">
+              {studentToDelete?.fullName}
+            </span>
+            ؟ لا يمكن التراجع عن هذا الإجراء.
+          </span>
+        }
+      />
 
-      {/* Subject Delete Confirmation Dialog */}
-      <Dialog
-        open={isDeleteSubjectConfirmOpen}
+      <DeleteConfirmDialog
+        isOpen={isDeleteAllStudentsConfirmOpen}
+        onOpenChange={setIsDeleteAllStudentsConfirmOpen}
+        onConfirm={confirmDeleteAllStudents}
+        title="حذف جميع الطلاب"
+        description={`هل أنت متأكد من رغبتك في حذف جميع الطلاب (${students.length} طالب)؟ لا يمكن التراجع عن هذا الإجراء.`}
+        confirmText="نعم، حذف الكل"
+      />
+
+      <DeleteConfirmDialog
+        isOpen={isDeleteSubjectConfirmOpen}
         onOpenChange={setIsDeleteSubjectConfirmOpen}
-      >
-        <DialogContent className="sm:max-w-[400px]">
-          <DialogHeader>
-            <DialogTitle className="text-right text-red-600 font-bold text-xl">
-              تأكيد حذف المادة
-            </DialogTitle>
-            <DialogDescription className="text-right py-6 text-gray-600">
-              هل أنت متأكد من رغبتك في حذف هذه المادة؟ سيؤدي هذا إلى حذف المادة
-              وجميع البيانات المتعلقة بها من هذا الفصل الدراسي.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter className="flex flex-row-reverse gap-3">
-            <Button
-              variant="destructive"
-              onClick={confirmDeleteSubject}
-              className="flex-1 bg-red-600 hover:bg-red-700 cursor-pointer font-bold h-11 rounded-xl shadow-md transition-all active:scale-95"
-            >
-              نعم، أحذف المادة
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => setIsDeleteSubjectConfirmOpen(false)}
-              className="flex-1 cursor-pointer h-11 rounded-xl border-gray-200 hover:bg-gray-50 font-medium transition-all"
-            >
-              إلغاء
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+        onConfirm={confirmDeleteSubject}
+        title="تأكيد حذف المادة"
+        description="هل أنت متأكد من رغبتك في حذف هذه المادة؟ سيؤدي هذا إلى حذف المادة وجميع البيانات المتعلقة بها من هذا الفصل الدراسي."
+        confirmText="نعم، أحذف المادة"
+      />
 
-      {/* Status Dialog */}
-      <AlertDialog
-        open={statusDialog.isOpen}
+      <StatusDialog
+        isOpen={statusDialog.isOpen}
         onOpenChange={(open) =>
           setStatusDialog((prev) => ({ ...prev, isOpen: open }))
         }
-      >
-        <AlertDialogContent className="sm:max-w-[400px]" dir="rtl">
-          <AlertDialogHeader>
-            <AlertDialogTitle
-              className={cn(
-                "text-right font-bold flex items-center gap-2 text-xl",
-                statusDialog.type === "error"
-                  ? "text-red-600"
-                  : statusDialog.type === "success"
-                    ? "text-emerald-600"
-                    : "text-amber-600",
-              )}
-            >
-              {statusDialog.type === "error" && (
-                <Plus className="h-5 w-5 rotate-45" />
-              )}
-              {statusDialog.type === "success" && (
-                <ShieldCheck className="h-5 w-5" />
-              )}
-              {statusDialog.type === "warning" && (
-                <Settings className="h-5 w-5 animate-spin-slow" />
-              )}
-              <span>{statusDialog.title}</span>
-            </AlertDialogTitle>
-            <AlertDialogDescription className="text-right text-gray-600 mt-3 leading-relaxed">
-              {statusDialog.message}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter className="mt-6">
-            <AlertDialogAction
-              onClick={() =>
-                setStatusDialog((prev) => ({ ...prev, isOpen: false }))
-              }
-              className={cn(
-                "w-full h-11 rounded-xl font-bold shadow-lg transition-all active:scale-95 text-white border-none cursor-pointer",
-                statusDialog.type === "error"
-                  ? "bg-red-600 hover:bg-red-700 shadow-red-200"
-                  : statusDialog.type === "success"
-                    ? "bg-emerald-600 hover:bg-emerald-700 shadow-emerald-200"
-                    : "bg-amber-600 hover:bg-amber-700 shadow-amber-200",
-              )}
-            >
-              موافق
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+        title={statusDialog.title}
+        message={statusDialog.message}
+        type={statusDialog.type}
+      />
     </div>
   );
 }

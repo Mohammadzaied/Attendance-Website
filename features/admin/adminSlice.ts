@@ -12,6 +12,7 @@ import {
   UpdateDepartmentDto,
   TeacherListResponse,
   DetailedSubjectResponse,
+  PaginatedTeacherResponse,
 } from "./adminTypes";
 
 const initialAsyncState = { isLoading: false, error: null };
@@ -24,6 +25,15 @@ const initialState: AdminState = {
   selectedTeacher: null,
   isUpdateDialogOpen: false,
   isDeleteDialogOpen: false,
+  teachersPagination: {
+    totalCount: 0,
+    totalPages: 0,
+    currentPage: 1,
+    pageSize: 15,
+    searchTerm: null,
+    hasPreviousPage: false,
+    hasNextPage: false,
+  },
   fetchTeachersState: initialAsyncState,
   fetchTeachersListState: initialAsyncState,
   fetchDepartmentsState: initialAsyncState,
@@ -56,9 +66,16 @@ export const fetchDepartments = createAsyncThunk(
 
 export const fetchTeachers = createAsyncThunk(
   "admin/fetchTeachers",
-  async (_, { rejectWithValue }) => {
+  async (
+    params: {
+      pageNumber?: number;
+      pageSize?: number;
+      searchTerm?: string | null;
+    } | void,
+    { rejectWithValue },
+  ) => {
     try {
-      const response = await adminService.getAllTeachers();
+      const response = await adminService.getAllTeachers(params || undefined);
       return response;
     } catch (error) {
       if (error instanceof Error) {
@@ -264,6 +281,17 @@ const adminSlice = createSlice({
       state.teacherLastActiveSemester = [];
       state.fetchTeacherLastActiveSemesterState = initialAsyncState;
     },
+    setTeachersPage: (state, action: PayloadAction<number>) => {
+      state.teachersPagination.currentPage = action.payload;
+    },
+    setTeachersSearchTerm: (state, action: PayloadAction<string | null>) => {
+      state.teachersPagination.searchTerm = action.payload;
+      state.teachersPagination.currentPage = 1; // Reset to page 1 on search
+    },
+    setTeachersPageSize: (state, action: PayloadAction<number>) => {
+      state.teachersPagination.pageSize = action.payload;
+      state.teachersPagination.currentPage = 1;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -289,9 +317,18 @@ const adminSlice = createSlice({
       })
       .addCase(
         fetchTeachers.fulfilled,
-        (state, action: PayloadAction<TeacherResponse[]>) => {
+        (state, action: PayloadAction<PaginatedTeacherResponse>) => {
           state.fetchTeachersState.isLoading = false;
-          state.teachers = action.payload;
+          state.teachers = action.payload.teachers;
+          state.teachersPagination = {
+            ...state.teachersPagination,
+            totalCount: action.payload.totalCount,
+            totalPages: action.payload.totalPages,
+            currentPage: action.payload.pageNumber,
+            pageSize: action.payload.pageSize,
+            hasPreviousPage: action.payload.hasPreviousPage,
+            hasNextPage: action.payload.hasNextPage,
+          };
           state.fetchTeachersState.error = null;
         },
       )
@@ -493,6 +530,9 @@ export const {
   openDeleteDialog,
   closeDeleteDialog,
   clearTeacherLastActiveSemester,
+  setTeachersPage,
+  setTeachersSearchTerm,
+  setTeachersPageSize,
 } = adminSlice.actions;
 
 export default adminSlice.reducer;

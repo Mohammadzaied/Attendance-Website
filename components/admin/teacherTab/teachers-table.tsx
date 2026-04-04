@@ -22,8 +22,10 @@ import {
   fetchTeacherLastActiveSemester,
   clearTeacherLastActiveSemester,
 } from "@/features/admin/adminSlice";
-import { updateSubjectThunk } from "@/features/specialization/specializationsSlice";
-import { fetchTeachersList } from "@/features/admin/adminSlice";
+import {
+  updateSubjectThunk,
+  deleteSubjectThunk,
+} from "@/features/specialization/specializationsSlice";
 import {
   Dialog as ShadcnDialog,
   DialogContent as ShadcnDialogContent,
@@ -35,6 +37,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TeacherSearchSelect } from "@/components/admin/specializationTab/teacher-search-select";
+import { DeleteConfirmDialog } from "@/components/admin/specializationTab/delete-confirm-dialog";
 import { useState, useMemo, useEffect } from "react";
 import { DetailedSubjectResponse } from "@/features/subject";
 import { AddSubjectToTeacherDialog } from "./add-subject-to-teacher-dialog";
@@ -44,6 +47,8 @@ import { cn } from "@/lib/utils";
 
 type TeachersTableProps = {
   teachers: TeacherResponse[];
+  totalCount?: number;
+  isLoading?: boolean;
   searchValue: string;
   onSearchChange: (value: string) => void;
   onEdit?: (teacher: TeacherResponse) => void;
@@ -58,6 +63,8 @@ type TeachersTableProps = {
 
 export function TeachersTable({
   teachers,
+  totalCount,
+  isLoading,
   searchValue,
   onSearchChange,
   onEdit,
@@ -71,12 +78,9 @@ export function TeachersTable({
 }: TeachersTableProps) {
   const dispatch = useAppDispatch();
   const isMobile = useIsMobile();
-  const {
-    teacherLastActiveSemester,
-    fetchTeacherLastActiveSemesterState,
-    teachersList,
-  } = useAppSelector((state) => state.admin);
-  const { updateSubjectState } = useAppSelector(
+  const { teacherLastActiveSemester, fetchTeacherLastActiveSemesterState } =
+    useAppSelector((state) => state.admin);
+  const { updateSubjectState, deleteSubjectState } = useAppSelector(
     (state) => state.specializations,
   );
 
@@ -90,15 +94,19 @@ export function TeachersTable({
   const [isAddSubjectOpen, setIsAddSubjectOpen] = useState(false);
   const [teacherForSubject, setTeacherForSubject] =
     useState<TeacherResponse | null>(null);
+  const [isDeleteSubjectConfirmOpen, setIsDeleteSubjectConfirmOpen] =
+    useState(false);
 
   const [result, setResult] = useState<{
     success: boolean;
     message: string;
     show: boolean;
+    shouldCloseSchedule?: boolean;
   }>({
     success: false,
     message: "",
     show: false,
+    shouldCloseSchedule: false,
   });
 
   const [subjectForm, setSubjectForm] = useState({
@@ -110,7 +118,6 @@ export function TeachersTable({
 
   const handleOpenSchedule = async (teacher: TeacherResponse) => {
     dispatch(clearTeacherLastActiveSemester());
-    dispatch(fetchTeachersList());
     setActiveTeacher(teacher);
     setIsScheduleDialogOpen(true);
     // Optional: clear previous data to avoid showing old data
@@ -155,6 +162,7 @@ export function TeachersTable({
         success: true,
         message: "تم تحديث بيانات المادة بنجاح",
         show: true,
+        shouldCloseSchedule: true,
       });
     } catch (error) {
       console.error("Failed to update subject:", error);
@@ -162,6 +170,37 @@ export function TeachersTable({
         success: false,
         message:
           typeof error === "string" ? error : "فشل في تحديث بيانات المادة",
+        show: true,
+      });
+    }
+  };
+
+  const handleDeleteSubject = async () => {
+    if (!editingSubject) return;
+
+    try {
+      await dispatch(deleteSubjectThunk(editingSubject.subjectId)).unwrap();
+
+      // Refresh schedule data
+      if (activeTeacher) {
+        dispatch(fetchTeacherLastActiveSemester(activeTeacher.userId));
+      }
+
+      setIsDeleteSubjectConfirmOpen(false);
+      setEditingSubject(null);
+      setIsEditMode(false);
+
+      setResult({
+        success: true,
+        message: "تم حذف المادة بنجاح",
+        show: true,
+        shouldCloseSchedule: false,
+      });
+    } catch (error) {
+      console.error("Failed to delete subject:", error);
+      setResult({
+        success: false,
+        message: typeof error === "string" ? error : "فشل في حذف المادة",
         show: true,
       });
     }
@@ -203,7 +242,7 @@ export function TeachersTable({
               </span>
               <div className="hidden md:block h-4 w-px bg-gray-200 mx-1" />
               <Badge className="bg-blue-50 text-blue-700 border-none px-2.5 py-0.5 text-xs font-bold leading-none shadow-sm">
-                {teachers.length} معلمين
+                {totalCount ?? teachers.length} معلمين
               </Badge>
             </div>
           </div>
@@ -293,6 +332,16 @@ export function TeachersTable({
               isMobile && "p-4 space-y-3 bg-gray-50/50",
             )}
           >
+            {isLoading && (
+              <div className="absolute inset-0 bg-white/60 backdrop-blur-[1px] z-20 flex items-center justify-center">
+                <div className="flex flex-col items-center gap-2">
+                  <div className="h-8 w-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
+                  <span className="text-blue-600 font-bold text-sm">
+                    جاري التحميل...
+                  </span>
+                </div>
+              </div>
+            )}
             {teachers.map((teacher, index) =>
               isMobile ? (
                 // Mobile Card Layout
@@ -511,6 +560,32 @@ export function TeachersTable({
             </div>
           ) : teacherLastActiveSemester.length > 0 ? (
             <div className="space-y-6">
+              <div
+                dir="rtl"
+                className="flex items-center justify-between bg-amber-50/50 p-4 rounded-xl border border-amber-100"
+              >
+                <div className="flex items-center gap-3">
+                  <Checkbox
+                    id={`edit-mode-${editingSubject?.subjectId}`}
+                    checked={isEditMode}
+                    onCheckedChange={(val) => {
+                      setIsEditMode(!!val);
+                    }}
+                    className="h-5 w-5 border-amber-400 data-[state=checked]:bg-amber-600 data-[state=checked]:border-amber-600"
+                  />
+                  <div className="flex flex-col gap-0.5">
+                    <Label
+                      htmlFor={`edit-mode-${editingSubject?.subjectId}`}
+                      className="text-amber-800 font-bold cursor-pointer"
+                    >
+                      تعديل البيانات
+                    </Label>
+                    <span className="text-amber-600/70 text-[10px]">
+                      تفعيل وضع التعديل للمادة المحددة
+                    </span>
+                  </div>
+                </div>
+              </div>
               <div className="grid gap-4">
                 <div className="flex flex-col gap-2">
                   <Label className="text-right text-gray-500 text-xs">
@@ -550,36 +625,6 @@ export function TeachersTable({
 
                 {editingSubject && (
                   <div className="space-y-6 animate-in fade-in duration-300">
-                    <div
-                      dir="rtl"
-                      className="flex items-center justify-between bg-amber-50/50 p-4 rounded-xl border border-amber-100"
-                    >
-                      <div className="flex items-center gap-3">
-                        <Checkbox
-                          id={`edit-mode-${editingSubject.subjectId}`}
-                          checked={isEditMode}
-                          onCheckedChange={(val) => {
-                            setIsEditMode(!!val);
-                            if (!!val) {
-                              dispatch(fetchTeachersList());
-                            }
-                          }}
-                          className="h-5 w-5 border-amber-400 data-[state=checked]:bg-amber-600 data-[state=checked]:border-amber-600"
-                        />
-                        <div className="flex flex-col gap-0.5">
-                          <Label
-                            htmlFor={`edit-mode-${editingSubject.subjectId}`}
-                            className="text-amber-800 font-bold cursor-pointer"
-                          >
-                            تعديل البيانات
-                          </Label>
-                          <span className="text-amber-600/70 text-[10px]">
-                            تفعيل وضع التعديل للمادة المحددة
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-
                     <div className="grid gap-4 text-right" dir="rtl">
                       <div className="grid gap-2">
                         <Label className="text-right">اسم المادة</Label>
@@ -599,15 +644,14 @@ export function TeachersTable({
                       <div className="grid gap-2">
                         <Label className="text-right">المعلم</Label>
                         <TeacherSearchSelect
-                          teachers={teachersList}
                           value={subjectForm.teacherId}
+                          initialName={subjectForm.teacherName}
                           disabled={!isEditMode}
-                          onValueChange={(val) => {
-                            const t = teachersList.find((x) => x.id === val);
+                          onValueChange={(id, name) => {
                             setSubjectForm({
                               ...subjectForm,
-                              teacherId: val,
-                              teacherName: t?.name || "",
+                              teacherId: id,
+                              teacherName: name,
                             });
                           }}
                         />
@@ -633,7 +677,7 @@ export function TeachersTable({
                     </div>
 
                     {isEditMode && (
-                      <div className="pt-2">
+                      <div className="pt-2 flex flex-col gap-3">
                         <Button
                           onClick={handleSaveSubject}
                           disabled={updateSubjectState.isLoading}
@@ -642,6 +686,18 @@ export function TeachersTable({
                           {updateSubjectState.isLoading
                             ? "جاري الحفظ..."
                             : "حفظ التعديلات"}
+                        </Button>
+
+                        <Button
+                          variant="ghost"
+                          onClick={() => setIsDeleteSubjectConfirmOpen(true)}
+                          disabled={deleteSubjectState.isLoading}
+                          className="w-full text-red-600 hover:text-red-700 hover:bg-red-50 h-11 font-bold rounded-xl border border-dashed border-red-200"
+                        >
+                          <Trash2 className="h-4 w-4 ml-2" />
+                          {deleteSubjectState.isLoading
+                            ? "جاري الحذف..."
+                            : "حذف المادة نهائياً"}
                         </Button>
                       </div>
                     )}
@@ -667,15 +723,28 @@ export function TeachersTable({
             message: "تم إضافة المادة للمعلم بنجاح",
             show: true,
           });
-          dispatch(fetchTeachersList());
         }}
+      />
+
+      <DeleteConfirmDialog
+        isOpen={isDeleteSubjectConfirmOpen}
+        onOpenChange={setIsDeleteSubjectConfirmOpen}
+        onConfirm={handleDeleteSubject}
+        title="تأكيد حذف المادة"
+        description="هل أنت متأكد من رغبتك في حذف هذه المادة؟ سيؤدي هذا إلى حذف المادة وجميع البيانات المتعلقة بها."
+        confirmText="نعم، حذف المادة"
       />
 
       <ShadcnDialog
         open={result.show}
         onOpenChange={(show) => {
           setResult({ ...result, show });
-          if (!show && result.success && !isAddSubjectOpen) {
+          if (
+            !show &&
+            result.success &&
+            result.shouldCloseSchedule &&
+            !isAddSubjectOpen
+          ) {
             handleCloseSchedule();
           }
         }}
@@ -695,7 +764,11 @@ export function TeachersTable({
             <Button
               onClick={() => {
                 setResult({ ...result, show: false });
-                if (result.success && !isAddSubjectOpen) {
+                if (
+                  result.success &&
+                  result.shouldCloseSchedule &&
+                  !isAddSubjectOpen
+                ) {
                   handleCloseSchedule();
                 }
               }}

@@ -9,8 +9,8 @@ import axios, {
 
 // API Configuration
 // export const API_BASE_URL = "/api";
-// export const API_BASE_URL = "https://localhost:7094";
-export const API_BASE_URL = "https://attendance-rwtc.runasp.net";
+export const API_BASE_URL = "https://localhost:7094";
+// export const API_BASE_URL = "https://attendance-rwtc.runasp.net";
 
 // Public endpoints that don't require authentication cookies
 const PUBLIC_ENDPOINTS = ["/Users/SignIn"];
@@ -68,9 +68,6 @@ class ApiClient {
           const token = state.AuthSlice?.accessToken;
           if (token) {
             config.headers.Authorization = `Bearer ${token}`;
-            console.log(
-              `[API Request] ${config.method?.toUpperCase()} ${config.url} - Authorization: Bearer ${token}`,
-            );
           }
         }
 

@@ -19,6 +19,7 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
+  PaginationEllipsis,
 } from "@/components/ui/pagination";
 import { Search, GraduationCap, UserCheck, Trash2 } from "lucide-react";
 import { EditStudentDialog } from "@/components/admin/specializationTab/edit-student-dialog";
@@ -60,7 +61,7 @@ export function StudentsListContent({
   const [searchTerm, setSearchTerm] = useState("");
   const [isGraduated, setIsGraduated] = useState(false);
   const [page, setPage] = useState(1);
-  const pageSize = 20;
+  const pageSize = 30;
 
   // Edit/Delete state (Admin only)
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -125,7 +126,7 @@ export function StudentsListContent({
     if (!selectedStudent || isDH) return;
     setIsDeleting(true);
     try {
-      await studentService.deleteStudent(selectedStudent.studentId);
+      await studentService.deleteStudents([selectedStudent.studentId]);
       toast.success("تم حذف الطالب بنجاح");
       setIsDeleteDialogOpen(false);
       loadStudents();
@@ -250,29 +251,59 @@ export function StudentsListContent({
                   </PaginationItem>
                 )}
 
-                {Array.from(
-                  { length: graduationStudents.totalPages },
-                  (_, i) => i + 1,
-                ).map((pageNum) => (
-                  <PaginationItem key={pageNum}>
-                    <PaginationLink
-                      onClick={() => setPage(pageNum)}
-                      isActive={page === pageNum}
-                      className={cn(
-                        "cursor-pointer",
-                        isDH &&
-                          cn(
-                            "rounded-xl font-bold transition-all",
-                            page === pageNum
-                              ? "bg-blue-600 text-white border-blue-600"
-                              : "border-gray-200 hover:bg-gray-50",
-                          ),
-                      )}
-                    >
-                      {pageNum}
-                    </PaginationLink>
-                  </PaginationItem>
-                ))}
+                {(() => {
+                  const totalPages = graduationStudents.totalPages;
+                  const currentPage = page;
+                  const pages: (number | string)[] = [];
+
+                  if (totalPages <= 7) {
+                    for (let i = 1; i <= totalPages; i++) pages.push(i);
+                  } else {
+                    pages.push(1);
+                    if (currentPage > 3) pages.push("ellipsis-start");
+
+                    const start = Math.max(2, currentPage - 1);
+                    const end = Math.min(totalPages - 1, currentPage + 1);
+
+                    for (let i = start; i <= end; i++) {
+                      pages.push(i);
+                    }
+
+                    if (currentPage < totalPages - 2)
+                      pages.push("ellipsis-end");
+                    pages.push(totalPages);
+                  }
+
+                  return pages.map((p, i) => {
+                    if (typeof p === "string") {
+                      return (
+                        <PaginationItem key={`ellipsis-${i}`}>
+                          <PaginationEllipsis />
+                        </PaginationItem>
+                      );
+                    }
+                    return (
+                      <PaginationItem key={p}>
+                        <PaginationLink
+                          onClick={() => setPage(p)}
+                          isActive={currentPage === p}
+                          className={cn(
+                            "cursor-pointer",
+                            isDH &&
+                              cn(
+                                "rounded-xl font-bold transition-all",
+                                currentPage === p
+                                  ? "bg-blue-600 text-white border-blue-600"
+                                  : "border-gray-200 hover:bg-gray-50",
+                              ),
+                          )}
+                        >
+                          {p}
+                        </PaginationLink>
+                      </PaginationItem>
+                    );
+                  });
+                })()}
 
                 {graduationStudents.hasNextPage && (
                   <PaginationItem>

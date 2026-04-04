@@ -10,17 +10,6 @@ const SUBJECTS_ENDPOINT = "Subjects";
 
 export const subjectService = {
   /**
-   * Create a new subject
-   */
-  // async createSubject(data: CreateSubjectDto): Promise<any> {
-  //   const response = await apiClient.post<ApiResponse<any>>(
-  //     `${SUBJECTS_ENDPOINT}`,
-  //     data,
-  //   );
-  //   return response.data;
-  // },
-
-  /**
    * Create multiple subjects at once (batch)
    */
   async createSubjectsBatch(data: CreateSubjectDto[]): Promise<any> {
@@ -30,17 +19,6 @@ export const subjectService = {
     );
     return response.data;
   },
-
-  /**
-   * Create a new subject for a specific teacher
-   */
-  // async createSubjectToTeacher(data: CreateSubjectToTeacherDto): Promise<any> {
-  //   const response = await apiClient.post<ApiResponse<any>>(
-  //     `${SUBJECTS_ENDPOINT}/CreateSubjectToTeacher`,
-  //     data,
-  //   );
-  //   return response.data;
-  // },
 
   /**
    * Create multiple new subjects for a specific teacher at once

@@ -366,17 +366,17 @@ export const updateStudentThunk = createAsyncThunk(
   },
 );
 
-export const deleteStudentThunk = createAsyncThunk(
-  "specializations/deleteStudent",
-  async (id: number, { rejectWithValue }) => {
+export const deleteStudentsThunk = createAsyncThunk(
+  "specializations/deleteStudents",
+  async (ids: number[], { rejectWithValue }) => {
     try {
-      await studentService.deleteStudent(id);
-      return id;
+      await studentService.deleteStudents(ids);
+      return ids;
     } catch (error) {
       if (error instanceof Error) {
         return rejectWithValue(error.message);
       }
-      return rejectWithValue("Failed to delete student");
+      return rejectWithValue("Failed to delete students");
     }
   },
 );
@@ -826,21 +826,21 @@ const specializationsSlice = createSlice({
         state.updateStudentState.isLoading = false;
         state.updateStudentState.error = action.payload as string;
       })
-      .addCase(deleteStudentThunk.pending, (state) => {
+      .addCase(deleteStudentsThunk.pending, (state) => {
         state.deleteStudentState.isLoading = true;
         state.deleteStudentState.error = null;
       })
       .addCase(
-        deleteStudentThunk.fulfilled,
-        (state, action: PayloadAction<number>) => {
+        deleteStudentsThunk.fulfilled,
+        (state, action: PayloadAction<number[]>) => {
           state.deleteStudentState.isLoading = false;
           state.enrollments = state.enrollments.filter(
-            (en) => en.studentId !== action.payload,
+            (en) => !action.payload.includes(en.studentId),
           );
           state.deleteStudentState.error = null;
         },
       )
-      .addCase(deleteStudentThunk.rejected, (state, action) => {
+      .addCase(deleteStudentsThunk.rejected, (state, action) => {
         state.deleteStudentState.isLoading = false;
         state.deleteStudentState.error = action.payload as string;
       })
@@ -923,6 +923,7 @@ const specializationsSlice = createSlice({
       .addCase(fetchSubjectsBySpecializationThunk.rejected, (state, action) => {
         state.fetchDetailedSubjectsState.isLoading = false;
         state.fetchDetailedSubjectsState.error = action.payload as string;
+        state.subjectsBySpecialization = []; // Clear list on error (e.g., 404 Subjects Not Found)
       })
       .addCase(updateSubjectThunk.pending, (state) => {
         state.updateSubjectState.isLoading = true;

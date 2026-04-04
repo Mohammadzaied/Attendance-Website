@@ -35,6 +35,8 @@ interface WarningManagementDialogsProps {
     variant: "default" | "destructive";
   };
   setResultDialog: (dialog: any) => void;
+  isBulk?: boolean;
+  selectedCount?: number;
 }
 
 export function WarningManagementDialogs({
@@ -52,6 +54,8 @@ export function WarningManagementDialogs({
   isApproving,
   resultDialog,
   setResultDialog,
+  isBulk = false,
+  selectedCount = 0,
 }: WarningManagementDialogsProps) {
   return (
     <>
@@ -60,7 +64,9 @@ export function WarningManagementDialogs({
         <DialogContent className="sm:max-w-[425px] rounded-3xl" dir="rtl">
           <DialogHeader className="text-right">
             <DialogTitle className="text-xl font-black text-gray-900 text-right">
-              مراجعة حالة الحرمان
+              {isBulk
+                ? `مراجعة حالة الحرمان (${selectedCount})`
+                : "مراجعة حالة الحرمان"}
             </DialogTitle>
           </DialogHeader>
 
@@ -127,7 +133,7 @@ export function WarningManagementDialogs({
         <DialogContent className="sm:max-w-[425px] rounded-3xl" dir="rtl">
           <DialogHeader className="text-right">
             <DialogTitle className="text-xl font-black text-gray-900 text-right">
-              تأكيد الإنذار
+              {isBulk ? `تأكيد الإنذارات (${selectedCount})` : "تأكيد الإنذار"}
             </DialogTitle>
           </DialogHeader>
 
@@ -136,7 +142,9 @@ export function WarningManagementDialogs({
               <CheckCircle className="h-10 w-10" />
             </div>
             <p className="text-gray-600 font-bold text-lg">
-              هل أنت متأكد من رغبتك في تأكيد هذا الإنذار؟
+              {isBulk
+                ? `هل أنت متأكد من رغبتك في تأكيد ${selectedCount} إنذار مختار؟`
+                : "هل أنت متأكد من رغبتك في تأكيد هذا الإنذار؟"}
             </p>
           </div>
 

@@ -7,15 +7,6 @@ import { fetchHeadOfDepartmentSpecializations } from "@/features/specialization/
 import { SpecializationResponse } from "@/features/specialization";
 import { Loader2 } from "lucide-react";
 
-interface ApiSpecialization {
-  SpecializationId: number;
-  Name: string;
-  DepartmentId: number;
-  DepartmentName: string;
-  YearsNumber: number;
-  StudentCount: number;
-}
-
 // Icon Components
 function GraduationCapIcon() {
   return (

@@ -61,10 +61,10 @@ export const studentService = {
   },
 
   /**
-   * Delete a student
+   * Delete students (bulk or single)
    */
-  async deleteStudent(id: number): Promise<void> {
-    await apiClient.delete(`${STUDENTS_ENDPOINT}/${id}`);
+  async deleteStudents(ids: number[]): Promise<void> {
+    await apiClient.delete(STUDENTS_ENDPOINT, { data: ids });
   },
 
   /**
