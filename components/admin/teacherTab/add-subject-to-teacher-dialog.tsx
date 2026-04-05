@@ -173,7 +173,20 @@ export function AddSubjectToTeacherDialog({
                     specializations={specializations}
                     value={row.specializationId}
                     onValueChange={(val) => {
-                      updateSubjectRow(index, "specializationId", val);
+                      const spec = specializations.find(
+                        (s) => s.specializationId === val,
+                      );
+                      const updates: Partial<SubjectRow> = {
+                        specializationId: val,
+                      };
+                      if (spec?.yearsNumber === 1 && row.studyYear === "2") {
+                        updates.studyYear = "1";
+                      }
+                      setSubjectRows((rows) =>
+                        rows.map((r, i) =>
+                          i === index ? { ...r, ...updates } : r,
+                        ),
+                      );
                     }}
                   />
                 </div>
@@ -201,7 +214,11 @@ export function AddSubjectToTeacherDialog({
                   </SelectTrigger>
                   <SelectContent dir="rtl">
                     <SelectItem value="1">سنة أولى</SelectItem>
-                    <SelectItem value="2">سنة ثانية</SelectItem>
+                    {(specializations.find(
+                      (s) => s.specializationId === row.specializationId,
+                    )?.yearsNumber ?? 2) > 1 && (
+                      <SelectItem value="2">سنة ثانية</SelectItem>
+                    )}
                   </SelectContent>
                 </Select>
 

@@ -36,6 +36,8 @@ import { AbsenceSubjectSummary } from "@/components/admin/studentTab/absence-sub
 import { AbsenceLogsList } from "@/components/admin/studentTab/absence-logs-list";
 import { AlertsSection } from "@/components/admin/studentTab/alerts-section";
 import { AbsencesDialogs } from "@/components/admin/studentTab/presence-dialogs";
+import { DatePicker } from "@/components/ui/date-picker";
+
 
 type Role = "admin" | "department-head";
 
@@ -62,8 +64,14 @@ export function StudentProfileContent({
     useState<string>("all");
 
   // Excuse Tab States
-  const [excuseDate, setExcuseDate] = useState<Date | undefined>(undefined);
+  const [excuseDate, setExcuseDate] = useState<Date | undefined>(() => {
+    const today = new Date();
+    if (today.getDay() === 5) today.setDate(today.getDate() - 1); // If Friday, default to Thursday
+    else if (today.getDay() === 6) today.setDate(today.getDate() + 1); // If Saturday, default to Sunday
+    return today;
+  });
   const [excuseReason, setExcuseReason] = useState("");
+
   const [excuseResult, setExcuseResult] = useState<any | null>(null);
   const [excuseError, setExcuseError] = useState<string | null>(null);
   const [isExcusing, setIsExcusing] = useState(false);
@@ -140,19 +148,41 @@ export function StudentProfileContent({
       dispatch(fetchAdminAllSubjects(params));
     }
   }, [dispatch, studentId, selectedYearId, selectedSemesterId]);
-
   const allSubjects = useMemo(() => {
     return (
-      adminSubjects?.specializations.flatMap((spec) =>
-        spec.studentAcademicInfos.flatMap((info) =>
+      adminSubjects?.specializations
+        .flatMap((spec) => spec.studentAcademicInfos)
+        .filter((info) => info.semesterId === Number(selectedSemesterId))
+        .flatMap((info) =>
           info.subjects.map((s) => ({
             ...s,
             studentAcademicInfoId: info.studentAcademicInfoId,
           })),
-        ),
-      ) || []
+        ) || []
     );
-  }, [adminSubjects]);
+  }, [adminSubjects, selectedSemesterId]);
+
+  const currentInfoId = useMemo(() => {
+    // 1. Try to find from adminSubjects matching the selected semester
+    const matchingInfo = adminSubjects?.specializations
+      .flatMap((spec) => spec.studentAcademicInfos)
+      .find((info) => info.semesterId === Number(selectedSemesterId));
+
+    if (matchingInfo) return matchingInfo.studentAcademicInfoId;
+
+    // 2. Fallback to profile if it matches the selected semester/year
+    if (
+      profile &&
+      profile.academicYearId === Number(selectedYearId) &&
+      profile.semesterId === Number(selectedSemesterId)
+    ) {
+      return profile.studentAcademicInfoId;
+    }
+
+    return undefined;
+  }, [adminSubjects, selectedSemesterId, selectedYearId, profile]);
+
+
 
   // Fetch absence details when active subject changes
   useEffect(() => {
@@ -210,29 +240,41 @@ export function StudentProfileContent({
   };
 
   useEffect(() => {
-    if (activeTypeTab === "excuse") {
-      setExcuseDate(undefined);
+    if (activeTypeTab === "excuse" && !isDH) {
+      const today = new Date();
+      if (today.getDay() === 5) today.setDate(today.getDate() - 1); // If Friday, default to Thursday
+      else if (today.getDay() === 6) today.setDate(today.getDate() + 1); // If Saturday, default to Sunday
+
+      setExcuseDate(today);
       setExcuseReason("");
       setExcuseResult(null);
       setExcuseError(null);
     }
-  }, [activeTypeTab]);
+  }, [activeTypeTab, isDH]);
+
+
 
   const handleExcuseAbsencesByDate = async () => {
-    if (!excuseDate || isDH) return;
+    if (!excuseDate || isDH || !currentInfoId) return;
 
     try {
       const result = await dispatch(
         bulkExcuseAbsences({
-          studentAcademicInfoId: allSubjects[0].studentAcademicInfoId, // Use first info ID as they all belong to same student
+          studentAcademicInfoId: currentInfoId,
           date: format(excuseDate, "yyyy-MM-dd"),
           reason: excuseReason || null,
         }),
       ).unwrap();
 
+
       setExcuseResult(result);
       setExcuseReason("");
-      setExcuseDate(undefined);
+      
+      const today = new Date();
+      if (today.getDay() === 5) today.setDate(today.getDate() - 1);
+      else if (today.getDay() === 6) today.setDate(today.getDate() + 1);
+      setExcuseDate(today);
+
     } catch (error: any) {
       console.error("Failed to excuse absences:", error);
       setExcuseError(error || "حدث خطأ غير متوقع أثناء عملية التحويل");
@@ -370,17 +412,20 @@ export function StudentProfileContent({
                   >
                     الانذارات
                   </button>
-                  <button
-                    onClick={() => setActiveTypeTab("excuse")}
-                    className={cn(
-                      "flex-1 md:flex-none px-4 py-2 md:py-1.5 rounded-lg text-sm font-bold transition-all duration-200 cursor-pointer",
-                      activeTypeTab === "excuse"
-                        ? "bg-white text-blue-600 shadow-sm"
-                        : "text-gray-500 hover:text-gray-700",
-                    )}
-                  >
-                    معالجة الأعذار
-                  </button>
+                  {!isDH && (
+                    <button
+                      onClick={() => setActiveTypeTab("excuse")}
+                      className={cn(
+                        "flex-1 md:flex-none px-4 py-2 md:py-1.5 rounded-lg text-sm font-bold transition-all duration-200 cursor-pointer",
+                        activeTypeTab === "excuse"
+                          ? "bg-white text-blue-600 shadow-sm"
+                          : "text-gray-500 hover:text-gray-700",
+                      )}
+                    >
+                      معالجة الأعذار
+                    </button>
+                  )}
+
                 </div>
               </div>
             </div>
@@ -400,7 +445,8 @@ export function StudentProfileContent({
               </div>
 
               <ScrollArea className="flex-1">
-                {activeTypeTab === "excuse" ? (
+                {activeTypeTab === "excuse" && !isDH ? (
+
                   <div className="m-0 p-4 md:p-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
                     <div className="flex flex-col items-center justify-center py-10 md:py-16">
                       <Card className="w-full max-w-lg p-6 md:p-8 border-2 border-dashed border-blue-100 bg-blue-50/30 rounded-[2.5rem] shadow-none">
@@ -419,45 +465,12 @@ export function StudentProfileContent({
                             </p>
                           </div>
 
-                          <div className="space-y-4 text-right" dir="rtl">
-                            <div className="space-y-2">
-                              <label className="text-sm font-bold text-gray-700 block pr-1">
-                                التاريخ
-                              </label>
-                              <Popover>
-                                <PopoverTrigger asChild>
-                                  <Button
-                                    variant="outline"
-                                    className={cn(
-                                      "w-full h-12 justify-start text-right font-bold rounded-2xl border-gray-200 bg-white",
-                                      !excuseDate &&
-                                        "text-muted-foreground font-medium",
-                                    )}
-                                  >
-                                    <CalendarDays className="ml-2 h-5 w-5 text-blue-600" />
-                                    {excuseDate
-                                      ? format(excuseDate, "PPP", {
-                                          locale: ar,
-                                        })
-                                      : "اختر التاريخ"}
-                                  </Button>
-                                </PopoverTrigger>
-                                <PopoverContent
-                                  className="w-auto p-0 rounded-2xl overflow-hidden border-none shadow-2xl"
-                                  align="center"
-                                >
-                                  <Calendar
-                                    mode="single"
-                                    selected={excuseDate}
-                                    onSelect={setExcuseDate}
-                                    initialFocus
-                                    dir="rtl"
-                                    locale={ar}
-                                    className="bg-white p-3"
-                                  />
-                                </PopoverContent>
-                              </Popover>
-                            </div>
+                          <div className="space-y-4 text-right w-full" dir="rtl">
+                            <DatePicker
+                              date={excuseDate}
+                              setDate={setExcuseDate}
+                              label="التاريخ"
+                            />
 
                             <div className="space-y-2">
                               <label className="text-sm font-bold text-gray-700 block pr-1">
@@ -473,11 +486,15 @@ export function StudentProfileContent({
                               />
                             </div>
 
+
                             <Button
                               disabled={
-                                !excuseDate || excuseAbsencesState.isLoading
+                                !excuseDate ||
+                                excuseAbsencesState.isLoading ||
+                                !currentInfoId
                               }
                               onClick={handleExcuseAbsencesByDate}
+
                               className="w-full h-14 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-black text-lg shadow-lg shadow-blue-200 transition-all active:scale-[0.98]"
                             >
                               {excuseAbsencesState.isLoading ? (
