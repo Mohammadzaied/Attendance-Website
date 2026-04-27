@@ -40,12 +40,12 @@ const getStatusColor = (status: string | number): string => {
   const statusLower = String(status).toLowerCase();
   switch (statusLower) {
     case "absent":
-      return "bg-red-100 text-red-700 border-red-200";
+      return "bg-danger-light text-danger border-danger/20";
     case "late":
-      return "bg-orange-100 text-orange-700 border-orange-200";
+      return "bg-warning-light text-warning border-warning/20";
     case "excused":
     case "excusedabsence":
-      return "bg-blue-100 text-blue-700 border-blue-200";
+      return "bg-info-light text-info border-info/20";
     default:
       return "bg-gray-100 text-gray-700 border-gray-200";
   }
@@ -91,47 +91,47 @@ export function SubjectAbsenceDetailsDialog({
 
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-12">
-            <Loader2 className="h-8 w-8 animate-spin text-blue-600 mb-3" />
+            <Loader2 className="h-8 w-8 animate-spin text-info mb-3" />
             <p className="text-gray-500">جاري تحميل البيانات...</p>
           </div>
         ) : error ? (
           <div className="flex flex-col items-center justify-center py-12">
-            <AlertCircle className="h-12 w-12 text-red-500 mb-3" />
-            <p className="text-red-600 font-semibold">{error}</p>
+            <AlertCircle className="h-12 w-12 text-danger mb-3" />
+            <p className="text-danger font-semibold">{error}</p>
           </div>
         ) : data ? (
           <div className="space-y-6">
             {/* Summary Stats */}
             <div className="grid grid-cols-4 md:grid-cols-2 gap-2">
               {data.adjustedTotalAbsences > 0 && (
-                <div className="bg-red-50 border border-red-200 rounded-xl p-2 text-center">
-                  <p className="text-sm text-red-600 mb-1">الإجمالي</p>
-                  <p className="text-3xl font-bold text-red-700">
+                <div className="bg-danger-light border border-danger/20 rounded-xl p-2 text-center">
+                  <p className="text-sm text-danger mb-1">الإجمالي</p>
+                  <p className="text-3xl font-bold text-danger">
                     {data.adjustedTotalAbsences}
                   </p>
                 </div>
               )}
               {data.absencesByStatus["Late"] > 0 && (
-                <div className="bg-amber-50 border border-amber-200 rounded-xl p-2 text-center">
-                  <p className="text-sm text-amber-600 mb-1">تأخر</p>
-                  <p className="text-3xl font-bold text-amber-700">
+                <div className="bg-warning-light border border-warning/20 rounded-xl p-2 text-center">
+                  <p className="text-sm text-warning mb-1">تأخر</p>
+                  <p className="text-3xl font-bold text-warning">
                     {data.absencesByStatus["Late"]}
                   </p>
                 </div>
               )}
               {data.absencesByStatus["Absent"] > 0 && (
-                <div className="bg-red-50  border-red-200 rounded-xl p-2 text-center">
-                  <p className="text-sm text-red-600 mb-1">غياب</p>
-                  <p className="text-3xl font-bold text-red-700">
+                <div className="bg-danger-light  border-danger/20 rounded-xl p-2 text-center">
+                  <p className="text-sm text-danger mb-1">غياب</p>
+                  <p className="text-3xl font-bold text-danger">
                     {data.absencesByStatus["Absent"]}
                   </p>
                 </div>
               )}
 
               {data.absencesByStatus["ExcusedAbsence"] > 0 && (
-                <div className="bg-blue-50  border-blue-200 rounded-xl p-2 text-center">
-                  <p className="text-sm text-blue-600 mb-1">بعذر</p>
-                  <p className="text-3xl font-bold text-blue-700">
+                <div className="bg-info-light  border-info/20 rounded-xl p-2 text-center">
+                  <p className="text-sm text-info mb-1">بعذر</p>
+                  <p className="text-3xl font-bold text-info">
                     {data.absencesByStatus["ExcusedAbsence"]}
                   </p>
                 </div>
@@ -141,7 +141,7 @@ export function SubjectAbsenceDetailsDialog({
             {/* Absence Records Grouped by Date */}
             <div className="space-y-4">
               <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-                <Calendar className="h-5 w-5 text-blue-600" />
+                <Calendar className="h-5 w-5 text-info" />
                 <span>سجل الغيابات</span>
               </h3>
 
@@ -182,8 +182,8 @@ export function SubjectAbsenceDetailsDialog({
                               className="flex items-center justify-between bg-white rounded-xl p-3 border border-gray-100"
                             >
                               <div className="flex items-center gap-3">
-                                <div className="h-8 w-8 bg-blue-50 rounded-lg flex items-center justify-center">
-                                  <Clock className="h-4 w-4 text-blue-600" />
+                                <div className="h-8 w-8 bg-info-light rounded-lg flex items-center justify-center">
+                                  <Clock className="h-4 w-4 text-info" />
                                 </div>
                                 <div className="text-right">
                                   <div className="flex items-center gap-2">

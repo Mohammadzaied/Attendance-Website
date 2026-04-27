@@ -40,7 +40,7 @@ export function GraduationStudentsTable({
   if (isLoading) {
     return (
       <div className="flex justify-center p-12">
-        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-info"></div>
       </div>
     );
   }
@@ -76,7 +76,7 @@ export function GraduationStudentsTable({
           return (
             <div
               key={student.studentId}
-              className="relative group bg-white border border-gray-100 md:border-0 rounded-2xl md:rounded-none shadow-sm md:shadow-none overflow-hidden transition-all duration-200 hover:bg-blue-50/30 md:hover:bg-blue-50/50"
+              className="relative group bg-white border border-gray-100 md:border-0 rounded-2xl md:rounded-none shadow-sm md:shadow-none overflow-hidden transition-all duration-200 hover:bg-info-light/30 md:hover:bg-info-light/50"
             >
               <Link
                 href={`${basePath}/students/${student.studentId}`}
@@ -86,7 +86,7 @@ export function GraduationStudentsTable({
                 {/* Mobile: Name & Header */}
                 <div className="flex items-start justify-between md:hidden">
                   <div className="flex items-center gap-2">
-                    <div className="bg-blue-100 p-2 rounded-xl text-blue-600">
+                    <div className="bg-info-light p-2 rounded-xl text-info">
                       <UserCircle className="h-5 w-5" />
                     </div>
                     <div>
@@ -103,7 +103,7 @@ export function GraduationStudentsTable({
                 {/* Desktop: Name */}
                 <div className="hidden md:flex items-center px-6 text-right overflow-hidden">
                   <div
-                    className="font-bold text-gray-900 group-hover:text-blue-700 transition-colors text-sm truncate"
+                    className="font-bold text-gray-900 group-hover:text-info transition-colors text-sm truncate"
                     title={student.fullName}
                   >
                     {student.fullName}
@@ -130,8 +130,8 @@ export function GraduationStudentsTable({
                     <GraduationCap className="h-3 w-3" /> التخصص والمستوى
                   </span> */}
                   {latestEnrollment ? (
-                    <div className="text-sm space-y-0.5 w-full md:w-auto p-3 md:p-0 bg-blue-50/30 md:bg-transparent rounded-xl md:rounded-none border border-blue-100/30 md:border-none">
-                      <div className="font-black text-blue-700 md:font-bold">
+                    <div className="text-sm space-y-0.5 w-full md:w-auto p-3 md:p-0 bg-info-light/30 md:bg-transparent rounded-xl md:rounded-none border border-info-light/30 md:border-none">
+                      <div className="font-black text-info md:font-bold">
                         {latestEnrollment.specializationName}
                       </div>
                       {latestEnrollment.studyYear !== 0 && (
@@ -155,7 +155,7 @@ export function GraduationStudentsTable({
                 <Link
                   href={`${basePath}/students/${student.studentId}`}
                   target="_blank"
-                  className="h-9 w-9 flex items-center justify-center text-blue-600 hover:text-blue-700 hover:bg-blue-100 transition-colors cursor-pointer rounded-xl md:rounded-md bg-white md:bg-transparent border border-gray-200 md:border-0 shadow-sm md:shadow-none"
+                  className="h-9 w-9 flex items-center justify-center text-info hover:text-info-foreground hover:bg-info-light transition-colors cursor-pointer rounded-xl md:rounded-md bg-white md:bg-transparent border border-gray-200 md:border-0 shadow-sm md:shadow-none"
                   title="عرض التفاصيل"
                 >
                   <Eye className="h-5 w-5" />
@@ -166,7 +166,7 @@ export function GraduationStudentsTable({
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-9 w-9 text-amber-600 hover:text-amber-700 hover:bg-amber-100 transition-colors cursor-pointer rounded-xl md:rounded-md bg-white md:bg-transparent border border-gray-200 md:border-0 shadow-sm md:shadow-none"
+                        className="h-9 w-9 text-warning hover:text-warning-foreground hover:bg-warning-light transition-colors cursor-pointer rounded-xl md:rounded-md bg-white md:bg-transparent border border-gray-200 md:border-0 shadow-sm md:shadow-none"
                         title="تعديل"
                         onClick={(e) => {
                           e.preventDefault();
@@ -180,7 +180,7 @@ export function GraduationStudentsTable({
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="h-9 w-9 text-red-600 hover:text-red-700 hover:bg-red-100 transition-colors cursor-pointer rounded-xl md:rounded-md bg-white md:bg-transparent border border-gray-200 md:border-0 shadow-sm md:shadow-none"
+                      className="h-9 w-9 text-danger hover:text-danger-foreground hover:bg-danger-light transition-colors cursor-pointer rounded-xl md:rounded-md bg-white md:bg-transparent border border-gray-200 md:border-0 shadow-sm md:shadow-none"
                       title="حذف"
                       onClick={(e) => {
                         e.preventDefault();

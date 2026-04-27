@@ -93,7 +93,7 @@ export function AddTeacherDialog({ onSuccess }: AddTeacherDialogProps) {
     <>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
-          <Button className="cursor-pointer bg-blue-600 hover:bg-blue-700">
+          <Button className="cursor-pointer bg-info hover:bg-info-foreground">
             <svg
               className="h-4 w-4 ml-2"
               fill="none"
@@ -230,7 +230,7 @@ export function AddTeacherDialog({ onSuccess }: AddTeacherDialogProps) {
               <Button
                 type="submit"
                 disabled={isLoading}
-                className="cursor-pointer bg-blue-600 hover:bg-blue-700"
+                className="cursor-pointer bg-info hover:bg-info-foreground"
               >
                 {isLoading ? "جاري الإضافة..." : "إضافة"}
               </Button>
@@ -252,7 +252,7 @@ export function AddTeacherDialog({ onSuccess }: AddTeacherDialogProps) {
           <DialogHeader>
             <DialogTitle
               className={`text-right ${
-                result.success ? "text-green-600" : "text-red-600"
+                result.success ? "text-success" : "text-danger"
               }`}
             >
               {result.success ? "تم بنجاح" : "خطأ"}

@@ -383,10 +383,10 @@ export function AbsencesList({
   return (
     <Card className="shadow-sm border-none md:border md:shadow-xs overflow-hidden rounded-xl">
       <CardHeader className="px-4 md:px-6 pt-4 pb-4 md:pb-6 text-right">
-        <CardTitle className="text-lg md:text-xl font-bold text-blue-900 leading-tight">
+        <CardTitle className="text-lg md:text-xl font-bold text-info leading-tight">
           الغيابات المسجلة
         </CardTitle>
-        <CardDescription className="text-blue-700/70 text-sm mt-1">
+        <CardDescription className="text-info/70 text-sm mt-1">
           {absenceSession
             ? `${new Date(absenceSession.date).toLocaleDateString("en-GB")}`
             : "اختر المادة والتاريخ لعرض الغيابات"}
@@ -396,8 +396,8 @@ export function AbsencesList({
         {isLoading && (
           <div className="flex items-center justify-center py-12">
             <div className="flex flex-col items-center gap-2">
-              <div className="h-10 w-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-              <p className="text-sm font-bold text-blue-800">
+              <div className="h-10 w-10 border-4 border-info border-t-transparent rounded-full animate-spin"></div>
+              <p className="text-sm font-bold text-info">
                 جاري تحميل البيانات...
               </p>
             </div>
@@ -405,8 +405,8 @@ export function AbsencesList({
         )}
 
         {error && !isLoading && (
-          <div className="bg-red-50 border border-red-200 p-6 rounded-2xl flex flex-col md:flex-row items-center gap-4 text-red-800">
-            <div className="h-14 w-14 bg-red-100 rounded-2xl flex items-center justify-center text-red-600 shrink-0">
+          <div className="bg-danger-light border border-danger p-6 rounded-2xl flex flex-col md:flex-row items-center gap-4 text-danger">
+            <div className="h-14 w-14 bg-danger-light text-danger rounded-2xl flex items-center justify-center shrink-0">
               <svg
                 className="h-8 w-8"
                 fill="none"
@@ -476,7 +476,7 @@ export function AbsencesList({
             <>
               <div className="flex items-center justify-between mb-4">
                 <div className="flex gap-2">
-                  <span className="text-xs font-semibold text-blue-600 bg-blue-50 px-3 py-1.5 rounded-lg">
+                  <span className="text-xs font-semibold text-info bg-info-light px-3 py-1.5 rounded-lg">
                     عدد الغيابات: {absenceSession.absenceCount}
                   </span>
                   <span className="text-xs font-semibold text-purple-600 bg-purple-50 px-3 py-1.5 rounded-lg">
@@ -549,7 +549,7 @@ export function AbsencesList({
                     disabled={
                       updateAbsenceSessionState.isLoading || !hasChanges
                     }
-                    className="bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-md shadow-blue-200 transition-all font-bold min-w-[140px] disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="bg-info hover:bg-info-foreground shadow-md shadow-info/20 transition-all font-bold min-w-[140px] disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {updateAbsenceSessionState.isLoading ? (
                       <div className="flex items-center gap-2">
@@ -593,7 +593,7 @@ export function AbsencesList({
                   executeDelete(confirmConfig.absenceIds);
                 }
               }}
-              className="bg-blue-600 hover:bg-blue-700"
+              className="bg-info hover:bg-info-foreground"
             >
               تأكيد
             </AlertDialogAction>
@@ -614,8 +614,8 @@ export function AbsencesList({
               className={cn(
                 "h-12 w-12 rounded-full flex items-center justify-center mx-auto mb-4",
                 resultConfig.type === "success"
-                  ? "bg-green-100 text-green-600"
-                  : "bg-red-100 text-red-600",
+                  ? "bg-success-light text-success"
+                  : "bg-danger-light text-danger",
               )}
             >
               {resultConfig.type === "success" ? (
@@ -663,8 +663,8 @@ export function AbsencesList({
               className={cn(
                 "px-8 rounded-xl",
                 resultConfig.type === "success"
-                  ? "bg-green-600 hover:bg-green-700"
-                  : "bg-red-600 hover:bg-red-700",
+                  ? "bg-success hover:bg-success-foreground"
+                  : "bg-danger hover:bg-danger-foreground",
               )}
             >
               موافق

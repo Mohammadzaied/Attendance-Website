@@ -10,9 +10,9 @@ interface AbsenceMatrixProps {
 }
 
 const STATUS_COLORS: Record<string, { dot: string; label: string }> = {
-  Absent: { dot: "bg-red-500", label: "غياب" },
-  Late: { dot: "bg-amber-500", label: "تأخر" },
-  ExcusedAbsence: { dot: "bg-green-500", label: "معذور" },
+  Absent: { dot: "bg-danger", label: "غياب" },
+  Late: { dot: "bg-warning", label: "تأخر" },
+  ExcusedAbsence: { dot: "bg-success", label: "معذور" },
 };
 
 export function AbsenceMatrix({
@@ -81,7 +81,7 @@ export function AbsenceMatrix({
       {/* Header */}
       <div className="bg-white border-b border-slate-100 px-4 sm:px-6 py-4 flex flex-wrap items-center justify-between gap-3 shrink-0">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg bg-blue-600 flex items-center justify-center text-white shadow-sm">
+          <div className="w-9 h-9 rounded-lg bg-info flex items-center justify-center text-white shadow-sm">
             <svg
               className="h-4 w-4"
               fill="none"
@@ -100,22 +100,22 @@ export function AbsenceMatrix({
             <h3 className="text-sm font-black text-gray-900">
               تقرير الغياب — {monthYear}
             </h3>
-            <p className="text-[10px] text-blue-600 font-black uppercase tracking-widest mt-0.5">
+            <p className="text-[10px] text-info font-black uppercase tracking-widest mt-0.5">
               {subjectName}
             </p>
           </div>
         </div>
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-1.5 text-[10px] font-black text-gray-400">
-            <div className="w-2 h-2 rounded-full bg-red-500" />
+            <div className="w-2 h-2 rounded-full bg-danger" />
             <span>غياب</span>
           </div>
           <div className="flex items-center gap-1.5 text-[10px] font-black text-gray-400">
-            <div className="w-2 h-2 rounded-full bg-amber-500" />
+            <div className="w-2 h-2 rounded-full bg-warning" />
             <span>تأخر</span>
           </div>
           <div className="flex items-center gap-1.5 text-[10px] font-black text-gray-400">
-            <div className="w-2 h-2 rounded-full bg-green-500" />
+            <div className="w-2 h-2 rounded-full bg-success" />
             <span>معذور</span>
           </div>
         </div>
@@ -153,7 +153,7 @@ export function AbsenceMatrix({
               ))}
               {!isMobile && (
                 <th
-                  className="sticky left-0 z-40 bg-blue-50/50 px-3 py-3 text-center font-black text-blue-600 border-b-2 border-slate-100"
+                  className="sticky left-0 z-40 bg-info-light/50 px-3 py-3 text-center font-black text-info border-b-2 border-slate-100"
                   style={{ minWidth: "80px" }}
                 >
                   المجموع
@@ -169,7 +169,7 @@ export function AbsenceMatrix({
               >
                 {/* Name */}
                 <td
-                  className="sticky right-0 z-20 bg-white px-2 py-2 text-right border-l-2 border-b border-slate-50 transition-colors group-hover:bg-blue-50/30"
+                  className="sticky right-0 z-20 bg-white px-2 py-2 text-right border-l-2 border-b border-slate-50 transition-colors group-hover:bg-info-light/30"
                   style={
                     isMobile
                       ? { width: "70px", minWidth: "70px", maxWidth: "70px" }
@@ -197,7 +197,7 @@ export function AbsenceMatrix({
                   return (
                     <td
                       key={day}
-                      className="px-1 py-4 text-center border-l border-b border-slate-50 group-hover:bg-blue-50/10"
+                      className="px-1 py-4 text-center border-l border-b border-slate-50 group-hover:bg-info-light/10"
                     >
                       <div
                         className="flex flex-wrap items-center justify-center gap-0.5"
@@ -217,9 +217,9 @@ export function AbsenceMatrix({
 
                 {/* Total */}
                 {!isMobile && (
-                  <td className="sticky left-0 z-20 px-3 py-3 text-center font-black text-xs bg-white border-b border-slate-100 border-r group-hover:bg-blue-50/30">
+                  <td className="sticky left-0 z-20 px-3 py-3 text-center font-black text-xs bg-white border-b border-slate-100 border-r group-hover:bg-info-light/30">
                     <span
-                      className={`px-2 py-1 rounded-md border flex items-center justify-center ${row.monthTotal > 0 ? "bg-blue-50 text-blue-600 border-blue-100" : "bg-slate-50 text-slate-400 border-slate-100"}`}
+                      className={`px-2 py-1 rounded-md border flex items-center justify-center ${row.monthTotal > 0 ? "bg-info-light text-info border-info/20" : "bg-slate-50 text-slate-400 border-slate-100"}`}
                     >
                       {row.monthTotal}
                     </span>
@@ -234,7 +234,7 @@ export function AbsenceMatrix({
       {/* Footer */}
       <div className="bg-slate-50 px-4 sm:px-6 py-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2 text-[10px] text-slate-400 font-black uppercase tracking-widest shrink-0">
         <span>* النقاط المتعددة = غيابات لمحاضرات مختلفة في نفس اليوم</span>
-        <span className="text-blue-600">شهر {monthYear}</span>
+        <span className="text-info">شهر {monthYear}</span>
       </div>
     </div>
   );

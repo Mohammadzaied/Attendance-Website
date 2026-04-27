@@ -10,9 +10,15 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { type Student } from "@/lib/mock-data";
+import { Student } from "@/features/student";
 
 type WarningDialogProps = {
   open: boolean;
@@ -50,11 +56,15 @@ export function WarningDialog({
             <div className="grid grid-cols-2 gap-4 p-4 bg-gray-50 rounded-lg">
               <div className="space-y-1">
                 <p className="text-sm text-gray-600 text-right">عدد الغيابات</p>
-                <p className="text-lg font-semibold text-right text-red-600">{student.absenceCount}</p>
+                <p className="text-lg font-semibold text-right text-danger">
+                  {student.absenceCount}
+                </p>
               </div>
               <div className="space-y-1">
                 <p className="text-sm text-gray-600 text-right">نسبة الحضور</p>
-                <p className="text-lg font-semibold text-right">{student.attendanceRate}%</p>
+                <p className="text-lg font-semibold text-right">
+                  {student.attendanceRate}%
+                </p>
               </div>
             </div>
 
@@ -62,7 +72,10 @@ export function WarningDialog({
               <Label htmlFor="severity" className="text-right block">
                 درجة الإنذار
               </Label>
-              <Select value={severity} onValueChange={(v: any) => onSeverityChange(v)}>
+              <Select
+                value={severity}
+                onValueChange={(v: any) => onSeverityChange(v)}
+              >
                 <SelectTrigger id="severity">
                   <SelectValue />
                 </SelectTrigger>
@@ -96,7 +109,7 @@ export function WarningDialog({
           <Button
             onClick={onSend}
             disabled={!text.trim()}
-            className="bg-linear-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700"
+            className="bg-danger hover:bg-danger-foreground"
           >
             إرسال الإنذار
           </Button>

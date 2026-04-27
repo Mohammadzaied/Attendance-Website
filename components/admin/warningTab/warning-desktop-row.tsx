@@ -73,16 +73,16 @@ export function WarningDesktopRow({
       className={cn(
         "transition-colors duration-150",
         allSelected
-          ? "bg-blue-50/40"
+          ? "bg-info-light/40"
           : someSelected
-            ? "bg-blue-50/20"
+            ? "bg-info-light/20"
             : "hover:bg-gray-50/40",
       )}
     >
       {/* Student Info Cell */}
       <td className="p-4 align-top">
         <div className="flex items-center gap-3">
-          <div className="h-9 w-9 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600 shrink-0">
+          <div className="h-9 w-9 rounded-xl bg-info-light flex items-center justify-center text-info shrink-0">
             <User className="h-4.5 w-4.5" />
           </div>
           <div>
@@ -110,13 +110,13 @@ export function WarningDesktopRow({
                   {subject.subjectName} - ({subject.numberOfHours} حصة)
                 </p>
                 <div className="flex items-center gap-2 mt-1">
-                  <span className="text-[8px] font-bold text-rose-500">
+                  <span className="text-[8px] font-bold text-danger">
                     غياب: {subject.absenceCounts.absent}
                   </span>
-                  <span className="text-[8px] font-bold text-amber-500">
+                  <span className="text-[8px] font-bold text-warning">
                     تأخير: {subject.absenceCounts.late}
                   </span>
-                  <span className="text-[8px] font-bold text-emerald-500">
+                  <span className="text-[8px] font-bold text-success">
                     بعذر: {subject.absenceCounts.excusedAbsence}
                   </span>
                 </div>
@@ -134,7 +134,7 @@ export function WarningDesktopRow({
                       className={cn(
                         "flex items-center gap-2 bg-white px-2 py-1 rounded-lg border shadow-sm text-[9px] group cursor-default transition-all duration-200",
                         isSelected
-                          ? "border-blue-300 bg-blue-50/50 ring-1 ring-blue-200/50"
+                          ? "border-info bg-info-light/50 ring-1 ring-info/50"
                           : "border-gray-100",
                       )}
                     >
@@ -143,17 +143,17 @@ export function WarningDesktopRow({
                           type="checkbox"
                           checked={isSelected}
                           onChange={() => onToggleSelection(alert.id)}
-                          className="w-3.5 h-3.5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 focus:ring-offset-0 cursor-pointer accent-blue-600 transition-all"
+                          className="w-3.5 h-3.5 rounded border-gray-300 text-info focus:ring-info focus:ring-offset-0 cursor-pointer accent-info transition-all"
                         />
                       )}
                       <span
                         className={cn(
                           "font-black px-1.5 py-0.5 rounded-md",
                           Number(alert.type) === 1
-                            ? "bg-blue-50 text-blue-600"
+                            ? "bg-info-light text-info"
                             : Number(alert.type) === 2
-                              ? "bg-amber-50 text-amber-600"
-                              : "bg-rose-50 text-rose-600",
+                              ? "bg-warning-light text-warning"
+                              : "bg-danger-light text-danger",
                         )}
                       >
                         {translateType(Number(alert.type))}
@@ -165,7 +165,7 @@ export function WarningDesktopRow({
                             size="sm"
                             variant="outline"
                             onClick={() => onReview(alert.id)}
-                            className="h-5 px-1.5 text-[8px] font-bold border-rose-200 text-rose-600 hover:bg-rose-50"
+                            className="h-5 px-1.5 text-[8px] font-bold border-danger text-danger hover:bg-danger-light"
                           >
                             مراجعة
                           </Button>
@@ -176,7 +176,7 @@ export function WarningDesktopRow({
                           variant="outline"
                           onClick={() => onApprove(alert.id)}
                           disabled={isApproving}
-                          className="h-5 px-1.5 text-[8px] font-bold border-emerald-200 text-emerald-600 hover:bg-emerald-50"
+                          className="h-5 px-1.5 text-[8px] font-bold border-success text-success hover:bg-success-light"
                         >
                           {isApproving ? (
                             <Spinner className="h-2.5 w-2.5 " />
@@ -186,7 +186,7 @@ export function WarningDesktopRow({
                           تأكيد
                         </Button>
                       )}
-                      <span className="text-rose-500 tabular-nums">
+                      <span className="text-danger tabular-nums">
                         {alert.limitAtIssue} غياب
                       </span>
                       <span
@@ -195,8 +195,8 @@ export function WarningDesktopRow({
                           alert.status === 1
                             ? "text-gray-400"
                             : alert.status === 2
-                              ? "text-emerald-500"
-                              : "text-rose-500",
+                              ? "text-success"
+                              : "text-danger",
                         )}
                       >
                         {translateStatus(alert.status)}
@@ -230,7 +230,7 @@ export function WarningDesktopRow({
           <Button
             size="sm"
             variant="ghost"
-            className="h-9 px-3 text-xs font-bold text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-xl transition-all duration-200"
+            className="h-9 px-3 text-xs font-bold text-info hover:text-info-foreground hover:bg-info-light rounded-xl transition-all duration-200"
           >
             بيانات الطالب
           </Button>

@@ -122,7 +122,7 @@ export function AbsenceEntrySection({
   return (
     <Card className="shadow-sm border-none md:border md:shadow-xs mb-6 md:mb-8 overflow-hidden rounded-xl">
       <CardHeader className="px-4 md:px-6 pt-2 pb-4 md:pb-6 text-right">
-        <CardTitle className="text-sm md:text-xl font-bold text-blue-900 leading-tight">
+        <CardTitle className="text-sm md:text-xl font-bold text-info leading-tight">
           تسجيل الغياب اليومي
           {selectedAcademicYearId && (
             <>
@@ -132,7 +132,7 @@ export function AbsenceEntrySection({
             </>
           )}
         </CardTitle>
-        <CardDescription className="text-blue-700/70 text-sm mt-1">
+        <CardDescription className="text-info/70 text-sm mt-1">
           اختر الشعبة والتاريخ ثم حدد الطلاب الغائبين
         </CardDescription>
       </CardHeader>
@@ -175,7 +175,7 @@ export function AbsenceEntrySection({
             {subjectHelperText && (
               <p
                 className={`text-xs text-right mt-1 ${
-                  subjectHelperIsError ? "text-red-500" : "text-amber-600"
+                  subjectHelperIsError ? "text-danger" : "text-warning"
                 }`}
               >
                 {subjectHelperText}
@@ -214,7 +214,7 @@ export function AbsenceEntrySection({
             <Label className="text-right block text-base font-bold text-gray-800">
               قائمة الطلاب
             </Label>
-            <span className="text-xs font-semibold text-blue-600 bg-blue-50 px-2 py-1 rounded-lg">
+            <span className="text-xs font-semibold text-info bg-info-light px-2 py-1 rounded-lg">
               {students.length} طالب
             </span>
           </div>
@@ -223,8 +223,8 @@ export function AbsenceEntrySection({
             {isLoadingStudents && (
               <div className="absolute inset-0 bg-white/60 z-10 flex items-center justify-center rounded-xl backdrop-blur-[1px]">
                 <div className="flex flex-col items-center gap-2">
-                  <div className="h-10 w-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-                  <p className="text-sm font-bold text-blue-800">
+                  <div className="h-10 w-10 border-4 border-info border-t-transparent rounded-full animate-spin"></div>
+                  <p className="text-sm font-bold text-info">
                     جاري تحميل القائمة...
                   </p>
                 </div>
@@ -332,7 +332,7 @@ export function AbsenceEntrySection({
               isCreatingSession ||
               (defaultLessonIds.length === 0 && absentStudents.size === 0)
             }
-            className="w-full md:w-auto h-12 md:h-11 bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-md shadow-blue-200 transition-all font-bold active:scale-[0.98]"
+            className="w-full md:w-auto h-12 md:h-11 bg-info hover:bg-info-foreground shadow-md shadow-info/20 transition-all font-bold active:scale-[0.98]"
           >
             {isCreatingSession
               ? "جاري الحفظ..."

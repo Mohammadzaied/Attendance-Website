@@ -90,17 +90,17 @@ export function TeacherSearchSelect({
           aria-expanded={open}
           disabled={disabled}
           className={cn(
-            "w-full justify-between text-right font-medium h-11 border-gray-200 transition-all duration-200 rounded-xl bg-gray-50/30 hover:bg-white hover:border-blue-300 hover:shadow-sm group",
-            open && "border-blue-400 ring-4 ring-blue-50 bg-white",
-            selectedTeacher && "text-blue-700 bg-blue-50/30 border-blue-100",
+            "w-full justify-between text-right font-medium h-11 border-gray-200 transition-all duration-200 rounded-xl bg-gray-50/30 hover:bg-white hover:border-info hover:shadow-sm group",
+            open && "border-info ring-4 ring-info-light bg-white",
+            selectedTeacher && "text-info bg-info-light/30 border-info-light",
           )}
         >
           <div className="flex items-center gap-2 overflow-hidden">
-            <div className="flex items-center justify-center h-6 w-6 rounded-lg bg-white shadow-sm border border-gray-100 shrink-0 group-hover:bg-blue-50 group-hover:border-blue-100 transition-colors">
+            <div className="flex items-center justify-center h-6 w-6 rounded-lg bg-white shadow-sm border border-gray-100 shrink-0 group-hover:bg-info-light group-hover:border-info-light transition-colors">
               <User
                 className={cn(
                   "h-3.5 w-3.5 text-gray-400 transition-colors",
-                  selectedTeacher && "text-blue-600",
+                  selectedTeacher && "text-info",
                 )}
               />
             </div>
@@ -116,7 +116,7 @@ export function TeacherSearchSelect({
           </div>
           <div className="flex items-center gap-1">
             {isLoading && (
-              <Loader2 className="h-3.5 w-3.5 animate-spin text-blue-400" />
+              <Loader2 className="h-3.5 w-3.5 animate-spin text-info" />
             )}
             <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-40 text-gray-500 transition-opacity group-hover:opacity-100" />
           </div>
@@ -141,10 +141,10 @@ export function TeacherSearchSelect({
             {isLoading && teachers.length === 0 && (
               <div className="py-12 flex flex-col items-center justify-center gap-3">
                 <div className="relative">
-                  <div className="h-12 w-12 border-4 border-blue-50 rounded-full animate-pulse" />
-                  <Loader2 className="h-6 w-6 animate-spin text-blue-600 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+                  <div className="h-12 w-12 border-4 border-info-light rounded-full animate-pulse" />
+                  <Loader2 className="h-6 w-6 animate-spin text-info absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
                 </div>
-                <span className="text-sm font-bold text-blue-600 animate-pulse">
+                <span className="text-sm font-bold text-info animate-pulse">
                   جاري البحث عن المعلمين...
                 </span>
               </div>
@@ -169,7 +169,7 @@ export function TeacherSearchSelect({
                     setOpen(false);
                     setSearchTerm("");
                   }}
-                  className="flex items-center justify-between py-2 px-3 mb-1 cursor-pointer rounded-xl aria-selected:bg-blue-600 aria-selected:text-white hover:bg-blue-50 group transition-all duration-150"
+                  className="flex items-center justify-between py-2 px-3 mb-1 cursor-pointer rounded-xl aria-selected:bg-info aria-selected:text-white hover:bg-info-light group transition-all duration-150"
                 >
                   <div className="flex items-center gap-2 overflow-hidden">
                     <div className="flex flex-col min-w-0">

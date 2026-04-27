@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Plus, Trash2 } from "lucide-react";
 import {
   Dialog,
@@ -59,13 +59,21 @@ export function SubjectDialog({
   onSuccess,
 }: SubjectDialogProps) {
   const dispatch = useAppDispatch();
-  const [isEditMode, setIsEditMode] = useState(false);
   const [subjectForm, setSubjectForm] = useState({
     name: "",
     teacherId: "",
     teacherName: "",
     numberOfHours: 3,
   });
+
+  const hasChanges = useMemo(() => {
+    if (!editingSubject) return false;
+    return (
+      subjectForm.name !== editingSubject.name ||
+      subjectForm.teacherId !== (editingSubject.teacherId || "") ||
+      subjectForm.numberOfHours !== editingSubject.numberOfHours
+    );
+  }, [subjectForm, editingSubject]);
   const [subjectRows, setSubjectRows] = useState<SubjectRow[]>([emptyRow()]);
 
   const {
@@ -81,7 +89,6 @@ export function SubjectDialog({
         teacherName: editingSubject.teacherName || "",
         numberOfHours: editingSubject.numberOfHours,
       });
-      setIsEditMode(false);
     } else {
       setSubjectRows([emptyRow()]);
     }
@@ -191,50 +198,25 @@ export function SubjectDialog({
       open={isOpen}
       onOpenChange={(open) => {
         onOpenChange(open);
-        if (!open) {
-          setIsEditMode(false);
-        }
       }}
     >
       <DialogContent
-        className="sm:max-w-[900px] w-[95vw] max-h-[90vh] overflow-y-auto"
+        className="sm:max-w-[900px] w-[95vw] max-h-[90vh] overflow-hidden flex flex-col"
         onInteractOutside={(e) => e.preventDefault()}
       >
         <DialogHeader>
-          <DialogTitle className="text-right flex items-center gap-2">
+          <DialogTitle className="text-right flex items-center gap-2 shrink-0">
             {editingSubject ? "تفاصيل المادة" : "إضافة مواد جديدة"}
           </DialogTitle>
         </DialogHeader>
 
         {editingSubject && (
           <div className="grid gap-4 py-4" dir="rtl">
-            <div className="flex items-center justify-between bg-amber-50/50 p-3 rounded-xl border border-amber-100">
-              <div className="flex items-center gap-2">
-                <Checkbox
-                  id="edit-mode"
-                  checked={isEditMode}
-                  onCheckedChange={(val) => {
-                    setIsEditMode(!!val);
-                  }}
-                  className="border-amber-400 data-[state=checked]:bg-amber-600 data-[state=checked]:border-amber-600"
-                />
-                <Label
-                  htmlFor="edit-mode"
-                  className="text-amber-800 font-bold cursor-pointer"
-                >
-                  تعديل البيانات
-                </Label>
-              </div>
-              <p className="text-xs text-amber-700">
-                قم بتفعيل الخيار لتتمكن من تعديل بيانات المادة
-              </p>
-            </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               <div className="grid gap-1.5">
                 <Label className="text-right text-sm">اسم المادة</Label>
                 <Input
                   value={subjectForm.name}
-                  disabled={!isEditMode}
                   onChange={(e) =>
                     setSubjectForm({ ...subjectForm, name: e.target.value })
                   }
@@ -246,7 +228,6 @@ export function SubjectDialog({
                 <TeacherSearchSelect
                   value={subjectForm.teacherId}
                   initialName={subjectForm.teacherName}
-                  disabled={!isEditMode}
                   onValueChange={(id, name) => {
                     setSubjectForm({
                       ...subjectForm,
@@ -261,7 +242,6 @@ export function SubjectDialog({
                 <Input
                   type="number"
                   value={subjectForm.numberOfHours}
-                  disabled={!isEditMode}
                   onChange={(e) =>
                     setSubjectForm({
                       ...subjectForm,
@@ -276,19 +256,19 @@ export function SubjectDialog({
         )}
 
         {!editingSubject && (
-          <div className="py-4" dir="rtl">
+          <div className="py-4 flex-1 flex flex-col overflow-hidden" dir="rtl">
             <div className="hidden md:grid grid-cols-[1fr_1fr_100px_36px] gap-2 mb-2 px-1">
               <span className="text-sm font-bold text-gray-600">
-                اسم المادة <span className="text-red-500">*</span>
+                اسم المادة <span className="text-danger">*</span>
               </span>
               <span className="text-sm font-bold text-gray-600">
-                المعلم <span className="text-red-500">*</span>
+                المعلم <span className="text-danger">*</span>
               </span>
               <span className="text-sm font-bold text-gray-600">عدد الحصص</span>
               <span />
             </div>
 
-            <div className="space-y-2">
+            <div className="overflow-y-auto max-h-[50vh] space-y-2 pr-1">
               {subjectRows.map((row, index) => (
                 <div
                   key={index}
@@ -331,7 +311,7 @@ export function SubjectDialog({
                     size="icon"
                     disabled={subjectRows.length === 1}
                     onClick={() => removeSubjectRow(index)}
-                    className="h-9 w-9 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg disabled:opacity-30 self-end md:self-auto"
+                    className="h-9 w-9 text-danger hover:text-danger-foreground hover:bg-danger-light rounded-lg disabled:opacity-30 self-end md:self-auto"
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
@@ -342,7 +322,7 @@ export function SubjectDialog({
             <Button
               variant="outline"
               onClick={addSubjectRow}
-              className="mt-3 w-full border-dashed border-blue-300 text-blue-600 hover:bg-blue-50 hover:border-blue-400 gap-2 h-10 font-bold"
+              className="mt-3 w-full border-dashed border-info text-info hover:bg-info-light hover:border-info gap-2 h-10 font-bold"
             >
               <Plus className="h-4 w-4" />
               إضافة مادة أخرى
@@ -351,38 +331,28 @@ export function SubjectDialog({
         )}
 
         <DialogFooter className="flex flex-row gap-2">
-          {(!editingSubject || isEditMode) && (
-            <>
-              <Button
-                variant="outline"
-                onClick={() => onOpenChange(false)}
-                className="flex-1 cursor-pointer border-gray-200 text-gray-600 hover:bg-gray-50"
-              >
-                إلغاء
-              </Button>
-              <Button
-                onClick={handleSaveSubject}
-                disabled={
-                  createSubjectState.isLoading || updateSubjectState.isLoading
-                }
-                className="flex-1 bg-blue-600 hover:bg-blue-700 cursor-pointer"
-              >
-                {createSubjectState.isLoading || updateSubjectState.isLoading
-                  ? "جاري الحفظ..."
-                  : editingSubject
-                    ? "حفظ التعديلات"
-                    : `حفظ ${subjectRows.length > 1 ? subjectRows.length + " مواد" : "المادة"}`}
-              </Button>
-            </>
-          )}
-          {editingSubject && !isEditMode && (
-            <Button
-              onClick={() => onOpenChange(false)}
-              className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 border-none cursor-pointer h-10 rounded-lg font-medium"
-            >
-              إغلاق
-            </Button>
-          )}
+          <Button
+            variant="outline"
+            onClick={() => onOpenChange(false)}
+            className="flex-1 cursor-pointer border-gray-200 text-gray-600 hover:bg-gray-50"
+          >
+            إلغاء
+          </Button>
+          <Button
+            onClick={handleSaveSubject}
+            disabled={
+              createSubjectState.isLoading ||
+              updateSubjectState.isLoading ||
+              (editingSubject ? !hasChanges : false)
+            }
+            className="flex-1 bg-info hover:bg-info-foreground cursor-pointer"
+          >
+            {createSubjectState.isLoading || updateSubjectState.isLoading
+              ? "جاري الحفظ..."
+              : editingSubject
+                ? "حفظ التعديلات"
+                : `حفظ ${subjectRows.length > 1 ? subjectRows.length + " مواد" : "المادة"}`}
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

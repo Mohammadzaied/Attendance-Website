@@ -91,7 +91,7 @@ export function StudentDialog({
         <div className="grid gap-4 py-4">
           <div className="grid gap-2">
             <Label htmlFor="st-name" className="text-right">
-              اسم الطالب <span className="text-red-500">*</span>
+              اسم الطالب <span className="text-danger">*</span>
             </Label>
             <Input
               id="st-name"
@@ -119,7 +119,7 @@ export function StudentDialog({
             />
           </div>
           {createAndEnrollStudentState.error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded text-sm text-right">
+            <div className="bg-danger-light border border-danger text-danger px-4 py-3 rounded text-sm text-right">
               {createAndEnrollStudentState.error}
             </div>
           )}
@@ -130,7 +130,7 @@ export function StudentDialog({
             disabled={
               createAndEnrollStudentState.isLoading || !studentForm.name.trim()
             }
-            className="w-full bg-blue-600 hover:bg-blue-700 cursor-pointer"
+            className="w-full bg-info hover:bg-info-foreground cursor-pointer"
           >
             {createAndEnrollStudentState.isLoading
               ? "جاري الإضافة..."

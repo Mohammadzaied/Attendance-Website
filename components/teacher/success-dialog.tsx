@@ -35,9 +35,9 @@ export function SuccessDialog({
           </DialogDescription>
         </DialogHeader>
         <div className="flex justify-center py-4">
-          <div className="h-16 w-16 rounded-full bg-green-100 flex items-center justify-center">
+          <div className="h-16 w-16 rounded-full bg-success-light flex items-center justify-center">
             <svg
-              className="h-8 w-8 text-green-600"
+              className="h-8 w-8 text-success"
               fill="currentColor"
               viewBox="0 0 20 20"
             >
@@ -52,7 +52,7 @@ export function SuccessDialog({
         <DialogFooter>
           <Button
             onClick={() => onOpenChange(false)}
-            className="bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
+            className="bg-info hover:bg-info-foreground"
           >
             حسناً
           </Button>

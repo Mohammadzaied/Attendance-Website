@@ -35,7 +35,7 @@ export function StudentsList({
       <div className="p-4 space-y-3 bg-gray-50/30 ">
         {isLoading && (
           <div className="flex flex-col items-center justify-center py-12 text-gray-400 gap-4">
-            <div className="h-10 w-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
+            <div className="h-10 w-10 border-4 border-info border-t-transparent rounded-full animate-spin" />
             <span className="font-bold text-sm">جاري تحميل الطلاب...</span>
           </div>
         )}
@@ -46,7 +46,7 @@ export function StudentsList({
                 className="bg-white rounded-xl p-4 border border-gray-100 shadow-sm  overflow-hidden group"
               >
                 <div className="flex items-center gap-4 ">
-                  <div className="h-14 w-14 bg-indigo-50 text-indigo-700 rounded-full flex items-center justify-center text-xl font-black shadow-sm ring-4 ring-white shrink-0">
+                  <div className="h-14 w-14 bg-info-light text-info rounded-full flex items-center justify-center text-xl font-black shadow-sm ring-4 ring-white shrink-0">
                     {student.fullName ? student.fullName.charAt(0) : "?"}
                   </div>
                   <div className="text-right flex-col  overflow-hidden!">
@@ -75,7 +75,7 @@ export function StudentsList({
                     <Button
                       variant="outline"
                       size="sm"
-                      className="w-full gap-2 border-gray-100 text-blue-600 hover:bg-blue-50 hover:border-blue-200 cursor-pointer h-full rounded-lg text-xs font-bold"
+                      className="w-full gap-2 border-gray-100 text-info hover:bg-info-light hover:border-info cursor-pointer h-full rounded-lg text-xs font-bold"
                     >
                       <FileText className="h-3.5 w-3.5" />
                       الملف
@@ -86,7 +86,7 @@ export function StudentsList({
                     size="sm"
                     disabled={!canEdit}
                     onClick={() => onEdit(student)}
-                    className="flex-1 gap-2 border-gray-100 text-amber-600 hover:bg-amber-50 hover:border-amber-200 cursor-pointer h-full rounded-lg text-xs font-bold"
+                    className="flex-1 gap-2 border-gray-100 text-warning hover:bg-warning-light hover:border-warning cursor-pointer h-full rounded-lg text-xs font-bold"
                   >
                     <Edit className="h-3.5 w-3.5" />
                     تعديل
@@ -96,7 +96,7 @@ export function StudentsList({
                     size="icon"
                     disabled={!canEdit}
                     onClick={() => onDelete(student)}
-                    className="h-full w-10 text-red-500 hover:bg-red-50 rounded-lg shrink-0"
+                    className="h-full w-10 text-danger hover:bg-danger-light rounded-lg shrink-0"
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
@@ -149,7 +149,7 @@ export function StudentsList({
             >
               <TableCell className="py-4 font-semibold text-gray-900 overflow-hidden max-w-[250px]">
                 <div className="flex items-center gap-3">
-                  <div className="h-8 w-8 bg-indigo-50 text-indigo-700 rounded-full flex items-center justify-center text-xs font-bold shadow-sm shrink-0">
+                  <div className="h-8 w-8 bg-info-light text-info rounded-full flex items-center justify-center text-xs font-bold shadow-sm shrink-0">
                     {student.fullName ? student.fullName.charAt(0) : "?"}
                   </div>
                   <span className="truncate" title={student.fullName}>
@@ -178,7 +178,7 @@ export function StudentsList({
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="h-9 px-4 gap-2 text-blue-600 hover:bg-blue-50 rounded-lg cursor-pointer transition-all"
+                      className="h-9 px-4 gap-2 text-info hover:bg-info-light rounded-lg cursor-pointer transition-all"
                     >
                       <FileText className="h-4 w-4" />
                       ملف الطالب
@@ -189,7 +189,7 @@ export function StudentsList({
                     size="icon"
                     disabled={!canEdit}
                     onClick={() => onEdit(student)}
-                    className="h-9 w-9 text-amber-600 hover:bg-amber-50 rounded-lg cursor-pointer transition-all focus-visible:ring-amber-500"
+                    className="h-9 w-9 text-warning hover:bg-warning-light rounded-lg cursor-pointer transition-all focus-visible:ring-warning"
                   >
                     <Edit className="h-4 w-4" />
                   </Button>
@@ -198,7 +198,7 @@ export function StudentsList({
                     size="icon"
                     disabled={!canEdit}
                     onClick={() => onDelete(student)}
-                    className="h-9 w-9 text-red-500 hover:bg-red-50 rounded-lg cursor-pointer transition-all"
+                    className="h-9 w-9 text-danger hover:bg-danger-light rounded-lg cursor-pointer transition-all"
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>

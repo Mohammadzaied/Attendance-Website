@@ -114,6 +114,8 @@ export interface AdminState {
     currentPage: number;
     pageSize: number;
     searchTerm: string | null;
+    roleFilter: string;
+    departmentFilter: string;
     hasPreviousPage: boolean;
     hasNextPage: boolean;
   };

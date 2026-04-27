@@ -33,7 +33,7 @@ export function SubjectsList({
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-gray-400 gap-4">
-        <div className="h-16 w-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+        <div className="h-16 w-16 border-4 border-info border-t-transparent rounded-full animate-spin"></div>
         <p className="font-medium">جاري تحميل المواد...</p>
       </div>
     );
@@ -48,7 +48,7 @@ export function SubjectsList({
               key={subject.subjectId}
               className="bg-white rounded-xl p-4 border border-gray-100 shadow-sm relative overflow-hidden group"
             >
-              <div className="absolute top-0 right-0 w-1 h-full bg-blue-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="absolute top-0 right-0 w-1 h-full bg-info opacity-0 group-hover:opacity-100 transition-opacity" />
               <div className="flex flex-col gap-4">
                 <div className="flex justify-between items-start">
                   <div className="space-y-1 text-right">
@@ -61,7 +61,7 @@ export function SubjectsList({
                     <div className="flex flex-wrap gap-2 justify-end mt-1">
                       <Badge
                         variant="secondary"
-                        className="bg-blue-50 text-blue-600 hover:bg-blue-100 font-semibold text-[10px] border-none px-2"
+                        className="bg-info-light text-info hover:bg-info-light font-semibold text-[10px] border-none px-2"
                       >
                         {subject.numberOfHours} حصص
                       </Badge>
@@ -73,7 +73,7 @@ export function SubjectsList({
                       size="icon"
                       disabled={!canEdit}
                       onClick={() => onDelete(subject.subjectId.toString())}
-                      className="h-8 w-8 text-red-500 hover:bg-red-50 hover:text-red-600 rounded-lg"
+                      className="h-8 w-8 text-danger hover:bg-danger-light hover:text-danger-foreground rounded-lg"
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
@@ -82,7 +82,7 @@ export function SubjectsList({
                       size="icon"
                       disabled={!canEdit}
                       onClick={() => onEdit(subject)}
-                      className="h-8 w-8 text-blue-600 hover:bg-blue-50 rounded-lg"
+                      className="h-8 w-8 text-info hover:bg-info-light rounded-lg"
                     >
                       <Settings className="h-4 w-4" />
                     </Button>
@@ -93,7 +93,7 @@ export function SubjectsList({
                   <div className="flex items-center gap-2">
                     {subject.teacherName ? (
                       <div className="flex items-center gap-2">
-                        <div className="h-7 w-7 bg-blue-100 text-blue-700 rounded-full flex items-center justify-center text-xs font-black ring-2 ring-white">
+                        <div className="h-7 w-7 bg-info-light text-info rounded-full flex items-center justify-center text-xs font-black ring-2 ring-white">
                           {subject.teacherName.charAt(0)}
                         </div>
                         <span
@@ -104,7 +104,7 @@ export function SubjectsList({
                         </span>
                       </div>
                     ) : (
-                      <span className="text-red-500 text-xs font-medium">
+                      <span className="text-danger text-xs font-medium">
                         لم يعين معلم
                       </span>
                     )}
@@ -147,7 +147,7 @@ export function SubjectsList({
         {subjects.map((subject) => (
           <TableRow
             key={subject.subjectId}
-            className="hover:bg-blue-50/10 transition-colors border-b border-gray-50"
+            className="hover:bg-info-light/10 transition-colors border-b border-gray-50"
           >
             <TableCell className="text-right font-bold text-gray-900 border-none overflow-hidden max-w-[250px]">
               <div className="truncate" title={subject.name}>
@@ -157,7 +157,7 @@ export function SubjectsList({
             <TableCell className="text-right border-none">
               {subject.teacherName ? (
                 <div className="flex items-center gap-2">
-                  <div className="h-7 w-7 bg-blue-100 text-blue-700 rounded-full flex items-center justify-center text-xs font-bold ring-2 ring-white shadow-sm">
+                  <div className="h-7 w-7 bg-info-light text-info rounded-full flex items-center justify-center text-xs font-bold ring-2 ring-white shadow-sm">
                     {subject.teacherName.charAt(0)}
                   </div>
                   <span
@@ -168,7 +168,7 @@ export function SubjectsList({
                   </span>
                 </div>
               ) : (
-                <span className="text-red-400 text-sm">لم يعين</span>
+                <span className="text-danger text-sm">لم يعين</span>
               )}
             </TableCell>
             <TableCell className="text-right border-none">
@@ -186,7 +186,7 @@ export function SubjectsList({
                   size="sm"
                   disabled={!canEdit}
                   onClick={() => onEdit(subject)}
-                  className="h-9 px-4 gap-2 border-gray-200 text-blue-600 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200 cursor-pointer transition-all shadow-sm rounded-lg"
+                  className="h-9 px-4 gap-2 border-gray-200 text-info hover:bg-info-light hover:text-info-foreground hover:border-info cursor-pointer transition-all shadow-sm rounded-lg"
                 >
                   <Settings className="h-3.5 w-3.5" />
                   إدارة
@@ -197,7 +197,7 @@ export function SubjectsList({
                   size="icon"
                   disabled={!canEdit}
                   onClick={() => onDelete(subject.subjectId.toString())}
-                  className="h-8 w-8 text-red-500 hover:bg-red-50 rounded-lg cursor-pointer transition-all focus-visible:ring-red-500"
+                  className="h-8 w-8 text-danger hover:bg-danger-light rounded-lg cursor-pointer transition-all focus-visible:ring-danger"
                 >
                   <Trash2 className="h-4 w-4" />
                 </Button>

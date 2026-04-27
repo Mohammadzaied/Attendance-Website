@@ -215,7 +215,7 @@ export function MajorsList({
                 setNewMajor({ name: "", yearsNumber: 2 });
                 setIsAddDialogOpen(true);
               }}
-              className="bg-blue-600 hover:bg-blue-700 gap-2 cursor-pointer shadow-sm w-full sm:w-auto justify-center"
+              className="bg-info hover:bg-info-foreground gap-2 cursor-pointer shadow-sm w-full sm:w-auto justify-center"
             >
               <Plus className="h-4 w-4" />
               إضافة تخصص جديد
@@ -234,7 +234,7 @@ export function MajorsList({
             <DialogHeader>
               <DialogTitle
                 className={`text-right ${
-                  result.success ? "text-green-600" : "text-red-600"
+                  result.success ? "text-success" : "text-danger"
                 }`}
               >
                 {result.success ? "تم بنجاح" : "خطأ"}
@@ -310,7 +310,7 @@ export function MajorsList({
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 bg-blue-100/50 text-blue-600 rounded-lg flex items-center justify-center">
+                      <div className="h-10 w-10 bg-info-light/50 text-info rounded-lg flex items-center justify-center">
                         <BookOpen className="h-5 w-5" />
                       </div>
                       <div className="text-right">
@@ -326,7 +326,7 @@ export function MajorsList({
                       variant="outline"
                       size="sm"
                       onClick={() => onSelectMajor(major)}
-                      className="w-full gap-1 border-blue-100 text-blue-600 hover:bg-blue-50 cursor-pointer text-xs"
+                      className="w-full gap-1 border-info-light text-info hover:bg-info-light cursor-pointer text-xs"
                     >
                       <Settings className="h-3.5 w-3.5" />
                       إدارة
@@ -338,7 +338,7 @@ export function MajorsList({
                       variant="ghost"
                       size="icon"
                       onClick={() => openEditDialog(major)}
-                      className="h-9 w-9 text-amber-600 hover:text-amber-700 hover:bg-amber-50 cursor-pointer"
+                      className="h-9 w-9 text-warning hover:text-warning-foreground hover:bg-warning-light cursor-pointer"
                     >
                       <Edit className="h-4 w-4" />
                     </Button>
@@ -346,7 +346,7 @@ export function MajorsList({
                       variant="ghost"
                       size="icon"
                       onClick={(e) => openDeleteDialog(major, e)}
-                      className="h-9 w-9 text-red-600 hover:text-red-700 hover:bg-red-50 cursor-pointer"
+                      className="h-9 w-9 text-danger hover:text-danger-foreground hover:bg-danger-light cursor-pointer"
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
@@ -371,7 +371,7 @@ export function MajorsList({
               <TableRow className="hover:bg-transparent border-b border-gray-100 justify-between">
                 <TableHead className="py-5 px-6 font-bold text-gray-900">
                   <div className="flex items-center gap-3">
-                    <div className="h-8 w-8 bg-blue-100/50 text-blue-600 rounded-lg flex items-center justify-center">
+                    <div className="h-8 w-8 bg-info-light/50 text-info rounded-lg flex items-center justify-center">
                       <BookOpen className="h-4 w-4" />
                     </div>
                     <span className="text-base">اسم التخصص</span>
@@ -407,11 +407,11 @@ export function MajorsList({
                 filteredMajors.map((major) => (
                   <TableRow
                     key={major.id}
-                    className="hover:bg-blue-50/20 transition-all border-b border-gray-50 group"
+                    className="hover:bg-info-light/20 transition-all border-b border-gray-50 group"
                   >
                     <TableCell className="py-4 px-6">
                       <div className="flex flex-col">
-                        <span className="font-bold text-gray-900 text-lg group-hover:text-blue-600 transition-colors uppercase">
+                        <span className="font-bold text-gray-900 text-lg group-hover:text-info transition-colors uppercase">
                           {major.name}
                         </span>
                       </div>
@@ -423,7 +423,7 @@ export function MajorsList({
                           variant="outline"
                           size="sm"
                           onClick={() => onSelectMajor(major)}
-                          className="gap-1 border-blue-100 text-blue-600 hover:bg-blue-50 cursor-pointer"
+                          className="gap-1 border-info-light text-info hover:bg-info-light cursor-pointer"
                         >
                           <Settings className="h-3.5 w-3.5" />
                           إدارة
@@ -432,7 +432,7 @@ export function MajorsList({
                           variant="ghost"
                           size="icon"
                           onClick={() => openEditDialog(major)}
-                          className="h-8 w-8 text-amber-600 hover:text-amber-700 hover:bg-amber-50 cursor-pointer"
+                          className="h-8 w-8 text-warning hover:text-warning-foreground hover:bg-warning-light cursor-pointer"
                         >
                           <Edit className="h-4 w-4" />
                         </Button>
@@ -440,7 +440,7 @@ export function MajorsList({
                           variant="ghost"
                           size="icon"
                           onClick={(e) => openDeleteDialog(major, e)}
-                          className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50 cursor-pointer"
+                          className="h-8 w-8 text-danger hover:text-danger-foreground hover:bg-danger-light cursor-pointer"
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>
@@ -470,7 +470,7 @@ export function MajorsList({
           </DialogHeader>
           <div className="grid gap-4 py-4">
             {addError && (
-              <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm text-right border border-red-100 italic">
+              <div className="bg-danger-light text-danger p-3 rounded-lg text-sm text-right border border-danger italic">
                 {addError}
               </div>
             )}
@@ -511,7 +511,7 @@ export function MajorsList({
             <Button
               onClick={handleAddMajor}
               disabled={createSpecializationState.isLoading}
-              className="w-full bg-blue-600 hover:bg-blue-700 cursor-pointer"
+              className="w-full bg-info hover:bg-info-foreground cursor-pointer"
             >
               {createSpecializationState.isLoading
                 ? "جاري الحفظ..."
@@ -541,7 +541,7 @@ export function MajorsList({
           </DialogHeader>
           <div className="grid gap-4 py-4">
             {editError && (
-              <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm text-right border border-red-100 italic">
+              <div className="bg-danger-light text-danger p-3 rounded-lg text-sm text-right border border-danger italic">
                 {editError}
               </div>
             )}
@@ -582,7 +582,7 @@ export function MajorsList({
             <Button
               onClick={handleEditMajor}
               disabled={updateSpecializationState.isLoading}
-              className="w-full bg-blue-600 hover:bg-blue-700 cursor-pointer"
+              className="w-full bg-info hover:bg-info-foreground cursor-pointer"
             >
               {updateSpecializationState.isLoading
                 ? "جاري الحفظ..."
@@ -599,7 +599,7 @@ export function MajorsList({
             <DialogTitle className="text-right">حذف التخصص</DialogTitle>
             <DialogDescription className="text-right">
               هل أنت متأكد من حذف تخصص{" "}
-              <span className="font-bold text-red-600">
+              <span className="font-bold text-danger">
                 {selectedMajorForAction?.name}
               </span>
               ؟ سيتم حذف جميع البيانات المتعلقة به نهائياً.
@@ -634,7 +634,7 @@ export function MajorsList({
               disabled={
                 deleteSpecializationState.isLoading || !deleteDeptPassword
               }
-              className="flex-1 bg-red-600 hover:bg-red-700 cursor-pointer"
+              className="flex-1 bg-danger hover:bg-danger-foreground cursor-pointer"
             >
               {deleteSpecializationState.isLoading
                 ? "جاري الحذف..."

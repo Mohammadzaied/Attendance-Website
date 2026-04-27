@@ -266,14 +266,14 @@ export function StudyYearDetail({
               })()}
               <span className="mx-1.5 md:mx-2">-</span>
               {major.name}
-              <span className="mx-1.5 md:mx-2 text-blue-600">/</span>
+              <span className="mx-1.5 md:mx-2 text-info">/</span>
               {year.studyYear === 1 ? "سنة أولى" : "سنة ثانية"}
             </h3>
             <p className="text-sm text-gray-500 font-medium">
               إدارة المواد الدراسية وقائمة الطلاب المسجلين
             </p>
           </div>
-          <Badge className="bg-blue-50 text-blue-700 border-blue-100 px-3 py-1.5 text-xs md:text-sm font-semibold w-fit shadow-sm">
+          <Badge className="bg-info-light text-info border-info px-3 py-1.5 text-xs md:text-sm font-semibold w-fit shadow-sm">
             {`${major.name} (${students.length} طالب)`}
           </Badge>
         </div>
@@ -290,14 +290,14 @@ export function StudyYearDetail({
           <TabsList className="bg-gray-200/50 p-1.5 h-auto w-full lg:w-auto self-center lg:self-auto rounded-xl grid grid-cols-2 gap-1 lg:flex lg:h-12">
             <TabsTrigger
               value="students"
-              className="px-4 cursor-pointer md:px-6 rounded-lg data-[state=active]:bg-white data-[state=active]:text-blue-600 data-[state=active]:shadow-sm transition-all duration-200 h-10 md:h-full gap-2 text-gray-600 font-bold"
+              className="px-4 cursor-pointer md:px-6 rounded-lg data-[state=active]:bg-white data-[state=active]:text-info data-[state=active]:shadow-sm transition-all duration-200 h-10 md:h-full gap-2 text-gray-600 font-bold"
             >
               <Users className="h-4 w-4" />
               <span className="text-sm md:text-base">الطلاب</span>
             </TabsTrigger>
             <TabsTrigger
               value="subjects"
-              className="px-4 cursor-pointer md:px-6 rounded-lg data-[state=active]:bg-white data-[state=active]:text-blue-600 data-[state=active]:shadow-sm transition-all duration-200 h-10 md:h-full gap-2 text-gray-600 font-bold"
+              className="px-4 cursor-pointer md:px-6 rounded-lg data-[state=active]:bg-white data-[state=active]:text-info data-[state=active]:shadow-sm transition-all duration-200 h-10 md:h-full gap-2 text-gray-600 font-bold"
             >
               <Book className="h-4 w-4" />
               <span className="text-sm md:text-base">المواد</span>
@@ -310,7 +310,7 @@ export function StudyYearDetail({
                 onClick={handleOpenAddSubject}
                 size="sm"
                 disabled={!canEdit}
-                className="bg-blue-600 hover:bg-blue-700 gap-2 cursor-pointer shadow-sm rounded-lg flex-1 md:flex-none justify-center h-10 md:h-9 font-bold transition-all active:scale-95"
+                className="bg-info hover:bg-info-foreground gap-2 cursor-pointer shadow-sm rounded-lg flex-1 md:flex-none justify-center h-10 md:h-9 font-bold transition-all active:scale-95 shadow-info/20"
               >
                 <Plus className="h-4 w-4" />
                 <span className="whitespace-nowrap">إضافة مادة جديدة</span>
@@ -329,7 +329,7 @@ export function StudyYearDetail({
                     variant="outline"
                     disabled={!canEdit}
                     size="sm"
-                    className="flex-1 sm:flex-none bg-white hover:bg-gray-50 text-blue-600 border-blue-200 gap-2 cursor-pointer shadow-sm rounded-lg justify-center h-10 md:h-9 font-bold"
+                    className="flex-1 sm:flex-none bg-white hover:bg-gray-50 text-info border-info gap-2 cursor-pointer shadow-sm rounded-lg justify-center h-10 md:h-9 font-bold"
                   >
                     <Settings className="h-4 w-4" />
                     {!isMobile && "ادخال الايميلات"}
@@ -351,7 +351,7 @@ export function StudyYearDetail({
                   onClick={() => setIsStudentDialogOpen(true)}
                   size="sm"
                   disabled={!canEdit}
-                  className="bg-blue-600 hover:bg-blue-700 gap-2 cursor-pointer shadow-sm rounded-lg w-full sm:w-auto justify-center h-10 md:h-9 font-bold transition-all active:scale-95"
+                  className="bg-info hover:bg-info-foreground gap-2 cursor-pointer shadow-sm rounded-lg w-full sm:w-auto justify-center h-10 md:h-9 font-bold transition-all active:scale-95 shadow-info/20"
                 >
                   <UserPlus className="h-4 w-4" />
                   <span className="whitespace-nowrap">إضافة طالب</span>
@@ -362,7 +362,7 @@ export function StudyYearDetail({
                     variant="destructive"
                     size="sm"
                     disabled={!canEdit || loadingStudents}
-                    className="bg-red-600 hover:bg-red-700 gap-2 cursor-pointer shadow-sm rounded-lg w-full sm:w-auto justify-center h-10 md:h-9 font-bold transition-all active:scale-95"
+                    className="bg-danger hover:bg-danger-foreground gap-2 cursor-pointer shadow-sm rounded-lg w-full sm:w-auto justify-center h-10 md:h-9 font-bold transition-all active:scale-95"
                   >
                     <Trash2 className="h-4 w-4" />
                     <span className="whitespace-nowrap">حذف الكل</span>

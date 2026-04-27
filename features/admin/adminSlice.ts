@@ -31,6 +31,8 @@ const initialState: AdminState = {
     currentPage: 1,
     pageSize: 15,
     searchTerm: null,
+    roleFilter: "all",
+    departmentFilter: "all",
     hasPreviousPage: false,
     hasNextPage: false,
   },
@@ -71,6 +73,8 @@ export const fetchTeachers = createAsyncThunk(
       pageNumber?: number;
       pageSize?: number;
       searchTerm?: string | null;
+      roleId?: string | null;
+      departmentId?: string | null;
     } | void,
     { rejectWithValue },
   ) => {
@@ -290,6 +294,14 @@ const adminSlice = createSlice({
     },
     setTeachersPageSize: (state, action: PayloadAction<number>) => {
       state.teachersPagination.pageSize = action.payload;
+      state.teachersPagination.currentPage = 1;
+    },
+    setTeachersRoleFilter: (state, action: PayloadAction<string>) => {
+      state.teachersPagination.roleFilter = action.payload;
+      state.teachersPagination.currentPage = 1;
+    },
+    setTeachersDepartmentFilter: (state, action: PayloadAction<string>) => {
+      state.teachersPagination.departmentFilter = action.payload;
       state.teachersPagination.currentPage = 1;
     },
   },
@@ -533,6 +545,8 @@ export const {
   setTeachersPage,
   setTeachersSearchTerm,
   setTeachersPageSize,
+  setTeachersRoleFilter,
+  setTeachersDepartmentFilter,
 } = adminSlice.actions;
 
 export default adminSlice.reducer;

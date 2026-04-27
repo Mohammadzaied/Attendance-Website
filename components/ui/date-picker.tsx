@@ -37,7 +37,7 @@ export function DatePicker({ date, setDate, label }: DatePickerProps) {
               !date && "text-muted-foreground",
             )}
           >
-            <CalendarIcon className="ml-2 h-4 w-4 text-blue-600" />
+            <CalendarIcon className="ml-2 h-4 w-4 text-info" />
             {date ? (
               format(date, "PPP", { locale: ar })
             ) : (

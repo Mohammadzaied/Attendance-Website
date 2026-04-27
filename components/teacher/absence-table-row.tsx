@@ -64,7 +64,7 @@ export function AbsenceTableRow({
         className={cn(
           "p-4 rounded-xl border transition-all mb-3 cursor-pointer",
           isSelected
-            ? "border-blue-200 bg-blue-50/30"
+            ? "border-info bg-info-light/30"
             : "border-gray-100 bg-white",
         )}
         onClick={onToggle}
@@ -85,7 +85,7 @@ export function AbsenceTableRow({
             variant="ghost"
             size="sm"
             className={cn(
-              "h-8 text-blue-600 font-bold hover:bg-blue-100/50 transition-all",
+              "h-8 text-info font-bold hover:bg-info-light/50 transition-all",
               isSelected && !showDetails
                 ? "opacity-100 visible"
                 : "opacity-0 invisible pointer-events-none",
@@ -117,7 +117,7 @@ export function AbsenceTableRow({
           className={cn(
             "grid transition-all duration-300 ease-in-out overflow-hidden",
             isSelected && showDetails
-              ? "grid-rows-[1fr] opacity-100 mt-4 pt-4 border-t border-blue-100/50"
+              ? "grid-rows-[1fr] opacity-100 mt-4 pt-4 border-t border-info/50"
               : "grid-rows-[0fr] opacity-0 mt-0 pt-0",
           )}
         >
@@ -175,7 +175,7 @@ export function AbsenceTableRow({
       className={cn(
         "h-10 cursor-pointer transition-colors border-b border-gray-50 ",
         isSelected
-          ? "bg-blue-50/40 hover:bg-blue-50/60"
+          ? "bg-info-light/40 hover:bg-info-light/60"
           : "hover:bg-gray-50/80",
       )}
       onClick={onToggle}

@@ -82,13 +82,13 @@ export function WarningFilters({
             value={studentName}
             onChange={(e) => setStudentName(e.target.value)}
             placeholder="البحث باسم الطالب..."
-            className="pr-10 h-11 bg-white border-gray-200 rounded-xl focus:ring-blue-500/20"
+            className="pr-10 h-11 bg-white border-gray-200 rounded-xl focus:ring-info/20"
           />
         </div>
       </div>
 
       {/* Filters Grid */}
-      <Card className="border-none shadow-xl shadow-blue-500/5 bg-white/80 backdrop-blur-md rounded-3xl overflow-hidden border-t-4 border-t-blue-600">
+      <Card className="border-none shadow-xl shadow-info/5 bg-white/80 backdrop-blur-md rounded-3xl overflow-hidden border-t-4 border-t-info">
         <CardContent className="p-6">
           <div
             className={cn(
@@ -230,7 +230,7 @@ export function WarningFilters({
                         isExporting || departmentName === "all" || !hasData
                       }
                       className={cn(
-                        "bg-green-600 hover:bg-green-700 text-white rounded-xl font-bold gap-2",
+                        "bg-success hover:bg-success-foreground text-white rounded-xl font-bold gap-2",
                         (departmentName === "all" || !hasData) &&
                           "opacity-50 cursor-not-allowed",
                       )}
@@ -259,7 +259,7 @@ export function WarningFilters({
             <Button
               variant="ghost"
               onClick={onReset}
-              className="text-gray-400 hover:text-blue-600 gap-2 font-bold"
+              className="text-gray-400 hover:text-info gap-2 font-bold"
             >
               <RotateCcw className="h-4 w-4" />
               إعادة تعيين الفلاتر

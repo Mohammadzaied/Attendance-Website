@@ -190,7 +190,7 @@ export function ImportUsersDialog({ onSuccess }: ImportUsersDialogProps) {
       <DialogTrigger asChild>
         <Button
           variant="outline"
-          className="cursor-pointer border-green-600 text-green-600 hover:bg-green-50"
+          className="cursor-pointer border-success text-success hover:bg-success-light"
         >
           <FileUp className="h-4 w-4 ml-2" />
           استيراد من Excel
@@ -210,7 +210,7 @@ export function ImportUsersDialog({ onSuccess }: ImportUsersDialogProps) {
         <div className="flex-1 flex flex-col gap-4 py-4 overflow-hidden">
           {!fileName ? (
             <div
-              className="flex-1 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center p-12 hover:border-blue-400 transition-colors cursor-pointer bg-gray-50/50"
+              className="flex-1 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center p-12 hover:border-info transition-colors cursor-pointer bg-gray-50/50"
               onClick={() => fileInputRef.current?.click()}
             >
               <FileUp className="h-12 w-12 text-gray-400 mb-4" />
@@ -228,11 +228,11 @@ export function ImportUsersDialog({ onSuccess }: ImportUsersDialogProps) {
             </div>
           ) : (
             <div className="flex-1 flex flex-col overflow-hidden">
-              <div className="flex items-center justify-between bg-blue-50 p-3 rounded-t-lg border-x border-t border-blue-100">
+              <div className="flex items-center justify-between bg-info-light p-3 rounded-t-lg border-x border-t border-info">
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5 text-blue-600" />
-                  <span className="font-medium text-blue-900">{fileName}</span>
-                  <span className="text-blue-600 text-sm">
+                  <CheckCircle2 className="h-5 w-5 text-info" />
+                  <span className="font-medium text-info-foreground">{fileName}</span>
+                  <span className="text-info text-sm">
                     ({importedData.length} مستخدم جاهز)
                   </span>
                 </div>
@@ -240,7 +240,7 @@ export function ImportUsersDialog({ onSuccess }: ImportUsersDialogProps) {
                   variant="ghost"
                   size="sm"
                   onClick={resetState}
-                  className="text-red-500 hover:text-red-700 hover:bg-red-50 h-8 w-8 p-0"
+                  className="text-danger hover:text-danger-foreground hover:bg-danger-light h-8 w-8 p-0"
                 >
                   <Trash2 className="h-4 w-4" />
                 </Button>
@@ -302,9 +302,9 @@ export function ImportUsersDialog({ onSuccess }: ImportUsersDialogProps) {
             </div>
           )}
 
-          <div className="bg-yellow-50 border border-yellow-100 p-3 rounded-lg flex gap-3">
-            <AlertCircle className="h-5 w-5 text-yellow-600 shrink-0" />
-            <p className="text-sm text-yellow-700">
+          <div className="bg-warning-light border border-warning p-3 rounded-lg flex gap-3">
+            <AlertCircle className="h-5 w-5 text-warning shrink-0" />
+            <p className="text-sm text-warning-foreground">
               تأكد من مطابقة عناوين الأعمدة في الملف مع: (اسم المستخدم , الاسم
               الكامل , كلمة المرور , المسمى الوظيفي , اسم القسم). كلمة المرور
               الافتراضية هي "123" إذا تم تركها فارغة.
@@ -329,7 +329,7 @@ export function ImportUsersDialog({ onSuccess }: ImportUsersDialogProps) {
             type="button"
             onClick={handleImport}
             disabled={isLoading || importedData.length === 0}
-            className="cursor-pointer bg-green-600 hover:bg-green-700"
+            className="cursor-pointer bg-success hover:bg-success-foreground"
           >
             {isLoading
               ? "جاري الاستيراد..."
@@ -359,8 +359,8 @@ export function ImportUsersDialog({ onSuccess }: ImportUsersDialogProps) {
               className={cn(
                 "flex items-center justify-start gap-2",
                 result?.variant === "success"
-                  ? "text-green-600"
-                  : "text-red-600",
+                  ? "text-success"
+                  : "text-danger",
               )}
             >
               {result?.title}
@@ -376,13 +376,13 @@ export function ImportUsersDialog({ onSuccess }: ImportUsersDialogProps) {
                 {importUsersState.data &&
                   importUsersState.data.errors?.length > 0 && (
                     <div className="mt-4 text-right">
-                      <p className="font-semibold text-red-600 mb-2">
+                      <p className="font-semibold text-danger mb-2">
                         الأخطاء الواردة:
                       </p>
-                      <ScrollArea className="h-[100px] w-full border rounded-md p-2 bg-red-50/50">
+                      <ScrollArea className="h-[100px] w-full border rounded-md p-2 bg-danger-light/50">
                         <ul
                           dir="rtl"
-                          className="list-disc list-inside space-y-1 text-sm text-red-700 "
+                          className="list-disc list-inside space-y-1 text-sm text-danger-foreground "
                         >
                           {importUsersState.data.errors?.map((err, idx) => (
                             <li
@@ -414,8 +414,8 @@ export function ImportUsersDialog({ onSuccess }: ImportUsersDialogProps) {
               className={cn(
                 "w-full cursor-pointer",
                 result?.variant === "success"
-                  ? "bg-green-600 hover:bg-green-700"
-                  : "bg-red-600 hover:bg-red-700",
+                  ? "bg-success hover:bg-success-foreground"
+                  : "bg-danger hover:bg-danger-foreground",
               )}
             >
               حسناً

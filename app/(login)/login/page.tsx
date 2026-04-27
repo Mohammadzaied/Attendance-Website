@@ -135,7 +135,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-dvh flex items-center justify-center bg-linear-to-br from-blue-50 via-white to-indigo-50 p-4">
+    <div className="min-h-dvh flex items-center justify-center bg-info-light p-4">
       <Card className="w-full max-w-md shadow-lg">
         <CardHeader className="space-y-1 text-center">
           <div className="mb-4 flex justify-center">
@@ -151,7 +151,7 @@ export default function LoginPage() {
           {step !== "login" && (
             <button
               onClick={handleGoBack}
-              className="mt-2 text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center justify-center gap-1 transition-colors mx-auto cursor-pointer"
+              className="mt-2 text-info hover:text-info-foreground text-sm font-medium flex items-center justify-center gap-1 transition-colors mx-auto cursor-pointer"
             >
               <ArrowRight className="h-4 w-4" />
               العودة لتسجيل الدخول
@@ -200,21 +200,21 @@ export default function LoginPage() {
                     dispatch(clearError());
                     setStep("forgot-password");
                   }}
-                  className="text-xs text-blue-600 hover:underline font-medium cursor-pointer"
+                  className="text-xs text-info hover:underline font-medium cursor-pointer"
                 >
                   نسيت كلمة المرور؟
                 </button>
               </div>
 
               {error && (
-                <div className="p-4 text-sm text-red-600 bg-red-50/50 border border-red-100 rounded-xl text-right font-medium animate-in slide-in-from-top-2">
+                <div className="p-4 text-sm text-danger bg-danger-light/50 border border-danger/10 rounded-xl text-right font-medium animate-in slide-in-from-top-2">
                   {error}
                 </div>
               )}
 
               <Button
                 type="submit"
-                className="w-full h-12 cursor-pointer bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-xl shadow-md shadow-blue-500/20 transition-all active:scale-[0.98]"
+                className="w-full h-12 cursor-pointer bg-info hover:bg-info-foreground text-white font-bold rounded-xl shadow-md shadow-info/20 transition-all active:scale-[0.98]"
                 disabled={isLoading}
               >
                 {isLoading ? (
@@ -248,20 +248,20 @@ export default function LoginPage() {
                   placeholder="example@email.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="h-12 bg-gray-50 border-gray-100 rounded-xl focus:ring-2 focus:ring-blue-500/20 "
+                  className="h-12 bg-gray-50 border-gray-100 rounded-xl focus:ring-2 focus:ring-info/20 "
                   required
                 />
               </div>
 
               {error && (
-                <div className="p-4 text-sm text-red-600 bg-red-50/50 border border-red-100 rounded-xl text-right font-medium animate-in slide-in-from-top-2">
+                <div className="p-4 text-sm text-danger bg-danger-light/50 border border-danger/10 rounded-xl text-right font-medium animate-in slide-in-from-top-2">
                   {error}
                 </div>
               )}
 
               <Button
                 type="submit"
-                className="w-full h-12 cursor-pointer bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl active:scale-[0.98] transition-all"
+                className="w-full h-12 cursor-pointer bg-info hover:bg-info-foreground text-white font-bold rounded-xl active:scale-[0.98] transition-all"
                 disabled={isLoading}
               >
                 {isLoading ? (
@@ -277,7 +277,7 @@ export default function LoginPage() {
             <form onSubmit={handleVerifyCode} className="space-y-5">
               <p className="text-center text-gray-500 text-sm leading-relaxed">
                 تم إرسال رمز التحقق إلى{" "}
-                <span className="font-bold text-blue-600">{email}</span>. يرجى
+                <span className="font-bold text-info">{email}</span>. يرجى
                 إدخاله أدناه.
               </p>
               <div className="space-y-2">
@@ -293,20 +293,20 @@ export default function LoginPage() {
                   placeholder="123456"
                   value={resetCode}
                   onChange={(e) => setResetCode(e.target.value)}
-                  className="h-12 bg-gray-50 border-gray-100 rounded-xl focus:ring-2 focus:ring-blue-500/20 text-center text-2xl font-mono tracking-widest"
+                  className="h-12 bg-gray-50 border-gray-100 rounded-xl focus:ring-2 focus:ring-info/20 text-center text-2xl font-mono tracking-widest"
                   required
                 />
               </div>
 
               {error && (
-                <div className="p-4 text-sm text-red-600 bg-red-50/50 border border-red-100 rounded-xl text-right font-medium animate-in slide-in-from-top-2">
+                <div className="p-4 text-sm text-danger bg-danger-light/50 border border-danger/10 rounded-xl text-right font-medium animate-in slide-in-from-top-2">
                   {error}
                 </div>
               )}
 
               <Button
                 type="submit"
-                className="w-full h-12 cursor-pointer bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl active:scale-[0.98] transition-all"
+                className="w-full h-12 cursor-pointer bg-info hover:bg-info-foreground text-white font-bold rounded-xl active:scale-[0.98] transition-all"
                 disabled={isLoading}
               >
                 {isLoading ? (
@@ -333,7 +333,7 @@ export default function LoginPage() {
                   placeholder="كلمة المرور الجديدة"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
-                  className="h-12 bg-gray-50 border-gray-100 rounded-xl focus:ring-2 focus:ring-blue-500/20 text-right font-sans"
+                  className="h-12 bg-gray-50 border-gray-100 rounded-xl focus:ring-2 focus:ring-info/20 text-right font-sans"
                   required
                 />
               </div>
@@ -351,7 +351,7 @@ export default function LoginPage() {
                   placeholder="تأكيد كلمة المرور"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="h-12 bg-gray-50 border-gray-100 rounded-xl focus:ring-2 focus:ring-blue-500/20 text-right font-sans"
+                  className="h-12 bg-gray-50 border-gray-100 rounded-xl focus:ring-2 focus:ring-info/20 text-right font-sans"
                   required
                 />
               </div>
@@ -364,7 +364,7 @@ export default function LoginPage() {
 
               <Button
                 type="submit"
-                className="w-full h-12 cursor-pointer bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl active:scale-[0.98] transition-all"
+                className="w-full h-12 cursor-pointer bg-info hover:bg-info-foreground text-white font-bold rounded-xl active:scale-[0.98] transition-all"
                 disabled={isLoading}
               >
                 {isLoading ? (

@@ -37,10 +37,10 @@ export function StatusDialog({
             className={cn(
               "text-right font-bold flex items-center gap-2 text-xl",
               type === "error"
-                ? "text-red-600"
+                ? "text-danger"
                 : type === "success"
-                  ? "text-emerald-600"
-                  : "text-amber-600",
+                  ? "text-success"
+                  : "text-warning",
             )}
           >
             {type === "error" && <Plus className="h-5 w-5 rotate-45" />}
@@ -60,10 +60,10 @@ export function StatusDialog({
             className={cn(
               "w-full h-11 rounded-xl font-bold shadow-lg transition-all active:scale-95 text-white border-none cursor-pointer",
               type === "error"
-                ? "bg-red-600 hover:bg-red-700 shadow-red-200"
+                ? "bg-danger hover:bg-danger-foreground shadow-danger/20"
                 : type === "success"
-                  ? "bg-emerald-600 hover:bg-emerald-700 shadow-emerald-200"
-                  : "bg-amber-600 hover:bg-amber-700 shadow-amber-200",
+                  ? "bg-success hover:bg-success-foreground shadow-success/20"
+                  : "bg-warning hover:bg-warning-foreground shadow-warning/20",
             )}
           >
             موافق

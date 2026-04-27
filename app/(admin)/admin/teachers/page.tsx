@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import { useSidebar } from "@/contexts/sidebar-context";
 import { useAdminSidebarItems } from "@/lib/utils/sidebar-items";
@@ -58,15 +58,30 @@ export default function TeachersPage() {
     dispatch(fetchDepartments());
   }, [dispatch, setSidebarItems, sidebarItems]);
 
+  // Clear filters when the page is opened
+  useEffect(() => {
+    setRoleFilter("all");
+    setDepartmentFilter("all");
+    setTeacherSearch("");
+    dispatch(setTeachersSearchTerm(null));
+    dispatch(setTeachersPage(1));
+  }, [dispatch]);
+
+  useEffect(() => {
+    dispatch(setTeachersPage(1));
+  }, [roleFilter, departmentFilter, dispatch]);
+
   useEffect(() => {
     dispatch(
       fetchTeachers({
         pageNumber: currentPage,
         pageSize: pageSize,
         searchTerm: searchTerm,
+        roleId: roleFilter !== "all" ? roleFilter : null,
+        departmentId: departmentFilter !== "all" ? departmentFilter : null,
       }),
     );
-  }, [dispatch, currentPage, searchTerm, pageSize]);
+  }, [dispatch, currentPage, searchTerm, pageSize, roleFilter, departmentFilter]);
 
   // Debounced search logic
   useEffect(() => {
@@ -84,6 +99,8 @@ export default function TeachersPage() {
         pageNumber: currentPage,
         pageSize: pageSize,
         searchTerm: searchTerm,
+        roleId: roleFilter !== "all" ? roleFilter : null,
+        departmentId: departmentFilter !== "all" ? departmentFilter : null,
       }),
     );
   };

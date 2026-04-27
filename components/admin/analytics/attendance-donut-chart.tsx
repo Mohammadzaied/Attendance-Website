@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { ApexOptions } from "apexcharts";
+import { COLORS } from "@/lib/colors";
 
 const ReactApexChart = dynamic(() => import("react-apexcharts"), {
   ssr: false,
@@ -26,7 +27,7 @@ export function AttendanceDonutChart({
       },
     },
     labels: ["الحضور", "الغياب"],
-    colors: ["#22c55e", "#f43f5e"],
+    colors: [COLORS.donutAttendance, COLORS.donutAbsence],
     dataLabels: {
       enabled: false,
 
@@ -34,7 +35,7 @@ export function AttendanceDonutChart({
     },
     stroke: {
       width: 4,
-      colors: ["#ffffff"],
+      colors: [COLORS.chartLabelWhite],
     },
     plotOptions: {
       pie: {
@@ -46,7 +47,7 @@ export function AttendanceDonutChart({
               show: true,
               fontSize: "30px",
               fontWeight: 600,
-              color: "#6b7280",
+              color: COLORS.chartText,
               offsetY: 20,
               formatter: () => "نسبة الحضور",
             },
@@ -54,14 +55,14 @@ export function AttendanceDonutChart({
               show: true,
               fontSize: "38px",
               fontWeight: 800,
-              color: "#111827",
+              color: COLORS.chartTextHeading,
               offsetY: -20,
               formatter: () => `${attendancePercentage}%`,
             },
             total: {
               show: true,
               label: "نسبة الحضور",
-              color: "#6b7280",
+              color: COLORS.chartText,
               fontSize: "14px",
               fontWeight: 600,
               formatter: () => `${attendancePercentage}%`,
@@ -103,3 +104,4 @@ export function AttendanceDonutChart({
     />
   );
 }
+

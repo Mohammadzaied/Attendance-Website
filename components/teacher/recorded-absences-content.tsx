@@ -85,7 +85,7 @@ export function RecordedAbsencesContent({
   const sectionOptions = useMemo(() => {
     return subjects.map((s) => ({
       value: s.subjectId.toString(),
-      label: `${s.name} - ${s.specializationName} - ${s.studyYear === 1 ? "سنة أولى" : "سنة ثانية"} `,
+      label: `${s.name} - ${s.specializationName} - ${s.studyYear === 1 ? "أولى" : "ثانية"} `,
     }));
   }, [subjects]);
 
@@ -129,7 +129,7 @@ export function RecordedAbsencesContent({
         >
           الغيابات المسجلة - السنة الأكاديمية{" "}
           {selectedAcademicYearId && (
-            <span className={cn("text-blue-900")}>
+            <span className={cn("text-info")}>
               ({" "}
               {
                 academicYears.find(
@@ -205,7 +205,7 @@ export function RecordedAbsencesContent({
                 </SelectContent>
               </Select>
               {fetchSubjectsState.error && (
-                <p className="text-xs text-red-500 text-right mt-1">
+                <p className="text-xs text-danger text-right mt-1">
                   {fetchSubjectsState.error}
                 </p>
               )}
@@ -223,11 +223,11 @@ export function RecordedAbsencesContent({
       </Card>
 
       {fetchSubjectsState.error ? (
-        <div className="bg-red-50 border border-red-200 rounded-xl p-8 text-center shadow-sm">
+        <div className="bg-danger-light border border-danger rounded-xl p-8 text-center shadow-sm">
           <div className="flex flex-col items-center gap-3">
-            <div className="h-12 w-12 rounded-full bg-red-100 flex items-center justify-center">
+            <div className="h-12 w-12 rounded-full bg-danger-light flex items-center justify-center">
               <svg
-                className="h-6 w-6 text-red-600"
+                className="h-6 w-6 text-danger"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -241,21 +241,21 @@ export function RecordedAbsencesContent({
               </svg>
             </div>
             <div>
-              <p className="text-red-600 font-bold text-lg mb-1">
+              <p className="text-danger font-bold text-lg mb-1">
                 خطأ في تحميل المواد
               </p>
-              <p className="text-red-500 text-sm">{fetchSubjectsState.error}</p>
+              <p className="text-danger text-sm">{fetchSubjectsState.error}</p>
             </div>
           </div>
         </div>
       ) : sectionOptions.length === 0 &&
         !fetchSubjectsState.isLoading &&
         selectedAcademicYearId !== null ? (
-        <div className="bg-amber-50 border border-amber-200 rounded-xl p-8 text-center shadow-sm">
+        <div className="bg-warning-light border border-warning rounded-xl p-8 text-center shadow-sm">
           <div className="flex flex-col items-center gap-3">
-            <div className="h-12 w-12 rounded-full bg-amber-100 flex items-center justify-center">
+            <div className="h-12 w-12 rounded-full bg-warning-light flex items-center justify-center">
               <svg
-                className="h-6 w-6 text-amber-600"
+                className="h-6 w-6 text-warning"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -271,15 +271,13 @@ export function RecordedAbsencesContent({
             <div>
               <p
                 className={cn(
-                  "text-amber-700 font-bold text-lg mb-1",
+                  "text-warning font-bold text-lg mb-1",
                   isDH && "font-black",
                 )}
               >
                 لا توجد مواد دراسية
               </p>
-              <p
-                className={cn("text-amber-600 text-sm", isDH && "font-medium")}
-              >
+              <p className={cn("text-warning text-sm", isDH && "font-medium")}>
                 لا توجد مواد دراسية مسجلة لهذه السنة الأكاديمية
               </p>
             </div>

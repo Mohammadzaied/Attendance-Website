@@ -546,7 +546,7 @@ export function WarningsListContent({
           <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 animate-in slide-in-from-bottom-4 duration-300">
             <div className="bg-gray-900/90 backdrop-blur-xl text-white px-5 py-3 rounded-2xl shadow-2xl shadow-black/20 border border-white/10 flex items-center gap-3">
               <div className="flex items-center gap-2 pl-3 border-l border-white/15">
-                <CheckSquare className="h-4 w-4 text-blue-400" />
+                <CheckSquare className="h-4 w-4 text-info" />
                 <span className="text-sm font-bold tabular-nums">
                   {selectedAlertIds.length}
                 </span>
@@ -567,7 +567,7 @@ export function WarningsListContent({
               <Button
                 size="sm"
                 onClick={handleBulkReject}
-                className="bg-rose-500/90 hover:bg-rose-500 text-white border-none rounded-xl h-8 px-3 gap-1.5 text-xs font-bold shadow-lg shadow-rose-500/20 transition-all"
+                className="bg-danger hover:bg-danger-foreground text-white border-none rounded-xl h-8 px-3 gap-1.5 text-xs font-bold shadow-lg shadow-danger/20 transition-all"
               >
                 <XCircle className="h-3.5 w-3.5" />
                 رفض
@@ -575,7 +575,7 @@ export function WarningsListContent({
               <Button
                 size="sm"
                 onClick={handleBulkApprove}
-                className="bg-emerald-500/90 hover:bg-emerald-500 text-white border-none rounded-xl h-8 px-3 gap-1.5 text-xs font-bold shadow-lg shadow-emerald-500/20 transition-all"
+                className="bg-success hover:bg-success-foreground text-white border-none rounded-xl h-8 px-3 gap-1.5 text-xs font-bold shadow-lg shadow-success/20 transition-all"
               >
                 <CheckCircle2 className="h-3.5 w-3.5" />
                 تأكيد
@@ -594,7 +594,7 @@ export function WarningsListContent({
                   {/* Mobile Stats + Select All */}
                   <div className="flex items-center gap-3 flex-wrap">
                     <div className="flex items-center gap-2 bg-white px-3 py-2 rounded-2xl border border-gray-100 shadow-sm">
-                      <Users className="h-3.5 w-3.5 text-blue-600" />
+                      <Users className="h-3.5 w-3.5 text-info" />
                       <span className="text-xs font-black text-gray-700">
                         {alertsByStudent.totalCount}
                       </span>
@@ -603,7 +603,7 @@ export function WarningsListContent({
                       </span>
                     </div>
                     <div className="flex items-center gap-2 bg-white px-3 py-2 rounded-2xl border border-gray-100 shadow-sm">
-                      <AlertTriangle className="h-3.5 w-3.5 text-amber-600" />
+                      <AlertTriangle className="h-3.5 w-3.5 text-warning" />
                       <span className="text-xs font-black text-gray-700">
                         {totalAlerts}
                       </span>
@@ -613,9 +613,9 @@ export function WarningsListContent({
                     </div>
                   </div>
                   {canShowSelectionUI && eligibleAlertIds.length > 0 && (
-                    <div className="flex items-center justify-between bg-linear-to-l from-blue-50 to-white p-4 rounded-2xl border border-blue-100/60 shadow-sm">
+                    <div className="flex items-center justify-between bg-linear-to-l from-info-light to-white p-4 rounded-2xl border border-info/60 shadow-sm">
                       <div className="flex items-center gap-2">
-                        <CheckSquare className="h-4 w-4 text-blue-500" />
+                        <CheckSquare className="h-4 w-4 text-info" />
                         <span className="text-sm font-bold text-gray-700">
                           تحديد الكل
                         </span>
@@ -625,7 +625,7 @@ export function WarningsListContent({
                       </div>
                       <input
                         type="checkbox"
-                        className="w-5 h-5 rounded-lg border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer accent-blue-600"
+                        className="w-5 h-5 rounded-lg border-gray-300 text-info focus:ring-info cursor-pointer accent-info"
                         checked={
                           selectedAlertIds.length === eligibleAlertIds.length &&
                           eligibleAlertIds.length > 0
@@ -669,8 +669,8 @@ export function WarningsListContent({
                           "flex items-center gap-2 px-3 py-1.5 rounded-xl border transition-all duration-200 cursor-pointer text-xs font-bold",
                           selectedAlertIds.length === eligibleAlertIds.length &&
                             eligibleAlertIds.length > 0
-                            ? "bg-blue-50 border-blue-200 text-blue-600 ring-1 ring-blue-100"
-                            : "bg-white border-gray-200 text-gray-600 hover:border-blue-200 hover:bg-blue-50/50 hover:text-blue-600",
+                            ? "bg-info-light border-info text-info ring-1 ring-info-light"
+                            : "bg-white border-gray-200 text-gray-600 hover:border-info hover:bg-info-light/50 hover:text-info",
                         )}
                       >
                         <CheckSquare className="h-3.5 w-3.5" />
@@ -682,8 +682,8 @@ export function WarningsListContent({
                     )}
                     <div className="flex items-center gap-5">
                       <div className="flex items-center gap-2">
-                        <div className="h-7 w-7 rounded-lg bg-blue-50 flex items-center justify-center">
-                          <Users className="h-3.5 w-3.5 text-blue-600" />
+                        <div className="h-7 w-7 rounded-lg bg-info-light flex items-center justify-center">
+                          <Users className="h-3.5 w-3.5 text-info" />
                         </div>
                         <span className="text-xs font-bold text-gray-500">
                           عدد الطلاب
@@ -694,8 +694,8 @@ export function WarningsListContent({
                       </div>
                       <div className="h-5 w-px bg-gray-200" />
                       <div className="flex items-center gap-2">
-                        <div className="h-7 w-7 rounded-lg bg-amber-50 flex items-center justify-center">
-                          <AlertTriangle className="h-3.5 w-3.5 text-amber-600" />
+                        <div className="h-7 w-7 rounded-lg bg-warning-light flex items-center justify-center">
+                          <AlertTriangle className="h-3.5 w-3.5 text-warning" />
                         </div>
                         <span className="text-xs font-bold text-gray-500">
                           عدد الإنذارات
@@ -796,7 +796,7 @@ export function WarningsListContent({
 
         {fetchAlertsByStudentState.isLoading && (
           <div className="flex flex-col items-center justify-center py-24 bg-white rounded-3xl border border-gray-100 shadow-sm">
-            <Spinner className="h-10 w-10 text-blue-600" />
+            <Spinner className="h-10 w-10 text-info" />
             <p
               className={cn(
                 "mt-4 font-medium",

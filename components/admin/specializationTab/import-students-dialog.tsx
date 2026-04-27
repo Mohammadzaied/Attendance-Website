@@ -180,7 +180,7 @@ export function ImportStudentsDialog({
         <Button
           variant="outline"
           size="sm"
-          className="bg-green-600 hover:bg-green-700 text-white h-10 md:h-9  border-green-700 gap-2 cursor-pointer shadow-sm"
+          className="bg-success hover:bg-success-foreground text-white h-10 md:h-9 border-success gap-2 cursor-pointer shadow-sm"
           disabled={disabled}
         >
           <FileUp className="h-4 w-4" />
@@ -200,7 +200,7 @@ export function ImportStudentsDialog({
         <div className="flex-1 flex flex-col gap-4 py-4 overflow-hidden">
           {!fileName ? (
             <div
-              className="flex-1 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center p-12 hover:border-blue-400 transition-colors cursor-pointer bg-gray-50/50"
+              className="flex-1 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center p-12 hover:border-info transition-colors cursor-pointer bg-gray-50/50"
               onClick={() => fileInputRef.current?.click()}
             >
               <FileUp className="h-12 w-12 text-gray-400 mb-4" />
@@ -218,11 +218,11 @@ export function ImportStudentsDialog({
             </div>
           ) : (
             <div className="flex-1 flex flex-col overflow-hidden">
-              <div className="flex items-center justify-between bg-blue-50 p-3 rounded-t-lg border-x border-t border-blue-100">
+              <div className="flex items-center justify-between bg-info-light p-3 rounded-t-lg border-x border-t border-info">
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5 text-blue-600" />
-                  <span className="font-medium text-blue-900">{fileName}</span>
-                  <span className="text-blue-600 text-sm">
+                  <CheckCircle2 className="h-5 w-5 text-info" />
+                  <span className="font-medium text-info-foreground">{fileName}</span>
+                  <span className="text-info text-sm">
                     ({importedData.length} طالب جاهز)
                   </span>
                 </div>
@@ -230,16 +230,16 @@ export function ImportStudentsDialog({
                   variant="ghost"
                   size="sm"
                   onClick={resetState}
-                  className="text-red-500 hover:text-red-700 hover:bg-red-50 h-8 w-8 p-0"
+                  className="text-danger hover:text-danger-foreground hover:bg-danger-light h-8 w-8 p-0"
                 >
                   <Trash2 className="h-4 w-4" />
                 </Button>
               </div>
 
-              <div className="flex-1 border border-gray-200 rounded-b-lg overflow-hidden">
-                <ScrollArea className="h-[400px] w-full ">
+              <div className="flex-1 border border-gray-200 rounded-b-lg overflow-hidden flex flex-col">
+                <div className="overflow-y-auto max-h-[400px] w-full" dir="ltr">
                   <Table dir="rtl">
-                    <TableHeader className="bg-gray-50 sticky top-0 z-10">
+                    <TableHeader className="bg-gray-50 sticky top-0 z-10 shadow-sm">
                       <TableRow>
                         <TableHead className="text-right whitespace-nowrap">
                           الاسم (FullName)
@@ -277,14 +277,14 @@ export function ImportStudentsDialog({
                       )}
                     </TableBody>
                   </Table>
-                </ScrollArea>
+                </div>
               </div>
             </div>
           )}
 
-          <div className="bg-yellow-50 border border-yellow-100 p-3 rounded-lg flex gap-3">
-            <AlertCircle className="h-5 w-5 text-yellow-600 shrink-0" />
-            <p className="text-sm text-yellow-700">
+          <div className="bg-warning-light border border-warning p-3 rounded-lg flex gap-3">
+            <AlertCircle className="h-5 w-5 text-warning shrink-0" />
+            <p className="text-sm text-warning">
               تأكد من مطابقة عناوين الأعمدة في الملف مع: (البريد الإلكتروني,
               الاسم).
             </p>
@@ -308,7 +308,7 @@ export function ImportStudentsDialog({
             type="button"
             onClick={handleImport}
             disabled={isLoading || importedData.length === 0}
-            className="cursor-pointer bg-green-600 hover:bg-green-700"
+            className="cursor-pointer bg-success hover:bg-success-foreground"
           >
             {isLoading
               ? "جاري الاستيراد..."
@@ -338,8 +338,8 @@ export function ImportStudentsDialog({
               className={cn(
                 "flex items-center justify-start gap-2",
                 result?.variant === "success"
-                  ? "text-green-600"
-                  : "text-red-600",
+                  ? "text-success"
+                  : "text-danger",
               )}
             >
               {result?.variant === "success" ? (
@@ -354,8 +354,8 @@ export function ImportStudentsDialog({
                 <div className="text-lg mb-2">{result?.description}</div>
                 {importStudentsState.error && (
                   <div className="mt-4 text-right">
-                    <p className="font-semibold text-red-600 mb-2">الخطأ:</p>
-                    <p className="text-sm text-red-700">
+                    <p className="font-semibold text-danger mb-2">الخطأ:</p>
+                    <p className="text-sm text-danger">
                       {importStudentsState.error}
                     </p>
                   </div>
@@ -378,8 +378,8 @@ export function ImportStudentsDialog({
               className={cn(
                 "w-full cursor-pointer",
                 result?.variant === "success"
-                  ? "bg-green-600 hover:bg-green-700"
-                  : "bg-red-600 hover:bg-red-700",
+                  ? "bg-success hover:bg-success-foreground"
+                  : "bg-danger hover:bg-danger-foreground",
               )}
             >
               حسناً

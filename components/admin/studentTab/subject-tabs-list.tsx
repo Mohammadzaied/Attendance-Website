@@ -32,7 +32,7 @@ export function SubjectTabsList({
           <div className="flex items-center gap-2">
             <Badge
               variant="secondary"
-              className="text-[9px] md:text-[10px] font-black bg-blue-600 text-white border-none px-2 py-0.5"
+              className="text-[9px] md:text-[10px] font-black bg-info text-white border-none px-2 py-0.5"
             >
               {spec.specializationName}
             </Badge>
@@ -61,7 +61,7 @@ export function SubjectTabsList({
                           ? subject.subjectId.toString()
                           : `${info.studentAcademicInfoId}-${subject.subjectId}`
                       }
-                      className="rounded-lg h-7 md:h-8 px-2 md:px-3 font-bold text-gray-400 data-[state=active]:border-blue-500 data-[state=active]:bg-white data-[state=active]:text-blue-600 data-[state=active]:shadow-sm transition-all duration-300 cursor-pointer flex items-center gap-2 group whitespace-nowrap border border-transparent text-[10px] md:text-xs"
+                      className="rounded-lg h-7 md:h-8 px-2 md:px-3 font-bold text-gray-400 data-[state=active]:border-info data-[state=active]:bg-white data-[state=active]:text-info data-[state=active]:shadow-sm transition-all duration-300 cursor-pointer flex items-center gap-2 group whitespace-nowrap border border-transparent text-[10px] md:text-xs"
                     >
                       {subject.subjectName}
                     </TabsTrigger>

@@ -120,7 +120,7 @@ export function MajorDetail({ major, onSelectYear }: MajorDetailProps) {
       {/* Major Stats Overview */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex gap-4">
-          <div className="h-12 w-12 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center">
+          <div className="h-12 w-12 bg-info-light text-info rounded-lg flex items-center justify-center">
             <BookOpen className="h-6 w-6" />
           </div>
           <div>
@@ -129,7 +129,7 @@ export function MajorDetail({ major, onSelectYear }: MajorDetailProps) {
           </div>
         </div>
         <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex items-center gap-4">
-          <div className="h-12 w-12 bg-green-50 text-green-600 rounded-lg flex items-center justify-center">
+          <div className="h-12 w-12 bg-success-light text-success rounded-lg flex items-center justify-center">
             <Users className="h-6 w-6" />
           </div>
           <div>
@@ -218,7 +218,7 @@ export function MajorDetail({ major, onSelectYear }: MajorDetailProps) {
         <div className="p-6">
           {isSemestersLoading || fetchStatsState.isLoading ? (
             <div className="col-span-full py-24 flex flex-col items-center justify-center bg-white rounded-3xl border border-gray-100 shadow-sm">
-              <Spinner className="h-10 w-10 text-blue-600" />
+              <Spinner className="h-10 w-10 text-info" />
               <p className="text-gray-500 mt-4 font-medium">
                 جاري تحميل البيانات...
               </p>
@@ -236,9 +236,9 @@ export function MajorDetail({ major, onSelectYear }: MajorDetailProps) {
                   filteredSemesters.map((sem) => (
                     <div
                       key={sem.semesterId}
-                      className="group border border-gray-100 rounded-xl p-5 hover:border-blue-200 hover:shadow-md transition-all relative overflow-hidden bg-white"
+                      className="group border border-gray-100 rounded-xl p-5 hover:border-info/30 hover:shadow-md transition-all relative overflow-hidden bg-white"
                     >
-                      <div className="absolute top-0 right-0 h-1 w-full bg-blue-500/10 group-hover:bg-blue-500 transition-colors" />
+                      <div className="absolute top-0 right-0 h-1 w-full bg-info/10 group-hover:bg-info transition-colors" />
 
                       <div className="flex justify-between items-start mb-4">
                         <div>
@@ -246,7 +246,7 @@ export function MajorDetail({ major, onSelectYear }: MajorDetailProps) {
                             السنة الأكاديمية {sem.year}-{sem.year + 1}
                           </h4>
 
-                          <p className="text-md font-medium text-blue-600">
+                          <p className="text-md font-medium text-info">
                             {major.name} : {sem.name} -{" "}
                             {selectedLevelFilter === "1"
                               ? "سنة أولى"
@@ -307,11 +307,11 @@ export function MajorDetail({ major, onSelectYear }: MajorDetailProps) {
                                 className={
                                   (semesterStats[sem.semesterId]
                                     ?.audiencePercent || 0) >= 80
-                                    ? "text-emerald-500"
+                                    ? "text-success"
                                     : (semesterStats[sem.semesterId]
                                           ?.audiencePercent || 0) >= 50
-                                      ? "text-amber-500"
-                                      : "text-red-500"
+                                      ? "text-warning"
+                                      : "text-danger"
                                 }
                                 strokeWidth="3"
                                 strokeDasharray={`${semesterStats[sem.semesterId]?.audiencePercent || 0}, 100`}
@@ -339,7 +339,7 @@ export function MajorDetail({ major, onSelectYear }: MajorDetailProps) {
 
                       <Button
                         variant="outline"
-                        className="w-full gap-2 border-gray-200 text-gray-700 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600 cursor-pointer transition-all"
+                        className="w-full gap-2 border-gray-200 text-gray-700 hover:bg-info-light hover:text-info hover:border-info group-hover:bg-info group-hover:text-white group-hover:border-info cursor-pointer transition-all"
                         onClick={() => {
                           const studyYear: StudyYear = {
                             id: sem.semesterId.toString(),

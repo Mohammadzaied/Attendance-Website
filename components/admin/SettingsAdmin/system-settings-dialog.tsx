@@ -114,7 +114,7 @@ export function SystemSettingsDialog({
       <DialogContent className="sm:max-w-[500px]" dir="rtl">
         <DialogHeader>
           <DialogTitle className="text-right flex items-center gap-2">
-            <Settings className="h-5 w-5 text-blue-600" />
+            <Settings className="h-5 w-5 text-info" />
             اعدادات النظام
           </DialogTitle>
           <DialogDescription className="text-right">
@@ -124,7 +124,7 @@ export function SystemSettingsDialog({
 
         {isLoading ? (
           <div className="flex items-center justify-center py-8">
-            <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+            <Loader2 className="h-8 w-8 animate-spin text-info" />
           </div>
         ) : settings ? (
           <div className="grid gap-6 py-4">
@@ -304,7 +304,7 @@ export function SystemSettingsDialog({
           </Button>
           <Button
             type="button"
-            className="bg-blue-600 hover:bg-blue-700 gap-2"
+            className="bg-info hover:bg-info-foreground gap-2"
             onClick={handleSave}
             disabled={isSaving || !settings || !isDirty}
           >
@@ -337,7 +337,7 @@ export function SystemSettingsDialog({
             <AlertDialogCancel disabled={isSaving}>إلغاء</AlertDialogCancel>
             <AlertDialogAction
               onClick={confirmSave}
-              className="bg-blue-600 hover:bg-blue-700"
+              className="bg-info hover:bg-info-foreground"
               disabled={isSaving}
             >
               موافق، حفظ

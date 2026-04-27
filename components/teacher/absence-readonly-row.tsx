@@ -25,7 +25,7 @@ const getStatusBadge = (status: AttendanceStatus) => {
       return (
         <Badge
           variant="destructive"
-          className="bg-red-50 text-red-600 border-red-200 hover:bg-red-50"
+          className="bg-danger-light text-danger border-danger hover:bg-danger-light"
         >
           غياب
         </Badge>
@@ -34,14 +34,14 @@ const getStatusBadge = (status: AttendanceStatus) => {
       return (
         <Badge
           variant="secondary"
-          className="bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100"
+          className="bg-success-light text-success border-success hover:bg-success-light"
         >
           غياب بعذر
         </Badge>
       );
     case AttendanceStatus.Late:
       return (
-        <Badge className="bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100">
+        <Badge className="bg-warning-light text-warning border-warning hover:bg-warning-light">
           تأخير
         </Badge>
       );
@@ -81,7 +81,7 @@ export function AbsenceReadOnlyRow({
       {/* Lessons */}
       <TableCell className="block md:table-cell px-4 py-3 md:p-3 align-middle text-right md:w-1/3">
         <div className="flex items-start gap-3">
-          <div className="md:hidden mt-0.5 text-blue-500">
+          <div className="md:hidden mt-0.5 text-info">
             <BookOpen className="h-4 w-4" />
           </div>
           <div className="flex flex-col flex-1">
@@ -132,8 +132,8 @@ export function AbsenceReadOnlyRow({
                 الملاحظات
               </span>
             </div>
-            <div className="bg-blue-50/80 border border-blue-100 rounded-lg p-2.5 md:p-2 text-right w-full overflow-hidden break-all">
-              <p className="text-xs text-blue-800 font-bold leading-normal whitespace-pre-wrap">
+            <div className="bg-info-light/80 border border-info rounded-lg p-2.5 md:p-2 text-right w-full overflow-hidden break-all">
+              <p className="text-xs text-info font-bold leading-normal whitespace-pre-wrap">
                 {reason}
               </p>
             </div>

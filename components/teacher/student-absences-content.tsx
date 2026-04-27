@@ -56,17 +56,17 @@ export function StudentAbsencesContent({
     > = {
       Absent: {
         label: "غياب",
-        className: "bg-red-100 text-red-700 border-red-200",
+        className: "bg-danger-light text-danger-foreground border-danger",
         icon: "❌",
       },
       Late: {
         label: "تأخير",
-        className: "bg-amber-100 text-amber-700 border-amber-200",
+        className: "bg-warning-light text-warning-foreground border-warning",
         icon: "⏰",
       },
       ExcusedAbsence: {
         label: "غياب بعذر",
-        className: "bg-blue-100 text-blue-700 border-blue-200",
+        className: "bg-info-light text-info-foreground border-info",
         icon: "📝",
       },
     };
@@ -118,7 +118,7 @@ export function StudentAbsencesContent({
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] text-gray-400 gap-4">
-        <div className="h-12 w-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+        <div className="h-12 w-12 border-4 border-info border-t-transparent rounded-full animate-spin"></div>
         <p className={cn("font-medium text-lg", isDH && "font-bold")}>
           جاري تحميل سجل الغياب...
         </p>
@@ -129,11 +129,11 @@ export function StudentAbsencesContent({
   if (error || !absenceData) {
     return (
       <div className="max-w-7xl mx-auto px-4 py-10">
-        <div className="bg-red-50 border border-red-200 rounded-xl p-8 text-center shadow-sm">
-          <AlertCircle className="h-12 w-12 mx-auto mb-3 text-red-500" />
+        <div className="bg-danger-light border border-danger rounded-xl p-8 text-center shadow-sm">
+          <AlertCircle className="h-12 w-12 mx-auto mb-3 text-danger" />
           <p
             className={cn(
-              "text-red-700 font-bold text-lg mb-4",
+              "text-danger-foreground font-bold text-lg mb-4",
               isDH && "font-black",
             )}
           >
@@ -173,14 +173,14 @@ export function StudentAbsencesContent({
         <Card
           className={cn(
             "shadow-sm justify-center",
-            "bg-linear-to-br from-blue-50 to-blue-100 border-blue-200",
+            "bg-linear-to-br from-info-light to-info border-info",
           )}
         >
           <CardContent className="p-4 text-center">
-            <p className={cn("text-3xl font-bold", "text-blue-700")}>
+            <p className={cn("text-3xl font-bold", "text-info-foreground")}>
               {absenceData.adjustedTotalAbsences}
             </p>
-            <p className={cn("text-sm mt-1 font-medium", "text-blue-600")}>
+            <p className={cn("text-sm mt-1 font-medium", "text-info")}>
               الإجمالي
             </p>
           </CardContent>
@@ -195,10 +195,10 @@ export function StudentAbsencesContent({
                 "shadow-sm justify-center",
                 cn(
                   isAbsent
-                    ? "bg-red-50 border-red-100"
+                    ? "bg-danger-light border-danger"
                     : isLate
-                      ? "bg-amber-50 border-amber-100"
-                      : "bg-blue-50 border-blue-100",
+                      ? "bg-warning-light border-warning"
+                      : "bg-info-light border-info",
                   "rounded-2xl border-2",
                 ),
                 // : cn(
@@ -219,10 +219,10 @@ export function StudentAbsencesContent({
                     cn(
                       "font-black",
                       isAbsent
-                        ? "text-red-600"
+                        ? "text-danger"
                         : isLate
-                          ? "text-amber-600"
-                          : "text-blue-600",
+                          ? "text-warning"
+                          : "text-info",
                     ),
                   )}
                 >
@@ -235,10 +235,10 @@ export function StudentAbsencesContent({
                     cn(
                       "font-bold",
                       isAbsent
-                        ? "text-red-700"
+                        ? "text-danger-foreground"
                         : isLate
-                          ? "text-amber-700"
-                          : "text-blue-700",
+                          ? "text-warning-foreground"
+                          : "text-info-foreground",
                     ),
                   )}
                 >
@@ -277,7 +277,7 @@ export function StudentAbsencesContent({
                     setDateTo(undefined);
                   }}
                   className={cn(
-                    "w-full text-xs text-red-600 hover:text-red-700 hover:bg-red-50 font-bold",
+                    "w-full text-xs text-danger hover:text-danger-foreground hover:bg-danger-light font-bold",
                   )}
                 >
                   إعادة تعيين الفلاتر
@@ -299,7 +299,7 @@ export function StudentAbsencesContent({
                 "text-lg font-bold text-gray-900 flex items-center gap-2",
               )}
             >
-              <Calendar className="h-5 w-5 text-blue-600" />
+              <Calendar className="h-5 w-5 text-info" />
               سجل الغيابات التفصيلي
             </h3>
             <Badge variant="secondary" className={cn("px-3 py-1")}>
@@ -323,7 +323,7 @@ export function StudentAbsencesContent({
                           <div className="flex items-center gap-3">
                             <div
                               className={cn(
-                                "h-10 w-10 bg-blue-50 flex items-center justify-center text-blue-600",
+                                "h-10 w-10 bg-info-light flex items-center justify-center text-info",
                                 "rounded-xl",
                               )}
                             >
@@ -343,7 +343,7 @@ export function StudentAbsencesContent({
                                     day: "numeric",
                                   },
                                 )}{" "}
-                                <span className={cn("text-md text-blue-700")}>
+                                <span className={cn("text-md text-info-foreground")}>
                                   ({absence.dayOfWeek})
                                 </span>
                               </p>
@@ -354,7 +354,7 @@ export function StudentAbsencesContent({
                               variant={"secondary"}
                               className={cn(
                                 "px-3 py-1",
-                                "font-bold rounded-lg border-blue-200 text-blue-700 bg-blue-50",
+                                "font-bold rounded-lg border-info text-info-foreground bg-info-light",
                               )}
                             >
                               {absence.totalAbsencesOnDate} سجلات
@@ -369,7 +369,7 @@ export function StudentAbsencesContent({
                             )}
                           >
                             <Clock
-                              className={cn("h-4 w-4", isDH && "text-blue-500")}
+                              className={cn("h-4 w-4", isDH && "text-info")}
                             />
                             الحصص المسجلة ({absence.totalAbsencesOnDate})
                           </div>
@@ -378,7 +378,7 @@ export function StudentAbsencesContent({
                               <div
                                 key={idx}
                                 className={cn(
-                                  "bg-gray-50 hover:bg-white hover:border-blue-200 transition-colors rounded-xl p-4 border border-gray-100",
+                                  "bg-gray-50 hover:bg-white hover:border-info transition-colors rounded-xl p-4 border border-gray-100",
                                 )}
                               >
                                 <div className="flex items-center justify-between mb-2">
@@ -404,10 +404,10 @@ export function StudentAbsencesContent({
                                 {lesson.reason && (
                                   <div
                                     className={cn(
-                                      "mt-3 p-2.5 bg-blue-50/50 rounded-lg border border-blue-100 w-full overflow-hidden break-all",
+                                      "mt-3 p-2.5 bg-info-light/50 rounded-lg border border-info w-full overflow-hidden break-all",
                                     )}
                                   >
-                                    <p className="text-xs text-blue-700 leading-relaxed whitespace-pre-wrap">
+                                    <p className="text-xs text-info-foreground leading-relaxed whitespace-pre-wrap">
                                       <span
                                         className={cn(
                                           "font-bold block mb-0.5 underline",

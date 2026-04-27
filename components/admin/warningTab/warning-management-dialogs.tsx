@@ -79,7 +79,7 @@ export function WarningManagementDialogs({
                 value={rejectionReason}
                 onChange={(e) => setRejectionReason(e.target.value)}
                 placeholder="أدخل سبب تمديد فترة الغياب..."
-                className="h-24 bg-gray-50/50 border-gray-100 rounded-xl focus:ring-blue-500/20 text-right"
+                className="h-24 bg-gray-50/50 border-gray-100 rounded-xl focus:ring-info/20 text-right"
                 dir="rtl"
               />
             </div>
@@ -94,7 +94,7 @@ export function WarningManagementDialogs({
                 onChange={(e) =>
                   setExtensionClasses(parseInt(e.target.value) || 0)
                 }
-                className="h-11 bg-gray-50/50 border-gray-100 rounded-xl focus:ring-blue-500/20 text-right"
+                className="h-11 bg-gray-50/50 border-gray-100 rounded-xl focus:ring-info/20 text-right"
                 placeholder="0"
                 min={0}
                 dir="rtl"
@@ -113,7 +113,7 @@ export function WarningManagementDialogs({
             <Button
               onClick={onConfirmReview}
               disabled={isRejecting}
-              className="bg-rose-600 hover:bg-rose-700 text-white rounded-xl font-bold px-8"
+              className="bg-danger hover:bg-danger-foreground text-white rounded-xl font-bold px-8"
             >
               {isRejecting ? (
                 <>
@@ -138,7 +138,7 @@ export function WarningManagementDialogs({
           </DialogHeader>
 
           <div className="py-8 text-center space-y-4">
-            <div className="h-16 w-16 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mx-auto">
+            <div className="h-16 w-16 bg-success-light text-success rounded-full flex items-center justify-center mx-auto">
               <CheckCircle className="h-10 w-10" />
             </div>
             <p className="text-gray-600 font-bold text-lg">
@@ -159,7 +159,7 @@ export function WarningManagementDialogs({
             <Button
               onClick={onConfirmApprove}
               disabled={isApproving}
-              className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold px-8"
+              className="bg-success hover:bg-success-foreground text-white rounded-xl font-bold px-8"
             >
               {isApproving ? (
                 <>
@@ -187,8 +187,8 @@ export function WarningManagementDialogs({
               className={cn(
                 "h-16 w-16 rounded-full flex items-center justify-center",
                 resultDialog.variant === "destructive"
-                  ? "bg-rose-50 text-rose-600"
-                  : "bg-emerald-50 text-emerald-600",
+                  ? "bg-danger-light text-danger"
+                  : "bg-success-light text-success",
               )}
             >
               {resultDialog.variant === "destructive" ? (
@@ -203,8 +203,8 @@ export function WarningManagementDialogs({
                 className={cn(
                   "text-2xl font-black text-center w-full",
                   resultDialog.variant === "destructive"
-                    ? "text-rose-600"
-                    : "text-emerald-600",
+                    ? "text-danger"
+                    : "text-success",
                 )}
               >
                 {resultDialog.title}

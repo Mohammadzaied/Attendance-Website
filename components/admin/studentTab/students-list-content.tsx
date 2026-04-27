@@ -181,7 +181,7 @@ export function StudentsListContent({
                 className={cn(
                   "flex items-center gap-2 cursor-pointer",
                   isDH &&
-                    "rounded-lg font-bold transition-all data-[state=active]:bg-white data-[state=active]:text-blue-600 data-[state=active]:shadow-sm",
+                    "rounded-lg font-bold transition-all data-[state=active]:bg-white data-[state=active]:text-info data-[state=active]:shadow-sm",
                 )}
               >
                 <UserCheck className="h-4 w-4" />
@@ -192,7 +192,7 @@ export function StudentsListContent({
                 className={cn(
                   "flex items-center gap-2 cursor-pointer",
                   isDH &&
-                    "rounded-lg font-bold transition-all data-[state=active]:bg-white data-[state=active]:text-blue-600 data-[state=active]:shadow-sm",
+                    "rounded-lg font-bold transition-all data-[state=active]:bg-white data-[state=active]:text-info data-[state=active]:shadow-sm",
                 )}
               >
                 <GraduationCap className="h-4 w-4" />
@@ -203,10 +203,10 @@ export function StudentsListContent({
 
           <div
             className={cn(
-              "px-4 py-2 text-sm font-medium text-blue-700",
+              "px-4 py-2 text-sm font-medium text-info",
               isDH
-                ? "bg-blue-50 rounded-xl font-black"
-                : "bg-blue-50 rounded-lg",
+                ? "bg-info-light rounded-xl font-black"
+                : "bg-info-light rounded-lg",
             )}
           >
             النتائج : {graduationStudents?.totalCount} طالب
@@ -218,7 +218,7 @@ export function StudentsListContent({
               value={searchTerm}
               onChange={(e) => handleSearchChange(e.target.value)}
               className={cn(
-                "pr-10 text-right h-10 border-gray-200 focus:ring-blue-500/20",
+                "pr-10 text-right h-10 border-gray-200 focus:ring-info/20",
                 isDH && "h-11 rounded-xl font-bold",
               )}
             />
@@ -293,7 +293,7 @@ export function StudentsListContent({
                               cn(
                                 "rounded-xl font-bold transition-all",
                                 currentPage === p
-                                  ? "bg-blue-600 text-white border-blue-600"
+                                  ? "bg-info text-white border-info"
                                   : "border-gray-200 hover:bg-gray-50",
                               ),
                           )}
@@ -358,7 +358,7 @@ export function StudentsListContent({
         <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
           <DialogContent className="sm:max-w-[400px] rounded-2xl" dir="rtl">
             <DialogHeader className="text-right">
-              <DialogTitle className="flex items-center gap-2 text-red-600">
+              <DialogTitle className="flex items-center gap-2 text-danger">
                 <Trash2 className="h-5 w-5" />
                 تأكيد الحذف
               </DialogTitle>

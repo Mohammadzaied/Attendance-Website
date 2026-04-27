@@ -77,7 +77,7 @@ export function DeleteTeacherDialog({
               سيتم حذف المعلم:{" "}
               <span className="font-semibold">{teacher?.fullName}</span>
             </p>
-            <p className="text-right text-sm text-red-600 mt-2">
+            <p className="text-right text-sm text-danger mt-2">
               هذا الإجراء لا يمكن التراجع عنه
             </p>
           </div>
@@ -93,10 +93,9 @@ export function DeleteTeacherDialog({
             </Button>
             <Button
               type="button"
-              variant="destructive"
               onClick={handleDelete}
               disabled={loading}
-              className="cursor-pointer"
+              className="cursor-pointer bg-danger hover:bg-danger-foreground text-white font-bold"
             >
               {loading ? "جاري الحذف..." : "حذف"}
             </Button>
@@ -117,7 +116,7 @@ export function DeleteTeacherDialog({
           <DialogHeader>
             <DialogTitle
               className={`text-right ${
-                result.success ? "text-green-600" : "text-red-600"
+                result.success ? "text-success" : "text-danger"
               }`}
             >
               {result.success ? "تم بنجاح" : "خطأ"}

@@ -364,7 +364,7 @@ export function EditStudentDialog({
           </div>
         </div>
         {updateStudentState.error && (
-          <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm text-right mb-4">
+          <div className="bg-danger-light text-danger p-3 rounded-lg text-sm text-right mb-4">
             {updateStudentState.error}
           </div>
         )}
@@ -381,7 +381,7 @@ export function EditStudentDialog({
               semestersBySpecialization.length === 0 ||
               !hasStudentChanges()
             }
-            className="w-full bg-blue-600 hover:bg-blue-700 cursor-pointer"
+            className="w-full bg-info hover:bg-info-foreground cursor-pointer"
           >
             {updateStudentState.isLoading ? "جاري التحديث..." : "حفظ التغييرات"}
           </Button>

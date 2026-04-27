@@ -132,19 +132,19 @@ export function AddSubjectToTeacherDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="sm:max-w-[800px] w-[95vw] max-h-[90vh] overflow-y-auto"
+        className="sm:max-w-[800px] w-[95vw] max-h-[90vh] overflow-hidden flex flex-col"
         dir="rtl"
       >
         <DialogHeader>
-          <DialogTitle className="text-right flex items-center gap-2 text-xl font-bold">
-            <BookOpen className="h-5 w-5 text-blue-600" />
+          <DialogTitle className="text-right flex items-center gap-2 text-xl font-bold shrink-0">
+            <BookOpen className="h-5 w-5 text-info" />
             <span>إضافة مادة جديدة للمعلم: {teacher?.fullName}</span>
           </DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-5 py-4">
+        <div className="space-y-4 py-2 flex-1 flex flex-col overflow-hidden">
           {error && (
-            <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm text-right font-medium border border-red-100">
+            <div className="bg-danger-light text-danger p-3 rounded-lg text-sm text-right font-medium border border-danger">
               {error}
             </div>
           )}
@@ -152,10 +152,10 @@ export function AddSubjectToTeacherDialog({
           {/* Column headers */}
           <div className="grid grid-cols-[1fr_2fr_100px_80px_36px] gap-2 mb-2 px-1 text-right">
             <span className="text-sm font-bold text-gray-600">
-              التخصص <span className="text-red-500">*</span>
+              التخصص <span className="text-danger">*</span>
             </span>
             <span className="text-sm font-bold text-gray-600">
-              اسم المادة <span className="text-red-500">*</span>
+              اسم المادة <span className="text-danger">*</span>
             </span>
             <span className="text-sm font-bold text-gray-600">السنة</span>
             <span className="text-sm font-bold text-gray-600">عدد الحصص</span>
@@ -245,7 +245,7 @@ export function AddSubjectToTeacherDialog({
                   size="icon"
                   disabled={subjectRows.length === 1}
                   onClick={() => removeSubjectRow(index)}
-                  className="h-9 w-9 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg disabled:opacity-30"
+                  className="h-9 w-9 text-danger hover:text-danger-foreground hover:bg-danger-light rounded-lg disabled:opacity-30"
                   type="button"
                 >
                   <Trash2 className="h-4 w-4" />
@@ -259,7 +259,7 @@ export function AddSubjectToTeacherDialog({
             type="button"
             variant="outline"
             onClick={addSubjectRow}
-            className="mt-3 w-full border-dashed border-blue-300 text-blue-600 hover:bg-blue-50 hover:border-blue-400 gap-2 h-10 font-bold"
+            className="mt-3 w-full border-dashed border-info text-info hover:bg-info-light hover:border-info gap-2 h-10 font-bold"
           >
             <Plus className="h-4 w-4" />
             إضافة مادة أخرى
@@ -277,7 +277,7 @@ export function AddSubjectToTeacherDialog({
           </Button>
           <Button
             type="button"
-            className="w-full sm:w-1/2 bg-blue-600 hover:bg-blue-700 text-white font-bold h-11 rounded-xl shadow-lg shadow-blue-600/20"
+            className="w-full sm:w-1/2 bg-info hover:bg-info-foreground text-white font-bold h-11 rounded-xl shadow-lg shadow-info/20"
             onClick={handleSubmit}
             disabled={createSubjectToTeacherState.isLoading}
           >

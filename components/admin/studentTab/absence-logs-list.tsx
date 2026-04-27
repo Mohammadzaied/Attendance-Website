@@ -33,17 +33,17 @@ export function AbsenceLogsList({
     > = {
       Absent: {
         label: "غياب",
-        className: "bg-red-100 text-red-700 border-red-200",
+        className: "bg-danger-light text-danger border-danger",
         icon: "❌",
       },
       Late: {
         label: "تأخير",
-        className: "bg-blue-100 text-blue-700 border-blue-200",
+        className: "bg-warning-light text-warning border-warning",
         icon: "⏰",
       },
       ExcusedAbsence: {
         label: "غياب بعذر",
-        className: "bg-blue-100 text-blue-700 border-blue-200",
+        className: "bg-info-light text-info border-info",
         icon: "📝",
       },
     };
@@ -64,11 +64,11 @@ export function AbsenceLogsList({
         filteredLogs.map((dateGroup, idx) => (
           <div
             key={idx}
-            className="bg-white p-3.5 md:p-5 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:border-blue-200 transition-all flex flex-col group overflow-hidden"
+            className="bg-white p-3.5 md:p-5 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:border-info transition-all flex flex-col group overflow-hidden"
           >
             <div className="flex items-center justify-between mb-3 md:mb-4 pb-3 md:pb-4 border-b border-gray-50">
               <div className="flex items-center gap-3 md:gap-4">
-                <div className="h-10 w-10 md:h-12 md:w-12 rounded-xl md:rounded-2xl bg-gray-50 text-gray-400 flex items-center justify-center group-hover:bg-blue-50 group-hover:text-blue-600 transition-all">
+                <div className="h-10 w-10 md:h-12 md:w-12 rounded-xl md:rounded-2xl bg-gray-50 text-gray-400 flex items-center justify-center group-hover:bg-info-light group-hover:text-info transition-all">
                   <CalendarIcon className="h-5 w-5 md:h-6 md:w-6" />
                 </div>
                 <div className="text-right">
@@ -105,7 +105,7 @@ export function AbsenceLogsList({
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-7 w-7 md:h-8 md:w-8 text-gray-400 hover:text-blue-600 hover:bg-amber-50 rounded-lg bg-white md:bg-transparent shadow-sm md:shadow-none border md:border-0 border-gray-100"
+                        className="h-7 w-7 md:h-8 md:w-8 text-gray-400 hover:text-info hover:bg-info-light rounded-lg bg-white md:bg-transparent shadow-sm md:shadow-none border md:border-0 border-gray-100"
                         onClick={() => onEdit?.(lesson)}
                       >
                         <Edit className="h-3.5 w-3.5 md:h-4 md:w-4" />
@@ -113,7 +113,7 @@ export function AbsenceLogsList({
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-7 w-7 md:h-8 md:w-8 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg bg-white md:bg-transparent shadow-sm md:shadow-none border md:border-0 border-gray-100"
+                        className="h-7 w-7 md:h-8 md:w-8 text-gray-400 hover:text-danger hover:bg-danger-light rounded-lg bg-white md:bg-transparent shadow-sm md:shadow-none border md:border-0 border-gray-100"
                         onClick={() => onDelete?.(lesson.id)}
                       >
                         <Trash2 className="h-3.5 w-3.5 md:h-4 md:w-4" />
@@ -121,7 +121,7 @@ export function AbsenceLogsList({
                     </div>
                   )}
                   {lesson.reason && (
-                    <div className="flex items-center gap-1.5 text-[10px] md:text-xs text-blue-500 mt-1.5 opacity-80">
+                    <div className="flex items-center gap-1.5 text-[10px] md:text-xs text-info mt-1.5 opacity-80">
                       <AlertCircle className="h-3 w-3 shrink-0" />
                       <span className="truncate">{lesson.reason}</span>
                     </div>
@@ -133,8 +133,8 @@ export function AbsenceLogsList({
         ))
       ) : (
         <div className="flex flex-col items-center justify-center py-12 md:py-20 bg-gray-50/30 rounded-3xl border border-dashed border-gray-200">
-          <div className="h-16 w-16 md:h-20 md:w-20 rounded-full bg-blue-50 flex items-center justify-center mb-4">
-            <AlertCircle className="h-8 w-8 md:h-10 md:w-10 text-blue-400 opacity-50" />
+          <div className="h-16 w-16 md:h-20 md:w-20 rounded-full bg-info-light flex items-center justify-center mb-4">
+            <AlertCircle className="h-8 w-8 md:h-10 md:w-10 text-info opacity-50" />
           </div>
           <h4 className="text-lg md:text-xl font-bold text-gray-900">
             لا توجد غيابات

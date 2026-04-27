@@ -155,7 +155,7 @@ export function ChangePasswordDialog({
               <Button
                 type="submit"
                 disabled={isLoading}
-                className="cursor-pointer bg-blue-600 hover:bg-blue-700"
+                className="cursor-pointer bg-info hover:bg-info-foreground"
               >
                 {isLoading ? "جاري التغيير..." : "تغيير كلمة المرور"}
               </Button>
@@ -174,8 +174,8 @@ export function ChangePasswordDialog({
             <DialogTitle
               className={`text-right ${
                 resultDialog.variant === "destructive"
-                  ? "text-red-600"
-                  : "text-green-600"
+                  ? "text-danger"
+                  : "text-success"
               }`}
             >
               {resultDialog.title}

@@ -34,8 +34,8 @@ export function StudentProfileHeader({
     <>
       {/* Student Profile Badge Row */}
       <div className="max-w-7xl mx-auto mb-4 md:mb-8 bg-white p-3 md:p-4 rounded-2xl md:rounded-3xl shadow-sm border border-gray-100 flex flex-nowrap md:flex-wrap items-center gap-3 md:gap-6 overflow-hidden">
-        <div className="h-12 w-12 md:h-16 md:w-16 rounded-xl md:rounded-2xl bg-blue-50 flex items-center justify-center shrink-0 shadow-inner">
-          <User className="h-6 w-6 md:h-8 md:w-8 text-blue-600" />
+        <div className="h-12 w-12 md:h-16 md:w-16 rounded-xl md:rounded-2xl bg-info-light flex items-center justify-center shrink-0 shadow-inner">
+          <User className="h-6 w-6 md:h-8 md:w-8 text-info" />
         </div>
         <div className="flex-1 min-w-0">
           <h2
@@ -79,7 +79,7 @@ export function StudentProfileHeader({
         <div className="flex flex-col md:flex-row items-center gap-3 md:gap-4 w-full md:w-auto">
           <div className="flex items-center gap-2 w-full md:w-initial">
             <div className="bg-white p-2 rounded-xl border border-gray-100 shadow-sm md:hidden">
-              <Calendar className="h-4 w-4 text-blue-600" />
+              <Calendar className="h-4 w-4 text-info" />
             </div>
             <span className="text-xs md:text-sm font-bold text-gray-500 whitespace-nowrap hidden md:inline">
               السنة الأكاديمية:
@@ -138,7 +138,7 @@ export function StudentProfileHeader({
 
           <div className="flex items-center gap-2 w-full md:w-initial">
             <div className="bg-white p-2 rounded-xl border border-gray-100 shadow-sm md:hidden">
-              <Book className="h-4 w-4 text-blue-600" />
+              <Book className="h-4 w-4 text-info" />
             </div>
             <span className="text-xs md:text-sm font-bold text-gray-500 whitespace-nowrap hidden md:inline">
               الفصل الدراسي:

@@ -16,7 +16,14 @@ import {
   type DepartmentResponse,
 } from "@/features/admin";
 import { ROLE_OPTIONS } from "@/Config/roles";
-import { Edit, Trash2, Search, Calendar, BookPlus } from "lucide-react";
+import {
+  Edit,
+  Trash2,
+  Search,
+  Calendar,
+  BookPlus,
+  ArrowRight,
+} from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   fetchTeacherLastActiveSemester,
@@ -116,6 +123,15 @@ export function TeachersTable({
     numberOfHours: 3,
   });
 
+  const hasChanges = useMemo(() => {
+    if (!editingSubject) return false;
+    return (
+      subjectForm.name !== editingSubject.name ||
+      subjectForm.teacherId !== editingSubject.teacherId ||
+      subjectForm.numberOfHours !== editingSubject.numberOfHours
+    );
+  }, [subjectForm, editingSubject]);
+
   const handleOpenSchedule = async (teacher: TeacherResponse) => {
     dispatch(clearTeacherLastActiveSemester());
     setActiveTeacher(teacher);
@@ -206,17 +222,6 @@ export function TeachersTable({
     }
   };
 
-  // Set initial editing subject when data loads
-  useEffect(() => {
-    if (
-      teacherLastActiveSemester &&
-      teacherLastActiveSemester.length > 0 &&
-      !editingSubject
-    ) {
-      setEditingSubject(teacherLastActiveSemester[0]);
-    }
-  }, [teacherLastActiveSemester, editingSubject]);
-
   useEffect(() => {
     if (editingSubject) {
       setSubjectForm({
@@ -241,7 +246,7 @@ export function TeachersTable({
                 عرض وإدارة جميع المعلمين في النظام
               </span>
               <div className="hidden md:block h-4 w-px bg-gray-200 mx-1" />
-              <Badge className="bg-blue-50 text-blue-700 border-none px-2.5 py-0.5 text-xs font-bold leading-none shadow-sm">
+              <Badge className="bg-info-light text-info border-none px-2.5 py-0.5 text-xs font-bold leading-none shadow-sm">
                 {totalCount ?? teachers.length} معلمين
               </Badge>
             </div>
@@ -262,7 +267,10 @@ export function TeachersTable({
                 <SelectContent dir="rtl">
                   <SelectItem value="all">كل الأقسام</SelectItem>
                   {departments.map((dept) => (
-                    <SelectItem key={dept.departmentId} value={dept.name}>
+                    <SelectItem
+                      key={dept.departmentId}
+                      value={dept.departmentId.toString()}
+                    >
                       {dept.name}
                     </SelectItem>
                   ))}
@@ -293,7 +301,7 @@ export function TeachersTable({
                 placeholder="بحث عن معلم..."
                 value={searchValue}
                 onChange={(e) => onSearchChange(e.target.value)}
-                className="pr-10 text-right h-10 border-gray-200 focus:ring-blue-600/20 bg-gray-50/50 rounded-xl text-xs md:text-sm"
+                className="pr-10 text-right h-10 border-gray-200 focus:ring-info/20 bg-gray-50/50 rounded-xl text-xs md:text-sm"
                 dir="rtl"
               />
             </div>
@@ -335,8 +343,8 @@ export function TeachersTable({
             {isLoading && (
               <div className="absolute inset-0 bg-white/60 backdrop-blur-[1px] z-20 flex items-center justify-center">
                 <div className="flex flex-col items-center gap-2">
-                  <div className="h-8 w-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
-                  <span className="text-blue-600 font-bold text-sm">
+                  <div className="h-8 w-8 border-4 border-info border-t-transparent rounded-full animate-spin" />
+                  <span className="text-info font-bold text-sm">
                     جاري التحميل...
                   </span>
                 </div>
@@ -349,10 +357,10 @@ export function TeachersTable({
                   key={index}
                   className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm relative overflow-hidden group space-y-4 w-full"
                 >
-                  <div className="absolute top-0 right-0 w-1.5 h-full bg-indigo-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <div className="absolute top-0 right-0 w-1.5 h-full bg-info opacity-0 group-hover:opacity-100 transition-opacity" />
 
                   <div className="flex items-center gap-4 w-full min-w-0">
-                    <div className="h-14 w-14 bg-indigo-50 text-indigo-700 rounded-2xl flex items-center justify-center text-xl font-black shadow-sm ring-4 ring-white shrink-0">
+                    <div className="h-14 w-14 bg-info-light text-info rounded-2xl flex items-center justify-center text-xl font-black shadow-sm ring-4 ring-white shrink-0">
                       {teacher.fullName ? (
                         teacher.fullName.charAt(0)
                       ) : (
@@ -365,7 +373,7 @@ export function TeachersTable({
                       </h4>
                       <p
                         dir="ltr"
-                        className="text-xs text-blue-600 font-mono font-medium mt-1 line-clamp-1 break-all"
+                        className="text-xs text-info font-mono font-medium mt-1 line-clamp-1 break-all"
                       >
                         {teacher.username}
                       </p>
@@ -384,7 +392,7 @@ export function TeachersTable({
                     </Badge>
                     <Badge
                       variant="outline"
-                      className="px-2.5 py-0.5 font-bold border-indigo-100 text-indigo-700 bg-indigo-50/30 rounded-lg text-[10px]"
+                      className="px-2.5 py-0.5 font-bold border-info text-info bg-info-light/30 rounded-lg text-[10px]"
                     >
                       {teacher.departmentName}
                     </Badge>
@@ -395,7 +403,7 @@ export function TeachersTable({
                       variant="ghost"
                       size="sm"
                       onClick={() => handleOpenSchedule(teacher)}
-                      className="flex-1 gap-2 text-indigo-600 hover:bg-indigo-50 rounded-xl text-xs font-black transition-all"
+                      className="flex-1 gap-2 text-info hover:bg-info-light rounded-xl text-xs font-black transition-all"
                     >
                       <Calendar className="h-3.5 w-3.5" />
                       الجدول
@@ -407,7 +415,7 @@ export function TeachersTable({
                         setTeacherForSubject(teacher);
                         setIsAddSubjectOpen(true);
                       }}
-                      className="flex-1 gap-2 text-blue-600 hover:bg-blue-50 rounded-xl text-xs font-black transition-all"
+                      className="flex-1 gap-2 text-info hover:bg-info-light rounded-xl text-xs font-black transition-all"
                     >
                       <BookPlus className="h-3.5 w-3.5" />
                       مادة
@@ -418,7 +426,7 @@ export function TeachersTable({
                         variant="ghost"
                         size="icon"
                         onClick={() => onEdit(teacher)}
-                        className="h-full w-10 text-amber-600 hover:bg-amber-50 rounded-xl shrink-0"
+                        className="h-full w-10 text-warning hover:bg-warning-light rounded-xl shrink-0"
                       >
                         <Edit className="h-4 w-4" />
                       </Button>
@@ -428,7 +436,7 @@ export function TeachersTable({
                         variant="ghost"
                         size="icon"
                         onClick={() => onDelete(teacher)}
-                        className="h-full w-10 text-red-500 hover:bg-red-50 rounded-xl shrink-0"
+                        className="h-full w-10 text-danger hover:bg-danger-light rounded-xl shrink-0"
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
@@ -439,7 +447,7 @@ export function TeachersTable({
                 // Desktop Table Row
                 <div
                   key={index}
-                  className="group grid grid-cols-[minmax(0,3fr)_minmax(0,3fr)_minmax(0,2fr)_minmax(0,2fr)_minmax(0,2fr)] px-6 py-4 hover:bg-blue-50/30 transition-all duration-200 items-center"
+                  className="group grid grid-cols-[minmax(0,3fr)_minmax(0,3fr)_minmax(0,2fr)_minmax(0,2fr)_minmax(0,2fr)] px-6 py-4 hover:bg-info-light/30 transition-all duration-200 items-center"
                 >
                   <div className="text-right">
                     <div className="font-bold text-gray-900 text-sm">
@@ -459,7 +467,7 @@ export function TeachersTable({
                   <div className="text-right">
                     <Badge
                       variant="secondary"
-                      className="px-2.5 py-0.5 font-bold bg-zinc-100 text-zinc-700 border-none rounded-lg text-xs"
+                      className="px-2.5 py-0.5 font-bold bg-gray-100 text-gray-700 border-none rounded-lg text-xs"
                     >
                       {
                         ROLE_OPTIONS.find((role) => role.id === teacher.roleId)
@@ -477,7 +485,7 @@ export function TeachersTable({
                       variant="ghost"
                       size="icon"
                       onClick={() => handleOpenSchedule(teacher)}
-                      className="h-9 w-9 text-indigo-600 hover:bg-indigo-100/50 rounded-xl transition-all"
+                      className="h-9 w-9 text-info hover:bg-info-light/50 rounded-xl transition-all"
                       title="الجدول الدراسي"
                     >
                       <Calendar className="h-4 w-4" />
@@ -489,7 +497,7 @@ export function TeachersTable({
                         setTeacherForSubject(teacher);
                         setIsAddSubjectOpen(true);
                       }}
-                      className="h-9 w-9 text-blue-600 hover:bg-blue-100/50 rounded-xl transition-all"
+                      className="h-9 w-9 text-info hover:bg-info-light/50 rounded-xl transition-all"
                       title="إضافة مادة"
                     >
                       <BookPlus className="h-4 w-4" />
@@ -499,7 +507,7 @@ export function TeachersTable({
                         variant="ghost"
                         size="icon"
                         onClick={() => onEdit(teacher)}
-                        className="h-9 w-9 text-amber-600 hover:bg-amber-100/50 rounded-xl transition-all"
+                        className="h-9 w-9 text-warning hover:bg-warning-light/50 rounded-xl transition-all"
                         title="تعديل"
                       >
                         <Edit className="h-4 w-4" />
@@ -510,7 +518,7 @@ export function TeachersTable({
                         variant="ghost"
                         size="icon"
                         onClick={() => onDelete(teacher)}
-                        className="h-9 w-9 text-red-600 hover:bg-red-100/50 rounded-xl transition-all"
+                        className="h-9 w-9 text-danger hover:bg-danger-light/50 rounded-xl transition-all"
                         title="حذف"
                       >
                         <Trash2 className="h-4 w-4" />
@@ -547,9 +555,21 @@ export function TeachersTable({
           dir="rtl"
         >
           <ShadcnDialogHeader>
-            <ShadcnDialogTitle className="text-right flex items-center gap-2">
-              <Calendar className="h-5 w-5 text-indigo-600" />
-              <span>الجدول الدراسي - {activeTeacher?.fullName}</span>
+            <ShadcnDialogTitle className="text-right flex items-center gap-2 w-full">
+              <Calendar className="h-5 w-5 text-info shrink-0" />
+              <span className="truncate">
+                الجدول الدراسي - {activeTeacher?.fullName}
+              </span>
+              {teacherLastActiveSemester.length > 0 &&
+                !fetchTeacherLastActiveSemesterState.isLoading && (
+                  <Badge className="mr-auto bg-primary/10 text-primary hover:bg-primary/20 border-none px-3 ml-6 font-bold shrink-0">
+                    {teacherLastActiveSemester.reduce(
+                      (acc, s) => acc + (s.numberOfHours || 0),
+                      0,
+                    )}{" "}
+                    حصة
+                  </Badge>
+                )}
             </ShadcnDialogTitle>
           </ShadcnDialogHeader>
 
@@ -559,151 +579,158 @@ export function TeachersTable({
               <Skeleton className="h-40 w-full" />
             </div>
           ) : teacherLastActiveSemester.length > 0 ? (
-            <div className="space-y-6">
-              <div
-                dir="rtl"
-                className="flex items-center justify-between bg-amber-50/50 p-4 rounded-xl border border-amber-100"
-              >
-                <div className="flex items-center gap-3">
-                  <Checkbox
-                    id={`edit-mode-${editingSubject?.subjectId}`}
-                    checked={isEditMode}
-                    onCheckedChange={(val) => {
-                      setIsEditMode(!!val);
-                    }}
-                    className="h-5 w-5 border-amber-400 data-[state=checked]:bg-amber-600 data-[state=checked]:border-amber-600"
-                  />
-                  <div className="flex flex-col gap-0.5">
-                    <Label
-                      htmlFor={`edit-mode-${editingSubject?.subjectId}`}
-                      className="text-amber-800 font-bold cursor-pointer"
+            <div className="space-y-4">
+              {!editingSubject ? (
+                <div className="grid gap-3 max-h-[60vh] overflow-y-auto pr-1 pb-2">
+                  {teacherLastActiveSemester.map((subject) => (
+                    <div
+                      key={subject.subjectId}
+                      className="group flex flex-col p-4 bg-white border border-gray-100 shadow-sm hover:shadow-md hover:border-info/30 transition-all rounded-xl"
                     >
-                      تعديل البيانات
-                    </Label>
-                    <span className="text-amber-600/70 text-[10px]">
-                      تفعيل وضع التعديل للمادة المحددة
-                    </span>
-                  </div>
-                </div>
-              </div>
-              <div className="grid gap-4">
-                <div className="flex flex-col gap-2">
-                  <Label className="text-right text-gray-500 text-xs">
-                    اختر المادة
-                  </Label>
-                  <Select
-                    dir="rtl"
-                    value={editingSubject?.subjectId.toString()}
-                    onValueChange={(val) => {
-                      const sub = teacherLastActiveSemester.find(
-                        (s) => s.subjectId.toString() === val,
-                      );
-                      setEditingSubject(sub || null);
-                      setIsEditMode(false);
-                    }}
-                  >
-                    <SelectTrigger className="w-full h-12 text-right bg-gray-50 border-gray-100 rounded-xl font-medium">
-                      <SelectValue placeholder="اختر مادة" />
-                    </SelectTrigger>
-                    <SelectContent dir="rtl">
-                      {teacherLastActiveSemester.map((subject) => (
-                        <SelectItem
-                          key={subject.subjectId}
-                          value={subject.subjectId.toString()}
-                        >
-                          {subject.name} - {subject.specializationName} -{" "}
-                          {subject.studyYear === 1
-                            ? "سنة أولى"
-                            : subject.studyYear === 2
-                              ? "سنة ثانية"
-                              : null}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {editingSubject && (
-                  <div className="space-y-6 animate-in fade-in duration-300">
-                    <div className="grid gap-4 text-right" dir="rtl">
-                      <div className="grid gap-2">
-                        <Label className="text-right">اسم المادة</Label>
-                        <Input
-                          value={subjectForm.name}
-                          disabled={!isEditMode}
-                          onChange={(e) =>
-                            setSubjectForm({
-                              ...subjectForm,
-                              name: e.target.value,
-                            })
-                          }
-                          className="text-right h-11 bg-gray-50/30"
-                        />
+                      <div className="flex justify-between items-start mb-3">
+                        <div className="flex flex-col items-start gap-1.5 flex-1 pr-3">
+                          <h3 className="font-bold text-gray-800 text-lg text-right leading-tight">
+                            {subject.name}
+                          </h3>
+                          <div
+                            className="flex flex-wrap items-center gap-2 justify-start"
+                            dir="rtl"
+                          >
+                            <Badge
+                              variant="outline"
+                              className="bg-info-light/30 text-info border-info/20 text-xs py-0"
+                            >
+                              {subject.specializationName}
+                            </Badge>
+                            <Badge
+                              variant="outline"
+                              className="bg-gray-50 text-gray-600 border-gray-200 text-xs py-0"
+                            >
+                              {subject.studyYear === 1
+                                ? "سنة أولى"
+                                : subject.studyYear === 2
+                                  ? "سنة ثانية"
+                                  : ""}
+                            </Badge>
+                          </div>
+                        </div>
+                        <div className="bg-primary/5 rounded-lg p-2 text-primary font-bold flex flex-col items-center justify-center min-w-[50px] shrink-0">
+                          <span className="text-xl leading-none">
+                            {subject.numberOfHours || 1}
+                          </span>
+                          <span className="text-[10px] text-primary/70 mt-1">
+                            حصص
+                          </span>
+                        </div>
                       </div>
 
-                      <div className="grid gap-2">
-                        <Label className="text-right">المعلم</Label>
-                        <TeacherSearchSelect
-                          value={subjectForm.teacherId}
-                          initialName={subjectForm.teacherName}
-                          disabled={!isEditMode}
-                          onValueChange={(id, name) => {
-                            setSubjectForm({
-                              ...subjectForm,
-                              teacherId: id,
-                              teacherName: name,
-                            });
-                          }}
-                        />
-                      </div>
-
-                      <div className="grid gap-2 text-right">
-                        <Label className="text-right">عدد الحصص</Label>
-                        <Input
-                          type="number"
-                          value={subjectForm.numberOfHours}
-                          disabled={!isEditMode}
-                          onChange={(e) =>
-                            setSubjectForm({
-                              ...subjectForm,
-                              numberOfHours: Number(e.target.value),
-                            })
-                          }
-                          className="text-right h-11 bg-gray-50/30"
-                          min={1}
-                          max={10}
-                        />
-                      </div>
-                    </div>
-
-                    {isEditMode && (
-                      <div className="pt-2 flex flex-col gap-3">
-                        <Button
-                          onClick={handleSaveSubject}
-                          disabled={updateSubjectState.isLoading}
-                          className="w-full bg-blue-600 hover:bg-blue-700 h-11 font-bold text-white shadow-lg shadow-blue-600/20 rounded-xl"
-                        >
-                          {updateSubjectState.isLoading
-                            ? "جاري الحفظ..."
-                            : "حفظ التعديلات"}
-                        </Button>
-
+                      <div className="flex justify-end pt-3 border-t border-gray-50">
                         <Button
                           variant="ghost"
-                          onClick={() => setIsDeleteSubjectConfirmOpen(true)}
-                          disabled={deleteSubjectState.isLoading}
-                          className="w-full text-red-600 hover:text-red-700 hover:bg-red-50 h-11 font-bold rounded-xl border border-dashed border-red-200"
+                          size="sm"
+                          onClick={() => {
+                            setEditingSubject(subject);
+                            setIsEditMode(false);
+                          }}
+                          className="h-8 text-info hover:text-info hover:bg-info-light gap-2 font-medium"
                         >
-                          <Trash2 className="h-4 w-4 ml-2" />
-                          {deleteSubjectState.isLoading
-                            ? "جاري الحذف..."
-                            : "حذف المادة نهائياً"}
+                          <Edit className="h-3.5 w-3.5" />
+                          تعديل تفاصيل المادة
                         </Button>
                       </div>
-                    )}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="space-y-6 animate-in slide-in-from-left-4 duration-300">
+                  <div className="flex items-center justify-between bg-gray-50 p-2 rounded-xl">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setEditingSubject(null)}
+                      className="text-gray-500 hover:text-gray-700 hover:bg-gray-200 rounded-lg"
+                    >
+                      <ArrowRight className="h-4 w-4 ml-2" />
+                      العودة للقائمة
+                    </Button>
+                    <Badge className="bg-info text-white text-sm py-1 px-3">
+                      {editingSubject.name}
+                    </Badge>
                   </div>
-                )}
-              </div>
+
+                  <div className="grid gap-4 text-right" dir="rtl">
+                    <div className="grid gap-2">
+                      <Label className="text-right">اسم المادة</Label>
+                      <Input
+                        value={subjectForm.name}
+                        onChange={(e) =>
+                          setSubjectForm({
+                            ...subjectForm,
+                            name: e.target.value,
+                          })
+                        }
+                        className="text-right h-11 bg-gray-50/30"
+                      />
+                    </div>
+
+                    <div className="grid gap-2">
+                      <Label className="text-right">المعلم</Label>
+                      <TeacherSearchSelect
+                        value={subjectForm.teacherId}
+                        initialName={subjectForm.teacherName}
+                        onValueChange={(id, name) => {
+                          setSubjectForm({
+                            ...subjectForm,
+                            teacherId: id,
+                            teacherName: name,
+                          });
+                        }}
+                      />
+                    </div>
+
+                    <div className="grid gap-2 text-right">
+                      <Label className="text-right">عدد الحصص</Label>
+                      <Input
+                        type="number"
+                        value={subjectForm.numberOfHours}
+                        onChange={(e) =>
+                          setSubjectForm({
+                            ...subjectForm,
+                            numberOfHours: Number(e.target.value),
+                          })
+                        }
+                        className="text-right h-11 bg-gray-50/30"
+                        min={1}
+                        max={10}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="pt-2 flex flex-col gap-3">
+                    <Button
+                      onClick={handleSaveSubject}
+                      disabled={updateSubjectState.isLoading || !hasChanges}
+                      className="w-full bg-info hover:bg-info-foreground h-11 font-bold text-white shadow-lg shadow-info/20 rounded-xl"
+                    >
+                      {updateSubjectState.isLoading
+                        ? "جاري الحفظ..."
+                        : "حفظ التعديلات"}
+                    </Button>
+
+                    <Button
+                      variant="ghost"
+                      onClick={() => setIsDeleteSubjectConfirmOpen(true)}
+                      disabled={deleteSubjectState.isLoading}
+                      className="w-full text-danger hover:text-danger hover:bg-danger-light h-11 font-bold rounded-xl border border-dashed border-danger"
+                    >
+                      <Trash2 className="h-4 w-4 ml-2" />
+                      {deleteSubjectState.isLoading
+                        ? "جاري الحذف..."
+                        : "حذف المادة نهائياً"}
+                    </Button>
+                  </div>
+                </div>
+              )}
             </div>
           ) : (
             <div className="text-center py-12 text-gray-500">
@@ -753,7 +780,7 @@ export function TeachersTable({
           <ShadcnDialogHeader>
             <ShadcnDialogTitle
               className={`text-right ${
-                result.success ? "text-green-600" : "text-red-600"
+                result.success ? "text-success" : "text-danger"
               }`}
             >
               {result.success ? "تم بنجاح" : "خطأ"}
@@ -772,7 +799,7 @@ export function TeachersTable({
                   handleCloseSchedule();
                 }
               }}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold h-11"
+              className="w-full bg-info hover:bg-info-foreground text-white font-bold h-11"
             >
               موافق
             </Button>

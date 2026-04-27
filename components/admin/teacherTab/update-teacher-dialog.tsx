@@ -261,7 +261,7 @@ export function UpdateTeacherDialog({
               <Button
                 type="submit"
                 disabled={loading || !isDirty}
-                className="cursor-pointer bg-blue-600 hover:bg-blue-700"
+                className="cursor-pointer bg-info hover:bg-info-foreground"
               >
                 {loading ? "جاري التحديث..." : "تحديث"}
               </Button>
@@ -283,7 +283,7 @@ export function UpdateTeacherDialog({
           <DialogHeader>
             <DialogTitle
               className={`text-right ${
-                result.success ? "text-green-600" : "text-red-600"
+                result.success ? "text-success" : "text-danger"
               }`}
             >
               {result.success ? "تم بنجاح" : "خطأ"}
@@ -300,7 +300,7 @@ export function UpdateTeacherDialog({
                   onOpenChange(false);
                 }
               }}
-              className="w-full cursor-pointer"
+              className="w-full bg-info hover:bg-info-foreground cursor-pointer"
             >
               موافق
             </Button>

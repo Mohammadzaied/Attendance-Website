@@ -95,7 +95,7 @@ export function SubjectStudentsContent({ role }: SubjectStudentsContentProps) {
       {/* Absence Statistics Button */}
       <Card
         className={cn(
-          "shadow-sm border-blue-100 bg-linear-to-br from-blue-50 to-white overflow-hidden rounded-xl",
+          "shadow-sm border-info bg-linear-to-br from-info-light to-white overflow-hidden rounded-xl",
           isDH && "rounded-2xl",
         )}
       >
@@ -108,7 +108,7 @@ export function SubjectStudentsContent({ role }: SubjectStudentsContentProps) {
                   isDH && "font-black",
                 )}
               >
-                <FileBarChart className="h-5 w-5 text-blue-600" />
+                <FileBarChart className="h-5 w-5 text-info" />
                 إحصائيات الغياب التفصيلية
               </h3>
               <p className={cn("text-sm text-gray-600", isDH && "font-medium")}>
@@ -126,7 +126,7 @@ export function SubjectStudentsContent({ role }: SubjectStudentsContentProps) {
                 fetchSubjectAbsenceDataState.isLoading || students.length === 0
               }
               className={cn(
-                "w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white gap-2 h-11 font-bold shadow-lg shadow-blue-600/20",
+                "w-full md:w-auto bg-info hover:bg-info-foreground text-white gap-2 h-11 font-bold shadow-lg shadow-info/20",
                 isDH && "font-black rounded-xl cursor-pointer transition-all",
               )}
             >
@@ -163,7 +163,7 @@ export function SubjectStudentsContent({ role }: SubjectStudentsContentProps) {
             <div className="flex items-center gap-3 self-end md:self-center">
               {/* Audience Percentage Circular Progress */}
               <div
-                className="flex items-center gap-2 bg-indigo-50/50 rounded-xl p-2 pr-3"
+                className="flex items-center gap-2 bg-info-light/50 rounded-xl p-2 pr-3"
                 title="نسبة الحضور المتوقعة"
               >
                 <div className="flex flex-col text-right">
@@ -171,7 +171,7 @@ export function SubjectStudentsContent({ role }: SubjectStudentsContentProps) {
                     نسبة الحضور
                   </span>
                 </div>
-                <div className="relative h-11 w-11 shrink-0 flex items-center justify-center">
+                <div className="relative h-12 w-12 shrink-0 flex items-center justify-center">
                   <svg
                     className="h-full w-full -rotate-90 transform"
                     viewBox="0 0 36 36"
@@ -182,7 +182,7 @@ export function SubjectStudentsContent({ role }: SubjectStudentsContentProps) {
                       cy="18"
                       r="16"
                       fill="none"
-                      className="stroke-indigo-100"
+                      className="stroke-info-light"
                       strokeWidth="3.5"
                     />
                     {/* Progress Circle */}
@@ -194,24 +194,31 @@ export function SubjectStudentsContent({ role }: SubjectStudentsContentProps) {
                       className={cn(
                         "transition-all duration-1000 ease-out",
                         fetchStudentsState.isLoading
-                          ? "stroke-indigo-200"
+                          ? "stroke-info"
                           : audiencePercent >= 80
-                            ? "stroke-emerald-500"
+                            ? "stroke-success"
                             : audiencePercent >= 50
-                              ? "stroke-amber-500"
-                              : "stroke-red-500",
+                              ? "stroke-warning"
+                              : "stroke-danger",
                       )}
                       strokeWidth="3.5"
                       strokeDasharray="100 100"
-                      strokeDashoffset={fetchStudentsState.isLoading ? 100 : 100 - audiencePercent}
+                      strokeDashoffset={
+                        fetchStudentsState.isLoading
+                          ? 100
+                          : 100 - audiencePercent
+                      }
                       strokeLinecap="round"
                     />
                   </svg>
                   <div className="absolute inset-0 flex items-center justify-center">
                     {fetchStudentsState.isLoading ? (
-                      <div className="h-3 w-3 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin"></div>
+                      <div className="h-3 w-3 border-2 border-info border-t-transparent rounded-full animate-spin"></div>
                     ) : (
-                      <span className="text-[10px] font-bold text-slate-700" dir="ltr">
+                      <span
+                        className="text-[10px] font-bold text-slate-700"
+                        dir="ltr"
+                      >
                         {audiencePercent.toFixed(1)}%
                       </span>
                     )}
@@ -221,7 +228,7 @@ export function SubjectStudentsContent({ role }: SubjectStudentsContentProps) {
 
               <Badge
                 className={cn(
-                  "bg-blue-50 text-blue-700 border-blue-200 px-4 py-2 h-11 flex items-center text-sm font-bold",
+                  "bg-info-light text-info-foreground border-info px-4 py-2 h-11 flex items-center text-sm font-bold",
                   isDH && "font-black rounded-xl",
                 )}
               >
@@ -236,7 +243,7 @@ export function SubjectStudentsContent({ role }: SubjectStudentsContentProps) {
       {/* Students List */}
       {fetchStudentsState.isLoading ? (
         <div className="flex flex-col items-center justify-center py-20 text-gray-400 gap-4">
-          <div className="h-16 w-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+          <div className="h-16 w-16 border-4 border-info border-t-transparent rounded-full animate-spin"></div>
           <p className={cn("font-medium text-lg", isDH && "font-bold")}>
             جاري تحميل قائمة الطلاب...
           </p>
@@ -251,14 +258,14 @@ export function SubjectStudentsContent({ role }: SubjectStudentsContentProps) {
             >
               <Card
                 className={cn(
-                  "h-full border-gray-100 group-hover:border-blue-300 group-hover:shadow-md transition-all duration-200",
+                  "h-full border-gray-100 group-hover:border-info group-hover:shadow-md transition-all duration-200",
                   isDH && "rounded-2xl",
                 )}
               >
                 <CardContent className="p-5 flex items-center gap-4">
                   <div
                     className={cn(
-                      "h-12 w-12 rounded-full bg-linear-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-lg shrink-0 shadow-sm group-hover:scale-110 transition-transform",
+                      "h-12 w-12 rounded-full bg-linear-to-br from-info to-info-foreground flex items-center justify-center text-white font-bold text-lg shrink-0 shadow-sm group-hover:scale-110 transition-transform",
                       isDH && "font-black",
                     )}
                   >
@@ -267,7 +274,7 @@ export function SubjectStudentsContent({ role }: SubjectStudentsContentProps) {
                   <div className="flex-1 min-w-0 text-right">
                     <p
                       className={cn(
-                        "font-bold text-gray-900 group-hover:text-blue-700 transition-colors truncate",
+                        "font-bold text-gray-900 group-hover:text-info-foreground transition-colors truncate",
                         isDH && "font-black",
                       )}
                     >
@@ -282,7 +289,7 @@ export function SubjectStudentsContent({ role }: SubjectStudentsContentProps) {
                       اضغط لعرض سجل الغياب
                     </p>
                   </div>
-                  <ChevronRight className="h-5 w-5 text-gray-300 group-hover:text-blue-500 transition-colors" />
+                  <ChevronRight className="h-5 w-5 text-gray-300 group-hover:text-info transition-colors" />
                 </CardContent>
               </Card>
             </Link>
@@ -315,10 +322,7 @@ export function SubjectStudentsContent({ role }: SubjectStudentsContentProps) {
             <Button
               variant="link"
               onClick={() => setSearchQuery("")}
-              className={cn(
-                "text-blue-600 font-bold mt-2",
-                isDH && "font-black",
-              )}
+              className={cn("text-info font-bold mt-2", isDH && "font-black")}
             >
               إلغاء البحث
             </Button>

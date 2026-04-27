@@ -33,7 +33,7 @@ export function DeleteConfirmDialog({
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[400px]">
         <DialogHeader>
-          <DialogTitle className="text-right text-red-600 font-bold text-xl">
+          <DialogTitle className="text-right text-danger font-bold text-xl">
             {title}
           </DialogTitle>
           <DialogDescription className="text-right py-4 text-gray-600">
@@ -51,7 +51,7 @@ export function DeleteConfirmDialog({
           <Button
             variant="destructive"
             onClick={onConfirm}
-            className="flex-1 bg-red-600 hover:bg-red-700 cursor-pointer font-bold h-11 rounded-xl shadow-md transition-all active:scale-95"
+            className="flex-1 bg-danger hover:bg-danger-foreground cursor-pointer font-bold h-11 rounded-xl shadow-md transition-all active:scale-95"
           >
             {confirmText}
           </Button>

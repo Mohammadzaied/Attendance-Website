@@ -322,9 +322,9 @@ export function StudentProfileContent({
         dir="rtl"
       >
         <div className="relative mb-8">
-          <div className="absolute inset-0 bg-blue-400/20 blur-3xl rounded-full scale-150 animate-pulse" />
-          <div className="bg-white p-6 rounded-3xl shadow-xl shadow-blue-500/10 border border-gray-100 relative z-10">
-            <Spinner className="h-12 w-12 text-blue-600 animate-spin" />
+          <div className="absolute inset-0 bg-info/20 blur-3xl rounded-full scale-150 animate-pulse" />
+          <div className="bg-white p-6 rounded-3xl shadow-xl shadow-info/10 border border-gray-100 relative z-10">
+            <Spinner className="h-12 w-12 text-info animate-spin" />
           </div>
         </div>
         <div className="text-center space-y-2 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -346,7 +346,7 @@ export function StudentProfileContent({
   ) {
     return (
       <div className="p-8 text-center" dir="rtl">
-        <div className="text-blue-500 mb-4">
+        <div className="text-info mb-4">
           {fetchProfileState.error ||
             fetchAdminSubjectsState.error ||
             fetchUnifiedAlertsState.error}
@@ -380,7 +380,7 @@ export function StudentProfileContent({
         {" "}
         {/* Added horizontal padding on mobile */}
         <div className="w-full">
-          <Card className="border-none shadow-xl shadow-blue-500/5 bg-white h-full flex flex-col overflow-visible rounded-3xl md:rounded-3xl">
+          <Card className="border-none shadow-xl shadow-info/5 bg-white h-full flex flex-col overflow-visible rounded-3xl md:rounded-3xl">
             <div className="p-4 md:p-6 border-b border-gray-100 flex flex-col md:flex-row items-start md:items-center justify-between bg-white z-40 shadow-sm rounded-t-3xl gap-4">
               <div className="text-right w-full md:w-auto">
                 <h3 className="text-lg md:text-xl font-bold text-gray-900">
@@ -392,7 +392,7 @@ export function StudentProfileContent({
                     className={cn(
                       "flex-1 md:flex-none px-4 py-2 md:py-1.5 rounded-lg text-sm font-bold transition-all duration-200 cursor-pointer",
                       activeTypeTab === "absences"
-                        ? "bg-white text-blue-600 shadow-sm"
+                        ? "bg-white text-info shadow-sm"
                         : "text-gray-500 hover:text-gray-700",
                     )}
                   >
@@ -406,7 +406,7 @@ export function StudentProfileContent({
                     className={cn(
                       "flex-1 md:flex-none px-4 py-2 md:py-1.5 rounded-lg text-sm font-bold transition-all duration-200 cursor-pointer",
                       activeTypeTab === "alerts"
-                        ? "bg-white text-blue-600 shadow-sm"
+                        ? "bg-white text-info shadow-sm"
                         : "text-gray-500 hover:text-gray-700",
                     )}
                   >
@@ -418,7 +418,7 @@ export function StudentProfileContent({
                       className={cn(
                         "flex-1 md:flex-none px-4 py-2 md:py-1.5 rounded-lg text-sm font-bold transition-all duration-200 cursor-pointer",
                         activeTypeTab === "excuse"
-                          ? "bg-white text-blue-600 shadow-sm"
+                          ? "bg-white text-info shadow-sm"
                           : "text-gray-500 hover:text-gray-700",
                       )}
                     >
@@ -449,9 +449,9 @@ export function StudentProfileContent({
 
                   <div className="m-0 p-4 md:p-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
                     <div className="flex flex-col items-center justify-center py-10 md:py-16">
-                      <Card className="w-full max-w-lg p-6 md:p-8 border-2 border-dashed border-blue-100 bg-blue-50/30 rounded-[2.5rem] shadow-none">
+                      <Card className="w-full max-w-lg p-6 md:p-8 border-2 border-dashed border-info-light bg-info-light/30 rounded-[2.5rem] shadow-none">
                         <div className="text-center space-y-6">
-                          <div className="w-20 h-20 bg-blue-600 rounded-3xl flex items-center justify-center mx-auto shadow-lg shadow-blue-200">
+                          <div className="w-20 h-20 bg-info rounded-3xl flex items-center justify-center mx-auto shadow-lg shadow-info/20">
                             <CalendarDays className="h-10 w-10 text-white" />
                           </div>
 
@@ -477,7 +477,7 @@ export function StudentProfileContent({
                                 السبب (اختياري)
                               </label>
                               <textarea
-                                className="w-full min-h-[100px] p-4 rounded-2xl border-2 border-gray-100 bg-white focus:border-blue-500 focus:ring-0 transition-all text-sm font-medium outline-none resize-none"
+                                className="w-full min-h-[100px] p-4 rounded-2xl border-2 border-gray-100 bg-white focus:border-info focus:ring-0 transition-all text-sm font-medium outline-none resize-none"
                                 placeholder="اكتب ملاحظاتك هنا..."
                                 value={excuseReason}
                                 onChange={(e) =>
@@ -495,7 +495,7 @@ export function StudentProfileContent({
                               }
                               onClick={handleExcuseAbsencesByDate}
 
-                              className="w-full h-14 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-black text-lg shadow-lg shadow-blue-200 transition-all active:scale-[0.98]"
+                              className="w-full h-14 rounded-2xl bg-info hover:bg-info-foreground text-white font-black text-lg shadow-lg shadow-info/20 transition-all active:scale-[0.98]"
                             >
                               {excuseAbsencesState.isLoading ? (
                                 <Loader2 className="h-6 w-6 animate-spin" />
@@ -529,7 +529,7 @@ export function StudentProfileContent({
                           {fetchAbsenceDetailsState.isLoading ? (
                             <div className="flex flex-col items-center justify-center py-20 bg-gray-50/50 rounded-3xl border border-dashed border-gray-200">
                               <div className="p-4 bg-white rounded-2xl shadow-sm border border-gray-100 mb-4 animate-bounce">
-                                <Loader2 className="h-8 w-8 text-blue-600 animate-spin" />
+                                <Loader2 className="h-8 w-8 text-info animate-spin" />
                               </div>
                               <p className="text-sm font-bold text-gray-500 mt-2">
                                 جاري استرداد سجلات الحضور...
@@ -557,7 +557,7 @@ export function StudentProfileContent({
                                     <Button
                                       variant="outline"
                                       size="sm"
-                                      className={`gap-2 h-9 border-gray-200 cursor-pointer bg-white text-xs md:text-sm flex-1 md:flex-none ${selectedDate ? "border-blue-200 bg-blue-50 text-blue-600" : ""}`}
+                                      className={`gap-2 h-9 border-gray-200 cursor-pointer bg-white text-xs md:text-sm flex-1 md:flex-none ${selectedDate ? "border-info bg-info-light text-info" : ""}`}
                                     >
                                       <CalendarDays className="h-4 w-4" />
                                       {selectedDate
@@ -587,7 +587,7 @@ export function StudentProfileContent({
                                     variant="ghost"
                                     size="sm"
                                     onClick={() => setSelectedDate(undefined)}
-                                    className="text-blue-600 hover:text-blue-600 hover:bg-blue-50 gap-1 h-9 font-bold text-xs md:text-sm"
+                                    className="text-info hover:text-info hover:bg-info-light gap-1 h-9 font-bold text-xs md:text-sm"
                                   >
                                     <X className="h-4 w-4" />
                                     إلغاء الفلتر
@@ -636,7 +636,7 @@ export function StudentProfileContent({
                           {fetchUnifiedAlertsState.isLoading ? (
                             <div className="flex flex-col items-center justify-center py-20 bg-gray-50/50 rounded-3xl border border-dashed border-gray-200">
                               <div className="p-4 bg-white rounded-2xl shadow-sm border border-gray-100 mb-4 animate-bounce">
-                                <Loader2 className="h-8 w-8 text-blue-600 animate-spin" />
+                                <Loader2 className="h-8 w-8 text-info animate-spin" />
                               </div>
                               <p className="text-sm font-bold text-gray-500 mt-2">
                                 جاري استرداد بيانات الإنذارات...

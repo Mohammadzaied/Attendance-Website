@@ -141,10 +141,10 @@ export function AbsenceEditRow({
               size="icon"
               onClick={onDelete}
               disabled={isDeleting || selectedLessonIds.length === 0}
-              className="h-9 w-9 text-red-500 hover:text-red-600 hover:bg-red-50"
+              className="h-9 w-9 text-danger hover:text-danger-foreground hover:bg-danger-light"
             >
               {isDeleting ? (
-                <div className="h-4 w-4 border-2 border-red-500 border-t-transparent rounded-full animate-spin" />
+                <div className="h-4 w-4 border-2 border-danger border-t-transparent rounded-full animate-spin" />
               ) : (
                 <Trash2 className="h-5 w-5" />
               )}
@@ -208,10 +208,10 @@ export function AbsenceEditRow({
           size="icon"
           onClick={onDelete}
           disabled={isDeleting || selectedLessonIds.length === 0}
-          className="h-8 w-8 text-red-400 hover:text-red-600 hover:bg-red-50 opacity-0 group-hover:opacity-100 transition-opacity"
+          className="h-8 w-8 text-danger hover:text-danger-foreground hover:bg-danger-light opacity-0 group-hover:opacity-100 transition-opacity"
         >
           {isDeleting ? (
-            <div className="h-4 w-4 border-2 border-red-500 border-t-transparent rounded-full animate-spin" />
+            <div className="h-4 w-4 border-2 border-danger border-t-transparent rounded-full animate-spin" />
           ) : (
             <Trash2 className="h-4 w-4" />
           )}

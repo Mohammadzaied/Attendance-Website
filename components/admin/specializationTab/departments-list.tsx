@@ -358,14 +358,14 @@ export function DepartmentsList({
           <Button
             onClick={() => setIsManagementDialogOpen(true)}
             variant="outline"
-            className="gap-2 cursor-pointer shadow-sm text-orange-600 border-orange-200 hover:bg-orange-50"
+            className="gap-2 cursor-pointer shadow-sm text-warning border-warning hover:bg-warning-light"
           >
             <Settings className="h-4 w-4" />
             إدارة المنظومة
           </Button>
           <Button
             onClick={() => setIsAddDialogOpen(true)}
-            className="bg-blue-600 hover:bg-blue-700 gap-2 cursor-pointer shadow-sm"
+            className="bg-info hover:bg-info-foreground gap-2 cursor-pointer shadow-sm"
           >
             <Plus className="h-4 w-4" />
             إضافة قسم جديد
@@ -400,13 +400,13 @@ export function DepartmentsList({
             <div
               key={dept.id}
               onClick={() => onSelectDepartment(dept)}
-              className="group relative bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:border-blue-200 transition-all cursor-pointer p-6 flex flex-col gap-4 overflow-hidden"
+              className="group relative bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:border-info transition-all cursor-pointer p-6 flex flex-col gap-4 overflow-hidden"
             >
               {/* Background Decoration */}
-              <div className="absolute -left-4 -top-4 w-24 h-24 bg-blue-50/50 rounded-full blur-2xl group-hover:bg-blue-100/50 transition-colors" />
+              <div className="absolute -left-4 -top-4 w-24 h-24 bg-info-light/50 rounded-full blur-2xl group-hover:bg-info-light transition-colors" />
 
               <div className="flex items-start justify-between">
-                <div className="h-14 w-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center group-hover:scale-110 group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
+                <div className="h-14 w-14 bg-info-light text-info rounded-2xl flex items-center justify-center group-hover:scale-110 group-hover:bg-info group-hover:text-white transition-all duration-300">
                   <Building2 className="h-7 w-7" />
                 </div>
                 <div className="flex items-center gap-2">
@@ -414,7 +414,7 @@ export function DepartmentsList({
                     variant="ghost"
                     size="sm"
                     onClick={(e) => handleEditClick(e, dept)}
-                    className="h-8 w-8 p-0 text-blue-500 hover:text-blue-700 hover:bg-blue-50 cursor-pointer"
+                    className="h-8 w-8 p-0 text-info hover:text-info-foreground hover:bg-info-light cursor-pointer"
                   >
                     <Pencil className="h-4 w-4" />
                   </Button>
@@ -422,11 +422,11 @@ export function DepartmentsList({
                     variant="ghost"
                     size="sm"
                     onClick={(e) => handleDeleteClick(e, dept)}
-                    className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50 cursor-pointer"
+                    className="h-8 w-8 p-0 text-danger hover:text-danger-foreground hover:bg-danger-light cursor-pointer"
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
-                  <div className="flex items-center gap-1 text-sm font-medium text-gray-400 group-hover:text-blue-600 transition-colors">
+                  <div className="flex items-center gap-1 text-sm font-medium text-gray-400 group-hover:text-info transition-colors">
                     <span>إدارة القسم</span>
                     <ChevronLeft className="h-4 w-4" />
                   </div>
@@ -434,7 +434,7 @@ export function DepartmentsList({
               </div>
 
               <div className="space-y-2">
-                <h3 className="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
+                <h3 className="text-xl font-bold text-gray-900 group-hover:text-info transition-colors">
                   {dept.name}
                 </h3>
                 {dept.headName && (
@@ -494,7 +494,7 @@ export function DepartmentsList({
             <Button
               onClick={handleAddDept}
               disabled={createDepartmentState.isLoading}
-              className="w-full bg-blue-600 hover:bg-blue-700 cursor-pointer"
+              className="w-full bg-info hover:bg-info-foreground cursor-pointer"
             >
               {createDepartmentState.isLoading ? "جاري الحفظ..." : "حفظ القسم"}
             </Button>
@@ -523,7 +523,7 @@ export function DepartmentsList({
                 سيتم حذف القسم:{" "}
                 <span className="font-semibold">{deptToDelete?.name}</span>
               </p>
-              <p className="text-right text-sm text-red-600 mt-2">
+              <p className="text-right text-sm text-danger mt-2">
                 هذا الإجراء لا يمكن التراجع عنه
               </p>
             </div>
@@ -604,7 +604,7 @@ export function DepartmentsList({
               type="button"
               onClick={handleUpdateConfirm}
               disabled={updateDepartmentState.isLoading}
-              className="cursor-pointer bg-blue-600 hover:bg-blue-700"
+              className="cursor-pointer bg-info hover:bg-info-foreground"
             >
               {updateDepartmentState.isLoading ? "جاري التحديث..." : "تحديث"}
             </Button>
@@ -623,7 +623,7 @@ export function DepartmentsList({
           <DialogHeader>
             <DialogTitle
               className={`text-right ${
-                result.success ? "text-green-600" : "text-red-600"
+                result.success ? "text-success" : "text-danger"
               }`}
             >
               {result.success ? "تم بنجاح" : "خطأ"}
@@ -667,7 +667,7 @@ export function DepartmentsList({
           </DialogHeader>
           <div className="grid gap-4 py-4">
             {academicYearError && (
-              <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm text-right border border-red-100 italic">
+              <div className="bg-danger-light text-danger p-3 rounded-lg text-sm text-right border border-danger italic">
                 {academicYearError}
               </div>
             )}
@@ -684,8 +684,8 @@ export function DepartmentsList({
                 className="text-right"
               />
             </div>
-            <div className="bg-blue-50 p-3 rounded-lg text-sm text-right w-full overflow-hidden">
-              <p className="text-blue-700 break-all leading-relaxed">
+            <div className="bg-info-light p-3 rounded-lg text-sm text-right w-full overflow-hidden">
+              <p className="text-info-foreground break-all leading-relaxed">
                 السنوات الأكاديمية المتاحة:{" "}
                 {academicYears.map((y) => y.year).join(" , ") || "لا يوجد"}
               </p>
@@ -694,7 +694,7 @@ export function DepartmentsList({
           <DialogFooter>
             <Button
               onClick={handleCreateAcademicYear}
-              className="w-full bg-blue-600 hover:bg-blue-700 cursor-pointer"
+              className="w-full bg-info hover:bg-info-foreground cursor-pointer"
             >
               حفظ السنة الأكاديمية
             </Button>
@@ -736,7 +736,7 @@ export function DepartmentsList({
                           setYearToDelete(year);
                           setIsYearDeleteDialogOpen(true);
                         }}
-                        className="text-red-500 cursor-pointer hover:text-red-700 hover:bg-red-50"
+                        className="text-danger cursor-pointer hover:text-danger-foreground hover:bg-danger-light"
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
@@ -751,13 +751,13 @@ export function DepartmentsList({
             </div>
 
             <div className="space-y-4 pt-4 border-t">
-              <h4 className="text-sm font-semibold text-right border-b pb-2 text-blue-600">
+              <h4 className="text-sm font-semibold text-right border-b pb-2 text-info">
                 ترقية الطلاب
               </h4>
               <Button
                 onClick={() => setIsPromoteDialogOpen(true)}
                 variant="outline"
-                className="w-full cursor-pointer gap-2 border-blue-200 text-blue-600 hover:bg-blue-50"
+                className="w-full cursor-pointer gap-2 border-info text-info hover:bg-info-light"
               >
                 <Lock className="h-4 w-4" />
                 ترقية الطلاب
@@ -781,7 +781,7 @@ export function DepartmentsList({
       >
         <DialogContent className="sm:max-w-[400px]">
           <DialogHeader>
-            <DialogTitle className="text-right text-red-600">
+            <DialogTitle className="text-right text-danger">
               تأكيد حذف السنة الأكاديمية
             </DialogTitle>
             <DialogDescription className="text-right">
@@ -789,8 +789,8 @@ export function DepartmentsList({
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
-            <div className="bg-red-50 p-4 rounded-lg">
-              <p className="text-right text-sm text-red-700 font-medium">
+            <div className="bg-danger-light p-4 rounded-lg">
+              <p className="text-right text-sm text-danger-foreground font-medium">
                 تنبيه: هذا الإجراء سيقوم بحذف كافة البيانات المتعلقة بهذه السنة
                 بشكل نهائي.
               </p>

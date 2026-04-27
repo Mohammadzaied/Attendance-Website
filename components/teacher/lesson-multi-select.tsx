@@ -116,8 +116,8 @@ export function LessonMultiSelect({
           )}
         </div>
         {orphanedLessonNames.length > 0 && (
-          <div className="mt-3 pt-3 border-t border-amber-200">
-            <span className="text-[9px] font-bold text-amber-600 uppercase tracking-wider block mb-2">
+          <div className="mt-3 pt-3 border-t border-warning">
+            <span className="text-[9px] font-bold text-warning uppercase tracking-wider block mb-2">
               حصص تم تغيير موعدها (للعرض فقط)
             </span>
             <div className="flex flex-wrap gap-1">
@@ -125,7 +125,7 @@ export function LessonMultiSelect({
                 <Badge
                   key={idx}
                   variant="outline"
-                  className="bg-amber-50/50 text-amber-700 border-amber-200 text-[10px] opacity-70"
+                  className="bg-warning-light/50 text-warning-foreground border-warning text-[10px] opacity-70"
                 >
                   {name}
                 </Badge>

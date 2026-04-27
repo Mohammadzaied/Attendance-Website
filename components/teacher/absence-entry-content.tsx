@@ -68,7 +68,8 @@ export function AbsenceEntryContent({ role }: AbsenceEntryContentProps) {
   const [selectedSection, setSelectedSection] = useState<string>("");
   const [currentDate, setCurrentDate] = useState<Date>(() => {
     const today = new Date();
-    if (today.getDay() === 5) today.setDate(today.getDate() - 1); // If Friday, default to Thursday
+    if (today.getDay() === 5)
+      today.setDate(today.getDate() - 1); // If Friday, default to Thursday
     else if (today.getDay() === 6) today.setDate(today.getDate() + 1); // If Saturday, default to Sunday
     return today;
   });
@@ -185,7 +186,7 @@ export function AbsenceEntryContent({ role }: AbsenceEntryContentProps) {
   const sectionOptions = useMemo(() => {
     return subjects.map((s) => ({
       value: s.subjectId.toString(),
-      label: `${s.name} - ${s.specializationName} ${isDH ? `- ${s.studyYear === 1 ? "سنة أولى" : "سنة ثانية"}` : ""}`,
+      label: `${s.name} - ${s.specializationName} - ${s.studyYear === 1 ? "أولى" : "ثانية"}`,
     }));
   }, [subjects, isDH]);
 
@@ -485,7 +486,7 @@ export function AbsenceEntryContent({ role }: AbsenceEntryContentProps) {
             <AlertDialogAction
               onClick={handleConfirmSubmit}
               className={cn(
-                "bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700",
+                "bg-info hover:bg-info-foreground",
                 isDH && "rounded-xl font-bold cursor-pointer",
               )}
             >
@@ -499,7 +500,7 @@ export function AbsenceEntryContent({ role }: AbsenceEntryContentProps) {
         <AlertDialogContent dir="rtl">
           <AlertDialogHeader>
             <AlertDialogTitle
-              className={cn("text-right text-red-600", isDH && "font-black")}
+              className={cn("text-right text-danger", isDH && "font-black")}
             >
               خطأ في تسجيل الغياب
             </AlertDialogTitle>
@@ -517,7 +518,7 @@ export function AbsenceEntryContent({ role }: AbsenceEntryContentProps) {
                 dispatch(clearError());
               }}
               className={cn(
-                "bg-red-600 hover:bg-red-700",
+                "bg-danger hover:bg-danger-foreground",
                 isDH && "rounded-xl font-bold cursor-pointer",
               )}
             >

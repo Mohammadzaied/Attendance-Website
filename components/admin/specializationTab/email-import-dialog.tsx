@@ -187,7 +187,7 @@ export function EmailImportDialog({
               <Button
                 variant="outline"
                 onClick={handleDownloadTemplate}
-                className="gap-2 cursor-pointer border-blue-200 text-blue-700 hover:bg-blue-50"
+                className="gap-2 cursor-pointer border-info text-info hover:bg-info-light"
               >
                 <Download className="h-4 w-4" />
                 تنزيل قائمة الطلاب الحالية
@@ -196,7 +196,7 @@ export function EmailImportDialog({
 
             {!fileName ? (
               <div
-                className="flex-1 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center p-12 hover:border-blue-400 transition-colors cursor-pointer bg-gray-50/50"
+                className="flex-1 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center p-12 hover:border-info transition-colors cursor-pointer bg-gray-50/50"
                 onClick={() => fileInputRef.current?.click()}
               >
                 <FileUp className="h-12 w-12 text-gray-400 mb-4" />
@@ -214,13 +214,13 @@ export function EmailImportDialog({
               </div>
             ) : (
               <div className="flex-1 flex flex-col overflow-hidden">
-                <div className="flex items-center justify-between bg-blue-50 p-3 rounded-t-lg border-x border-t border-blue-100">
+                <div className="flex items-center justify-between bg-info-light p-3 rounded-t-lg border-x border-t border-info">
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="h-5 w-5 text-blue-600" />
-                    <span className="font-medium text-blue-900">
+                    <CheckCircle2 className="h-5 w-5 text-info" />
+                    <span className="font-medium text-info-foreground">
                       {fileName}
                     </span>
-                    <span className="text-blue-600 text-sm">
+                    <span className="text-info text-sm">
                       ({importedData.length} طالب جاهز للتحديث)
                     </span>
                   </div>
@@ -228,19 +228,18 @@ export function EmailImportDialog({
                     variant="ghost"
                     size="sm"
                     onClick={resetState}
-                    className="text-red-500 hover:text-red-700 hover:bg-red-50 h-8 w-8 p-0"
+                    className="text-danger hover:text-danger-foreground hover:bg-danger-light h-8 w-8 p-0"
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
                 </div>
 
                 <div
-                  className="flex-1 border border-gray-200 rounded-b-lg overflow-hidden text-right"
-                  dir="rtl"
+                  className="flex-1 border border-gray-200 rounded-b-lg overflow-hidden flex flex-col text-right"
                 >
-                  <ScrollArea className="h-full max-h-[400px]">
+                  <div className="overflow-y-auto max-h-[400px] w-full" dir="ltr">
                     <Table dir="rtl">
-                      <TableHeader className="bg-gray-50 sticky top-0 z-10">
+                      <TableHeader className="bg-gray-50 sticky top-0 z-10 shadow-sm">
                         <TableRow>
                           <TableHead className="text-right">الاسم</TableHead>
                           <TableHead className="text-right">
@@ -259,7 +258,7 @@ export function EmailImportDialog({
                         ))}
                       </TableBody>
                     </Table>
-                  </ScrollArea>
+                    </div>
                 </div>
               </div>
             )}
@@ -279,7 +278,7 @@ export function EmailImportDialog({
               type="button"
               onClick={handleImport}
               disabled={isLoading || importedData.length === 0}
-              className="cursor-pointer bg-blue-600 hover:bg-blue-700"
+              className="cursor-pointer bg-info hover:bg-info-foreground"
             >
               {isLoading ? "جاري التحديث..." : "تحديث الايميلات"}
             </Button>
@@ -307,8 +306,8 @@ export function EmailImportDialog({
               className={cn(
                 "flex items-center justify-start gap-2",
                 result?.variant === "success"
-                  ? "text-green-600"
-                  : "text-red-600",
+                  ? "text-success"
+                  : "text-danger",
               )}
             >
               {result?.title}
@@ -336,8 +335,8 @@ export function EmailImportDialog({
               className={cn(
                 "w-full cursor-pointer",
                 result?.variant === "success"
-                  ? "bg-green-600 hover:bg-green-700"
-                  : "bg-red-600 hover:bg-red-700",
+                  ? "bg-success hover:bg-success-foreground"
+                  : "bg-danger hover:bg-danger-foreground",
               )}
             >
               حسناً

@@ -36,6 +36,8 @@ export const adminService = {
     pageNumber?: number;
     pageSize?: number;
     searchTerm?: string | null;
+    roleId?: string | null;
+    departmentId?: string | null;
   }): Promise<PaginatedTeacherResponse> {
     const queryParams = new URLSearchParams();
     if (params?.pageNumber)
@@ -43,6 +45,10 @@ export const adminService = {
     if (params?.pageSize)
       queryParams.append("pageSize", params.pageSize.toString());
     if (params?.searchTerm) queryParams.append("searchTerm", params.searchTerm);
+    if (params?.roleId && params.roleId !== "all")
+      queryParams.append("roleId", params.roleId);
+    if (params?.departmentId && params.departmentId !== "all")
+      queryParams.append("departmentId", params.departmentId);
 
     const endpoint = `${TEACHER_ENDPOINT}/Teachers?${queryParams.toString()}`;
 

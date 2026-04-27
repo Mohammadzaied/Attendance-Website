@@ -93,14 +93,14 @@ export function StudentAbsenceDetailsDialog({
             <h2 className="text-xl font-bold text-gray-900">
               إحصائيات الغياب - {subjectName}
             </h2>
-            <Badge className="bg-blue-50 text-blue-700 border-blue-200">
+            <Badge className="bg-info-light text-info-foreground border-info">
               {students.length} طالب
             </Badge>
           </div>
           <Button
             onClick={handleExportToExcel}
             disabled={isExporting || students.length === 0}
-            className="w-full md:w-auto bg-green-600 hover:bg-green-700 text-white gap-2 h-10 font-bold shadow-sm"
+            className="w-full md:w-auto bg-success hover:bg-success-foreground text-white gap-2 h-10 font-bold shadow-sm"
           >
             <Download className="h-4 w-4" />
             {isExporting ? "جاري التصدير..." : "تصدير إلى Excel"}
@@ -108,123 +108,121 @@ export function StudentAbsenceDetailsDialog({
         </div>
 
         <div
-          className="flex-1 overflow-scroll px-6 scrollbar-always-visible"
+          className="flex-1 overflow-auto mx-2 pb-4 scrollbar-always-visible"
           dir="rtl"
           style={{ scrollbarGutter: "stable" }}
         >
-          <div className="min-w-[800px] border-separate border-spacing-0">
-            <Table className="">
-              <TableHeader>
-                <TableRow className="hover:bg-transparent">
-                  <TableHead className="sticky top-0 z-10 bg-gray-50 text-right font-bold text-gray-900 w-12 border-b border-gray-200">
-                    #
-                  </TableHead>
-                  <TableHead className="sticky top-0 z-10 bg-gray-50 text-right font-bold text-gray-900 min-w-[200px] border-b border-gray-200">
-                    اسم الطالب
-                  </TableHead>
-                  <TableHead className="sticky top-0 z-10 bg-gray-50 text-center font-bold text-gray-900 w-24 border-b border-gray-200">
-                    مجموع الغيابات
-                  </TableHead>
-                  <TableHead className="sticky top-0 z-10 bg-gray-50 text-center font-bold text-gray-900 w-24 border-b border-gray-200">
-                    تأخير
-                  </TableHead>
-                  <TableHead className="sticky top-0 z-10 bg-gray-50 text-center font-bold text-gray-900 w-28 border-b border-gray-200">
-                    غياب بعذر
-                  </TableHead>
-                  <TableHead className="sticky top-0 z-10 bg-gray-50 text-center font-bold text-gray-900 w-28 border-b border-gray-200">
-                    غياب
-                  </TableHead>
-                  <TableHead className="sticky top-0 z-10 bg-gray-50 text-center font-bold text-gray-900 w-28 border-b border-gray-200">
-                    انذار أول
-                  </TableHead>
-                  <TableHead className="sticky top-0 z-10 bg-gray-50 text-center font-bold text-gray-900 w-28 border-b border-gray-200">
-                    انذار ثاني
-                  </TableHead>
-                  <TableHead className="sticky top-0 z-10 bg-gray-50 text-center font-bold text-gray-900 w-28 border-b border-gray-200">
-                    حرمان
-                  </TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {students.map((student, index) => (
-                  <TableRow
-                    key={student.studentId}
-                    className="hover:bg-blue-50/30 transition-colors"
-                  >
-                    <TableCell className="text-right font-medium text-gray-500">
-                      {index + 1}
-                    </TableCell>
-                    <TableCell className="text-right font-medium">
-                      {student.fullName}
-                    </TableCell>
-                    <TableCell className="text-center">
-                      <Badge
-                        variant="outline"
-                        className="bg-red-50 text-red-700 border-red-200 font-bold"
-                      >
-                        {student.absenceStats.totalAbsenceWithoutExcuse}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-center">
-                      <Badge
-                        variant="outline"
-                        className="bg-amber-50 text-amber-700 border-amber-200 font-bold"
-                      >
-                        {student.absenceStats.lateCount}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-center">
-                      <Badge
-                        variant="outline"
-                        className="bg-green-50 text-green-700 border-green-200 font-bold"
-                      >
-                        {student.absenceStats.excusedAbsenceCount}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-center">
-                      <Badge
-                        variant="outline"
-                        className="bg-orange-50 text-orange-700 border-orange-200 font-bold"
-                      >
-                        {student.absenceStats.absentCount}
-                      </Badge>
-                    </TableCell>
+          <table className="w-full caption-bottom text-sm min-w-[800px] border-separate border-spacing-0">
+            <TableHeader>
+              <TableRow className="hover:bg-transparent">
+                <TableHead className="sticky top-0 right-0 z-30 bg-gray-100 text-right font-bold text-gray-900 w-[50px] min-w-[50px] border-b border-gray-200 border-l border-l-gray-200/50">
+                  #
+                </TableHead>
+                <TableHead className="sticky top-0 right-[50px] z-30 bg-gray-100 text-right font-bold text-gray-900 w-[200px] min-w-[200px] border-b border-gray-200 border-l border-l-gray-200/50">
+                  اسم الطالب
+                </TableHead>
+                <TableHead className=" z-30 bg-gray-100 text-center font-bold text-gray-900 w-[120px] min-w-[120px] border-b border-gray-200 border-l border-l-gray-200/50">
+                  مجموع الغيابات
+                </TableHead>
+                <TableHead className="sticky top-0 z-10 bg-gray-50 text-center font-bold text-gray-900 w-24 border-b border-gray-200">
+                  تأخير
+                </TableHead>
+                <TableHead className="sticky top-0 z-10 bg-gray-50 text-center font-bold text-gray-900 w-28 border-b border-gray-200">
+                  غياب بعذر
+                </TableHead>
+                <TableHead className="sticky top-0 z-10 bg-gray-50 text-center font-bold text-gray-900 w-28 border-b border-gray-200">
+                  غياب
+                </TableHead>
+                <TableHead className="sticky top-0 z-10 bg-gray-50 text-center font-bold text-gray-900 w-28 border-b border-gray-200">
+                  انذار أول
+                </TableHead>
+                <TableHead className="sticky top-0 z-10 bg-gray-50 text-center font-bold text-gray-900 w-28 border-b border-gray-200">
+                  انذار ثاني
+                </TableHead>
+                <TableHead className="sticky top-0 z-10 bg-gray-50 text-center font-bold text-gray-900 w-28 border-b border-gray-200">
+                  حرمان
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {students.map((student, index) => (
+                <TableRow
+                  key={student.studentId}
+                  className="hover:bg-info-light/30 transition-colors group"
+                >
+                  <TableCell className="text-right font-medium text-gray-500 sticky right-0 z-20 bg-white group-hover:bg-info-light/30 border-l border-l-gray-100">
+                    {index + 1}
+                  </TableCell>
+                  <TableCell className="text-right font-medium sticky right-[50px] z-20 bg-white group-hover:bg-info-light/30 border-l border-l-gray-100">
+                    {student.fullName}
+                  </TableCell>
+                  <TableCell className="text-center  z-20 bg-white group-hover:bg-info-light/30 border-l border-l-gray-100 shadow-[1px_0_5px_-2px_rgba(0,0,0,0.1)]">
+                    <Badge
+                      variant="outline"
+                      className="bg-danger-light text-danger-foreground border-danger font-bold"
+                    >
+                      {student.absenceStats.totalAbsenceWithoutExcuse}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-center">
+                    <Badge
+                      variant="outline"
+                      className="bg-warning-light text-warning-foreground border-warning font-bold"
+                    >
+                      {student.absenceStats.lateCount}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-center">
+                    <Badge
+                      variant="outline"
+                      className="bg-success-light text-success-foreground border-success font-bold"
+                    >
+                      {student.absenceStats.excusedAbsenceCount}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-center">
+                    <Badge
+                      variant="outline"
+                      className="bg-warning-light text-warning-foreground border-warning font-bold"
+                    >
+                      {student.absenceStats.absentCount}
+                    </Badge>
+                  </TableCell>
 
-                    <TableCell className="text-center">
-                      {student.hasFirstAlert ? (
-                        <div className="flex items-center justify-center gap-1 text-red-600">
-                          <AlertTriangle className="h-4 w-4" />
-                          <span className="text-xs font-bold">نعم</span>
-                        </div>
-                      ) : (
-                        <span className="text-gray-400 text-xs">لا</span>
-                      )}
-                    </TableCell>
-                    <TableCell className="text-center">
-                      {student.hasSecondAlert ? (
-                        <div className="flex items-center justify-center gap-1 text-red-600">
-                          <AlertTriangle className="h-4 w-4" />
-                          <span className="text-xs font-bold">نعم</span>
-                        </div>
-                      ) : (
-                        <span className="text-gray-400 text-xs">لا</span>
-                      )}
-                    </TableCell>
-                    <TableCell className="text-center">
-                      {student.hasApprovedDeprivationAlert ? (
-                        <div className="flex items-center justify-center gap-1 text-red-600">
-                          <AlertTriangle className="h-4 w-4" />
-                          <span className="text-xs font-bold">نعم</span>
-                        </div>
-                      ) : (
-                        <span className="text-gray-400 text-xs">لا</span>
-                      )}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
+                  <TableCell className="text-center">
+                    {student.hasFirstAlert ? (
+                      <div className="flex items-center justify-center gap-1 text-danger">
+                        <AlertTriangle className="h-4 w-4" />
+                        <span className="text-xs font-bold">نعم</span>
+                      </div>
+                    ) : (
+                      <span className="text-gray-400 text-xs">لا</span>
+                    )}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    {student.hasSecondAlert ? (
+                      <div className="flex items-center justify-center gap-1 text-danger">
+                        <AlertTriangle className="h-4 w-4" />
+                        <span className="text-xs font-bold">نعم</span>
+                      </div>
+                    ) : (
+                      <span className="text-gray-400 text-xs">لا</span>
+                    )}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    {student.hasApprovedDeprivationAlert ? (
+                      <div className="flex items-center justify-center gap-1 text-danger">
+                        <AlertTriangle className="h-4 w-4" />
+                        <span className="text-xs font-bold">نعم</span>
+                      </div>
+                    ) : (
+                      <span className="text-gray-400 text-xs">لا</span>
+                    )}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </table>
         </div>
 
         <div className="flex justify-end gap-2 px-6 py-4 border-t">

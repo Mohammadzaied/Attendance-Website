@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { ApexOptions } from "apexcharts";
+import { COLORS } from "@/lib/colors";
 
 const ReactApexChart = dynamic(() => import("react-apexcharts"), {
   ssr: false,
@@ -71,13 +72,13 @@ export function SpecializationBarChart({ specializations }: Props) {
     });
 
     // Assign semantic color based on the year
-    if (subLabel.includes("أولى")) barColors.push("#3b82f6");
-    else if (subLabel.includes("ثانية")) barColors.push("#10b981");
-    else if (subLabel.includes("ثالثة")) barColors.push("#f59e0b");
-    else if (subLabel.includes("رابعة")) barColors.push("#8b5cf6");
-    else if (subLabel.includes("خامسة")) barColors.push("#ec4899");
-    else if (subLabel.includes("سادسة")) barColors.push("#14b8a6");
-    else barColors.push("#6366f1");
+    if (subLabel.includes("أولى")) barColors.push(COLORS.year1);
+    else if (subLabel.includes("ثانية")) barColors.push(COLORS.year2);
+    else if (subLabel.includes("ثالثة")) barColors.push(COLORS.year3);
+    else if (subLabel.includes("رابعة")) barColors.push(COLORS.year4);
+    else if (subLabel.includes("خامسة")) barColors.push(COLORS.year5);
+    else if (subLabel.includes("سادسة")) barColors.push(COLORS.year6);
+    else barColors.push(COLORS.yearDefault);
   });
 
   const series = [
@@ -90,7 +91,7 @@ export function SpecializationBarChart({ specializations }: Props) {
   // Create the precise separating lines mapping manually to the dummy spacers
   const separatorAnnotations = separatorKeys.map((c) => ({
     y: c,
-    borderColor: "#cbd5e1", // Light slate gray
+    borderColor: COLORS.chartSeparator,
     strokeDashArray: 4, // clean dotted appearance
     borderWidth: 2,
     offsetX: 0,
@@ -122,7 +123,7 @@ export function SpecializationBarChart({ specializations }: Props) {
       enabled: true,
       textAnchor: "middle",
       style: {
-        colors: ["#ffffff"],
+        colors: [COLORS.chartLabelWhite],
         fontSize: "12px",
         fontFamily: "inherit",
         fontWeight: 600,
@@ -140,7 +141,7 @@ export function SpecializationBarChart({ specializations }: Props) {
         top: 1,
         left: 1,
         blur: 1,
-        color: "#000000",
+        color: COLORS.chartDropShadow,
         opacity: 0.3,
       },
     },
@@ -151,7 +152,7 @@ export function SpecializationBarChart({ specializations }: Props) {
     xaxis: {
       max: 100,
       labels: {
-        style: { fontFamily: "inherit", colors: "#6b7280" },
+        style: { fontFamily: "inherit", colors: COLORS.chartText },
         formatter: (val: string) => `${val}%`, // Percents purely on X-axis globally
       },
       axisBorder: { show: false },
@@ -164,7 +165,7 @@ export function SpecializationBarChart({ specializations }: Props) {
         style: {
           fontFamily: "inherit",
           fontWeight: 700,
-          colors: "#374151",
+          colors: COLORS.chartTextDark,
           fontSize: "13px",
         },
         formatter: (val: any) => {
@@ -175,7 +176,7 @@ export function SpecializationBarChart({ specializations }: Props) {
       },
     },
     grid: {
-      borderColor: "#f1f5f9",
+      borderColor: COLORS.chartGrid,
       strokeDashArray: 4,
       xaxis: { lines: { show: true } }, // Clean percentage lines
       yaxis: { lines: { show: false } }, // Ensure no false positive group lines natively

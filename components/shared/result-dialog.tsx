@@ -41,8 +41,8 @@ export function ResultDialog({
             className={cn(
               "h-16 w-16 rounded-full flex items-center justify-center",
               variant === "destructive"
-                ? "bg-rose-50 text-rose-600"
-                : "bg-emerald-50 text-emerald-600",
+                ? "bg-danger-light text-danger"
+                : "bg-success-light text-success",
             )}
           >
             {variant === "destructive" ? (
@@ -57,8 +57,8 @@ export function ResultDialog({
               className={cn(
                 "text-2xl font-black text-center w-full",
                 variant === "destructive"
-                  ? "text-rose-600"
-                  : "text-emerald-600",
+                  ? "text-danger"
+                  : "text-success",
               )}
             >
               {title}

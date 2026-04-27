@@ -9,7 +9,7 @@ export function SeverityBadge({ severity }: { severity: Severity }) {
     case "high":
       return <Badge variant="destructive">عالي</Badge>;
     case "medium":
-      return <Badge className="bg-amber-500 hover:bg-amber-600">متوسط</Badge>;
+      return <Badge className="bg-warning hover:bg-warning-foreground">متوسط</Badge>;
     case "low":
       return <Badge variant="secondary">منخفض</Badge>;
     default:

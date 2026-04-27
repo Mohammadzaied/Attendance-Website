@@ -33,10 +33,10 @@ export function WarningMobileCard({
   onToggleSelection,
 }: WarningMobileCardProps) {
   return (
-    <Card className="border-none shadow-xl shadow-blue-500/5 bg-white rounded-3xl overflow-hidden">
+    <Card className="border-none shadow-xl shadow-info/5 bg-white rounded-3xl overflow-hidden">
       <CardHeader className="p-4 bg-gray-50/50 border-b border-gray-100">
         <div className="flex items-center gap-3">
-          <div className="h-10 w-10 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600 shrink-0">
+          <div className="h-10 w-10 rounded-xl bg-info-light flex items-center justify-center text-info shrink-0">
             <User className="h-5 w-5" />
           </div>
           <div className="flex-1 min-w-0">
@@ -59,7 +59,7 @@ export function WarningMobileCard({
             <Button
               size="sm"
               variant="outline"
-              className="h-8 px-3 text-xs font-bold border-blue-100 text-blue-600 hover:bg-blue-50 rounded-xl"
+              className="h-8 px-3 text-xs font-bold border-info text-info hover:bg-info-light rounded-xl"
             >
               بيانات الطالب
             </Button>
@@ -86,7 +86,7 @@ export function WarningMobileCard({
                 <span className="text-[9px] font-bold text-gray-400 uppercase">
                   غياب
                 </span>
-                <span className="text-xs font-black text-rose-500">
+                <span className="text-xs font-black text-danger">
                   {subject.absenceCounts.absent}
                 </span>
               </div>
@@ -95,7 +95,7 @@ export function WarningMobileCard({
                 <span className="text-[9px] font-bold text-gray-400 uppercase">
                   تأخير
                 </span>
-                <span className="text-xs font-black text-amber-500">
+                <span className="text-xs font-black text-warning">
                   {subject.absenceCounts.late}
                 </span>
               </div>
@@ -104,7 +104,7 @@ export function WarningMobileCard({
                 <span className="text-[9px] font-bold text-gray-400 uppercase">
                   بعذر
                 </span>
-                <span className="text-xs font-black text-emerald-500">
+                <span className="text-xs font-black text-success">
                   {subject.absenceCounts.excusedAbsence}
                 </span>
               </div>
@@ -122,7 +122,7 @@ export function WarningMobileCard({
                       className={cn(
                         "flex flex-col gap-1.5 bg-white p-2.5 rounded-xl border shadow-sm w-full transition-all duration-200",
                         isSelected
-                          ? "border-blue-200 bg-blue-50/20 ring-1 ring-blue-50"
+                          ? "border-info bg-info-light/20 ring-1 ring-info-light"
                           : "border-gray-100",
                       )}
                     >
@@ -133,17 +133,17 @@ export function WarningMobileCard({
                               type="checkbox"
                               checked={isSelected}
                               onChange={() => onToggleSelection(alert.id)}
-                              className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                              className="w-4 h-4 rounded border-gray-300 text-info focus:ring-info cursor-pointer"
                             />
                           )}
                           <span
                             className={cn(
                               "font-black text-[10px] px-2 py-1 rounded-lg",
                               Number(alert.type) === 1
-                                ? "bg-blue-50 text-blue-600"
+                                ? "bg-info-light text-info"
                                 : Number(alert.type) === 2
-                                  ? "bg-amber-50 text-amber-600"
-                                  : "bg-rose-50 text-rose-600",
+                                  ? "bg-warning-light text-warning"
+                                  : "bg-danger-light text-danger",
                             )}
                           >
                             {translateType(Number(alert.type))}
@@ -155,7 +155,7 @@ export function WarningMobileCard({
                                 size="sm"
                                 variant="outline"
                                 onClick={() => onReview(alert.id)}
-                                className="h-6 px-2 text-[10px] font-bold border-rose-200 text-rose-600 hover:bg-rose-50"
+                                className="h-6 px-2 text-[10px] font-bold border-danger text-danger hover:bg-danger-light"
                               >
                                 مراجعة
                               </Button>
@@ -166,7 +166,7 @@ export function WarningMobileCard({
                               variant="outline"
                               onClick={() => onApprove(alert.id)}
                               disabled={isApproving}
-                              className="h-6 px-2 text-[10px] font-bold border-emerald-200 text-emerald-600 hover:bg-emerald-50"
+                              className="h-6 px-2 text-[10px] font-bold border-success text-success hover:bg-success-light"
                             >
                               {isApproving ? (
                                 <Spinner className="h-3 w-3" />
@@ -188,7 +188,7 @@ export function WarningMobileCard({
                       </div>
 
                       <div className="flex items-center justify-between">
-                        <span className="text-sm font-black text-rose-500 tabular-nums">
+                        <span className="text-sm font-black text-danger tabular-nums">
                           {alert.limitAtIssue} غياب
                         </span>
                         <span
@@ -197,8 +197,8 @@ export function WarningMobileCard({
                             alert.status === 1
                               ? "text-gray-400"
                               : alert.status === 2
-                                ? "text-emerald-500"
-                                : "text-rose-500",
+                                ? "text-success"
+                                : "text-danger",
                           )}
                         >
                           {translateStatus(alert.status)}

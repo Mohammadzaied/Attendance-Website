@@ -61,7 +61,7 @@ export function SubjectsListContent({ role }: SubjectsListContentProps) {
         >
           المواد الدراسية - السنة الأكاديمية{" "}
           {selectedAcademicYearId && (
-            <span className={cn("text-blue-900")}>
+            <span className={cn("text-info-foreground")}>
               ({" "}
               {
                 academicYears.find(
@@ -91,7 +91,7 @@ export function SubjectsListContent({ role }: SubjectsListContentProps) {
       {/* Subjects Grid */}
       {fetchSubjectsState.isLoading ? (
         <div className="flex flex-col items-center justify-center py-20 text-gray-400 gap-4">
-          <div className="h-16 w-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+          <div className="h-16 w-16 border-4 border-info border-t-transparent rounded-full animate-spin"></div>
           <p className="font-medium">جاري تحميل المواد...</p>
         </div>
       ) : subjects.length > 0 ? (
@@ -104,19 +104,19 @@ export function SubjectsListContent({ role }: SubjectsListContentProps) {
             >
               <Card
                 className={cn(
-                  "h-full cursor-pointer transition-all duration-200 group-hover:shadow-lg border-2 border-gray-100 group-hover:border-blue-200",
+                  "h-full cursor-pointer transition-all duration-200 group-hover:shadow-lg border-2 border-gray-100 group-hover:border-info",
                   isDH && "rounded-2xl",
                 )}
               >
                 <CardContent className="p-4">
                   <div className="flex items-start gap-3 mb-3">
-                    <div className="h-10 w-10 rounded-lg flex items-center justify-center shrink-0 bg-blue-50 text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                    <div className="h-10 w-10 rounded-lg flex items-center justify-center shrink-0 bg-info-light text-info group-hover:bg-info group-hover:text-white transition-colors">
                       <Book className="h-5 w-5" />
                     </div>
                     <div className="flex-1 text-right min-w-0">
                       <h3
                         className={cn(
-                          "text-base font-bold text-gray-900 group-hover:text-blue-700 transition-colors mb-0.5 truncate",
+                          "text-base font-bold text-gray-900 group-hover:text-info-foreground transition-colors mb-0.5 truncate",
                           isDH && "font-black",
                         )}
                       >
@@ -138,22 +138,22 @@ export function SubjectsListContent({ role }: SubjectsListContentProps) {
           ))}
         </div>
       ) : (
-        <div className="bg-amber-50 border border-amber-200 rounded-xl p-8 text-center shadow-sm">
+        <div className="bg-warning-light border border-warning rounded-xl p-8 text-center shadow-sm">
           <div className="flex flex-col items-center gap-3">
-            <div className="h-12 w-12 rounded-full bg-amber-100 flex items-center justify-center">
-              <Book className="h-6 w-6 text-amber-600" />
+            <div className="h-12 w-12 rounded-full bg-warning-light flex items-center justify-center">
+              <Book className="h-6 w-6 text-warning" />
             </div>
             <div>
               <p
                 className={cn(
-                  "text-amber-700 font-bold text-lg mb-1",
+                  "text-warning-foreground font-bold text-lg mb-1",
                   isDH && "font-black",
                 )}
               >
                 لا توجد مواد دراسية
               </p>
               <p
-                className={cn("text-amber-600 text-sm", isDH && "font-medium")}
+                className={cn("text-warning text-sm", isDH && "font-medium")}
               >
                 لا توجد مواد دراسية مسجلة لهذه السنة الأكاديمية
               </p>

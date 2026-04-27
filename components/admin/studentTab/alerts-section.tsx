@@ -55,7 +55,7 @@ export function AlertsSection({
     <div className="space-y-4">
       {/* Subject Filter for Alerts */}
       {subjectsWithAlerts.length > 0 && (
-        <div className="flex flex-wrap gap-2 mb-6 p-4 bg-white rounded-2xl border border-blue-100/50">
+        <div className="flex flex-wrap gap-2 mb-6 p-4 bg-white rounded-2xl border border-info-light/50">
           <Button
             variant={selectedAlertSubjectId === "all" ? "default" : "outline"}
             size="sm"
@@ -63,8 +63,8 @@ export function AlertsSection({
             className={cn(
               "rounded-xl font-bold h-9",
               selectedAlertSubjectId === "all"
-                ? "bg-blue-600 hover:bg-blue-700"
-                : "border-blue-200 text-blue-700 hover:bg-amber-50",
+                ? "bg-info hover:bg-info-foreground"
+                : "border-info text-info hover:bg-info-light",
             )}
           >
             الكل
@@ -82,8 +82,8 @@ export function AlertsSection({
               className={cn(
                 "rounded-xl font-bold h-9",
                 selectedAlertSubjectId === s.subjectId.toString()
-                  ? "bg-blue-600 hover:bg-blue-700"
-                  : "border-blue-200 text-blue-700 hover:bg-amber-50",
+                  ? "bg-info hover:bg-info-foreground"
+                  : "border-info text-info hover:bg-info-light",
               )}
             >
               {s.subjectName}
@@ -108,17 +108,17 @@ export function AlertsSection({
               {typeGroup.alerts.map((alert: UnifiedAlertItem) => (
                 <Card
                   key={alert.id}
-                  className="border-none shadow-sm bg-white border-r-4 border-blue-500 overflow-hidden"
+                  className="border-none shadow-sm bg-white border-r-4 border-info overflow-hidden"
                 >
                   <CardContent className="p-2">
                     <div className="flex items-start gap-4">
                       <div
                         className={`h-12 w-12 rounded-2xl ${
                           alert.status === 2
-                            ? "bg-green-500"
+                            ? "bg-success"
                             : alert.status === 3
-                              ? "bg-red-500"
-                              : "bg-amber-300"
+                              ? "bg-danger"
+                              : "bg-warning"
                         } text-white flex items-center justify-center shrink-0`}
                       >
                         {alert.status === 2 ? (
@@ -134,19 +134,22 @@ export function AlertsSection({
                           <h4 className="text-lg font-bold ">
                             {translateAlertType(typeGroup.alertType)}
                             {alert.status === 3 ? (
-                              <span className="text-red-500">
+                              <span className="text-danger">
                                 {" "}
                                 {" (مرفوض)"}{" "}
                               </span>
                             ) : alert.status === 2 ? (
-                              <span></span>
+                              <span className="text-success">
+                                {" "}
+                                {" (مقبول)"}{" "}
+                              </span>
                             ) : (
-                              <span className="text-amber-300">
+                              <span className="text-warning">
                                 {" (قيد الانتظار)"}
                               </span>
                             )}
                           </h4>
-                          <Badge className="bg-blue-200 text-blue-800 border-none">
+                          <Badge className="bg-info-light text-info border-none">
                             {new Date(alert.createdAt).toLocaleDateString(
                               "en-GB",
                               {
@@ -160,14 +163,14 @@ export function AlertsSection({
                         <p className="text-gray-700 leading-relaxed">
                           صدر هذا الإنذار لتجاوز الطالب نسبة الغياب المسموح بها
                           :{" "}
-                          <span className="font-bold text-red-500">
+                          <span className="font-bold text-danger">
                             عدد الغيابات {alert.limitAtIssue}
                           </span>
                         </p>
                         {alert.isExtended && (
-                          <div className="mt-4 p-3 bg-white/60 rounded-xl border border-blue-200/50">
-                            <div className="text-sm text-blue-800 font-bold flex items-center gap-2">
-                              <div className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+                          <div className="mt-4 p-3 bg-info-light/60 rounded-xl border border-info-light/50">
+                            <div className="text-sm text-info font-bold flex items-center gap-2">
+                              <div className="w-1.5 h-1.5 rounded-full bg-info" />
                               تم تمديد الحد المسموح بمقدار{" "}
                               {alert.extensionExtraClasses} حصص إضافية.
                             </div>
@@ -184,7 +187,7 @@ export function AlertsSection({
 
         {filteredAlerts.length === 0 && (
           <div className="flex flex-col items-center justify-center py-20 text-center opacity-60">
-            <div className="h-20 w-20 rounded-full bg-emerald-50 flex items-center justify-center mb-4 text-blue-500">
+            <div className="h-20 w-20 rounded-full bg-success-light flex items-center justify-center mb-4 text-info">
               <CheckCircle2 className="h-10 w-10" />
             </div>
             <h4 className="text-xl font-bold text-gray-900">

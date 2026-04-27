@@ -1,28 +1,29 @@
 "use client";
 
 import { AbsenceDay, MStudentAbsence } from "@/features/specialization";
+import { COLORS } from "@/lib/colors";
 import { useState } from "react";
 
 const STATUS_MAP: Record<
   string,
   { label: string; color: string; bg: string; dot: string }
 > = {
-  Absent: { label: "غياب", color: "#dc2626", bg: "#fef2f2", dot: "#ef4444" },
-  Late: { label: "تأخر", color: "#d97706", bg: "#fffbeb", dot: "#f59e0b" },
+  Absent: { label: "غياب", color: COLORS.danger, bg: COLORS.dangerLight, dot: COLORS.dangerDot },
+  Late: { label: "تأخر", color: COLORS.warningForeground, bg: COLORS.warningLight, dot: COLORS.warning },
   ExcusedAbsence: {
     label: "غياب معذور",
-    color: "#059669",
-    bg: "#f0fdf4",
-    dot: "#10b981",
+    color: COLORS.successForeground,
+    bg: COLORS.successLight,
+    dot: COLORS.success,
   },
 };
 
 function StatusBadge({ status }: { status: string }) {
   const s = STATUS_MAP[status] ?? {
     label: status,
-    color: "#4b5563",
-    bg: "#f3f4f6",
-    dot: "#9ca3af",
+    color: COLORS.neutralText,
+    bg: COLORS.neutralBg,
+    dot: COLORS.neutralDot,
   };
   return (
     <span
@@ -49,11 +50,11 @@ function DateRow({ day, rowIndex }: { day: AbsenceDay; rowIndex: number }) {
       <tr
         onClick={() => setExpanded((v) => !v)}
         style={{
-          background: rowIndex % 2 === 0 ? "#ffffff" : "#f9fafb",
+          background: rowIndex % 2 === 0 ? COLORS.tableRowWhite : COLORS.tableRowAlt,
           cursor: "pointer",
           transition: "background 0.15s",
         }}
-        className="hover:bg-indigo-50/60 border-b border-gray-100"
+        className="hover:bg-info-light/60 border-b border-gray-100"
       >
         {/* Date */}
         <td className="px-4 py-3 text-sm font-semibold text-gray-800 whitespace-nowrap">
@@ -63,7 +64,7 @@ function DateRow({ day, rowIndex }: { day: AbsenceDay; rowIndex: number }) {
         <td className="px-4 py-3 text-sm text-gray-500">{day.dayOfWeek}</td>
         {/* Lessons count */}
         <td className="px-4 py-3 text-center">
-          <span className="inline-block bg-indigo-100 text-indigo-700 text-xs font-bold px-2.5 py-1 rounded-full">
+          <span className="inline-block bg-info-light text-info text-xs font-bold px-2.5 py-1 rounded-full">
             {day.lessons.length} محاضرة
           </span>
         </td>
@@ -97,7 +98,7 @@ function DateRow({ day, rowIndex }: { day: AbsenceDay; rowIndex: number }) {
 
       {/* Expanded lessons */}
       {expanded && (
-        <tr style={{ background: "#f0f4ff" }}>
+        <tr style={{ background: COLORS.tableExpandedBg }}>
           <td colSpan={5} className="px-6 py-3">
             <div className="flex flex-wrap gap-2">
               {day.lessons.map((lesson) => {
@@ -189,7 +190,7 @@ export function AbsenceDayTable({ studentAbsence }: AbsenceDayTableProps) {
               className="px-4 py-2 text-xs text-gray-500 font-medium text-right"
             >
               الإجمالي:{" "}
-              <span className="font-bold text-red-600">
+              <span className="font-bold text-danger">
                 {studentAbsence.totalAbsences} غياب
               </span>
             </td>
