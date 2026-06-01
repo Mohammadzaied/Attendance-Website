@@ -35,7 +35,7 @@ export interface CreateSubjectDto {
   specializationId: number;
   semesterId: number;
   studyYear: number;
-  teacherId: string;
+  teacherIds: string[];
   numberOfHours: number;
 }
 
@@ -43,7 +43,7 @@ export interface CreateSubjectToTeacherDto {
   name: string;
   specializationId: number;
   studyYear: number;
-  teacherId: string;
+  teacherIds: string[];
   numberOfHours: number;
 }
 
@@ -62,8 +62,10 @@ export interface CreateSubjectToTeacherDto {
 export interface DetailedSubjectResponse {
   subjectId: number;
   name: string;
-  teacherId: string;
-  teacherName: string;
+  teachers: {
+    userId: string;
+    fullName: string;
+  }[];
   numberOfHours: number;
   specializationId: number;
   specializationName: string;
@@ -76,13 +78,12 @@ export interface DetailedSubjectResponse {
   academicYear: number;
   studyYear: number;
   createdAt: string;
-  // schedule: ScheduleDayResponse[];
   enrolledStudentsCount: number;
 }
 
 export interface SubjectUpdateDto {
   name: string;
-  teacherId: string;
+  teacherIds: string[];
   numberOfHours: number;
 }
 

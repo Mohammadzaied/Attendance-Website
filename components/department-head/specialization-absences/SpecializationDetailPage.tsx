@@ -17,6 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Loader2 } from "lucide-react";
+import { formatName } from "@/lib/utils";
 
 type StudyYear = 1 | 2;
 
@@ -342,11 +343,15 @@ export function SpecializationDetailPage({ specializationId }: Props) {
               <SelectContent>
                 <SelectItem value="all">📦 ملخص جميع المواد</SelectItem>
                 {subjects.map((sub) => {
-                  const nameParts = (sub.teacherName || "").split(" ");
                   const formattedTeacherName =
-                    nameParts.length > 1
-                      ? `${nameParts[0]} ${nameParts[nameParts.length - 1]}`
-                      : sub.teacherName;
+                    sub.teachers.length > 1
+                      ? sub.teachers
+                          ?.map((t) =>
+                            t.fullName.split(" ").slice(0, 1).join(" "),
+                          )
+                          .join(" , ") || "غير محدد"
+                      : sub.teachers?.map((t) => formatName(t.fullName)) ||
+                        "غير محدد";
 
                   return (
                     <SelectItem

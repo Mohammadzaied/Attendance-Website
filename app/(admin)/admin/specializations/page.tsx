@@ -3,5 +3,5 @@
 import { SpecializationsListPage } from "@/components/department-head/specialization-absences/SpecializationsListPage";
 
 export default function DHSpecializationsPage() {
-  return <SpecializationsListPage role="department-head" />;
+  return <SpecializationsListPage role="admin" />;
 }

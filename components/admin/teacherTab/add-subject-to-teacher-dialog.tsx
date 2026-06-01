@@ -26,6 +26,7 @@ import {
 } from "@/features/specialization/specializationsSlice";
 import { SpecializationSearchSelect } from "./specialization-search-select";
 import { TeacherResponse } from "@/features/admin";
+import { MultiTeacherSearchSelect } from "../specializationTab/multi-teacher-search-select";
 
 interface AddSubjectToTeacherDialogProps {
   teacher: TeacherResponse | null;
@@ -50,12 +51,14 @@ export function AddSubjectToTeacherDialog({
     specializationId: number | "";
     studyYear: string;
     numberOfHours: number;
+    teachers: { userId: string; fullName: string }[];
   };
   const emptyRow = (): SubjectRow => ({
     name: "",
     specializationId: "",
     studyYear: "1",
     numberOfHours: 3,
+    teachers: teacher ? [{ userId: teacher.userId, fullName: teacher.fullName }] : [],
   });
 
   const [subjectRows, setSubjectRows] = useState<SubjectRow[]>([emptyRow()]);
@@ -64,7 +67,7 @@ export function AddSubjectToTeacherDialog({
   const updateSubjectRow = (
     index: number,
     field: keyof SubjectRow,
-    value: string | number,
+    value: any,
   ) => {
     setSubjectRows((rows) =>
       rows.map((r, i) => (i === index ? { ...r, [field]: value } : r)),
@@ -97,7 +100,8 @@ export function AddSubjectToTeacherDialog({
         !r.name.trim() ||
         r.specializationId === "" ||
         !r.studyYear ||
-        !r.numberOfHours,
+        !r.numberOfHours ||
+        r.teachers.length === 0,
     );
 
     if (invalidRow) {
@@ -112,7 +116,7 @@ export function AddSubjectToTeacherDialog({
             name: r.name,
             specializationId: Number(r.specializationId),
             studyYear: Number(r.studyYear),
-            teacherId: teacher.userId,
+            teacherIds: r.teachers.map((t) => t.userId),
             numberOfHours: Number(r.numberOfHours),
           })),
         ),
@@ -132,7 +136,7 @@ export function AddSubjectToTeacherDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="sm:max-w-[800px] w-[95vw] max-h-[90vh] overflow-hidden flex flex-col"
+        className="sm:max-w-[1000px] w-[95vw] max-h-[90vh] overflow-hidden flex flex-col"
         dir="rtl"
       >
         <DialogHeader>
@@ -150,56 +154,68 @@ export function AddSubjectToTeacherDialog({
           )}
 
           {/* Column headers */}
-          <div className="grid grid-cols-[1fr_2fr_100px_80px_36px] gap-2 mb-2 px-1 text-right">
+          <div className="hidden md:grid grid-cols-[1.5fr_1.5fr_2fr_100px_80px_36px] gap-2 mb-2 px-1 text-right">
             <span className="text-sm font-bold text-gray-600">
               التخصص <span className="text-danger">*</span>
             </span>
             <span className="text-sm font-bold text-gray-600">
               اسم المادة <span className="text-danger">*</span>
             </span>
+            <span className="text-sm font-bold text-gray-600">
+              المعلمين <span className="text-danger">*</span>
+            </span>
             <span className="text-sm font-bold text-gray-600">السنة</span>
             <span className="text-sm font-bold text-gray-600">عدد الحصص</span>
             <span />
           </div>
 
-          <div className="space-y-2 max-h-[50vh] overflow-y-auto pr-1">
+          <div className="space-y-2 max-h-[60vh] overflow-y-auto pr-1">
             {subjectRows.map((row, index) => (
               <div
                 key={index}
-                className="grid grid-cols-[1fr_2fr_100px_80px_36px] gap-2 items-center bg-gray-50/60 rounded-lg p-2 border border-gray-100 text-right"
+                className="grid grid-cols-1 md:grid-cols-[1.5fr_1.5fr_2fr_100px_80px_36px] gap-2 items-center bg-gray-50/60 rounded-lg p-2 border border-gray-100 text-right"
               >
-                <div className="w-[180px]">
-                  <SpecializationSearchSelect
-                    specializations={specializations}
-                    value={row.specializationId}
-                    onValueChange={(val) => {
-                      const spec = specializations.find(
-                        (s) => s.specializationId === val,
-                      );
-                      const updates: Partial<SubjectRow> = {
-                        specializationId: val,
-                      };
-                      if (spec?.yearsNumber === 1 && row.studyYear === "2") {
-                        updates.studyYear = "1";
-                      }
-                      setSubjectRows((rows) =>
-                        rows.map((r, i) =>
-                          i === index ? { ...r, ...updates } : r,
-                        ),
-                      );
-                    }}
-                  />
+                <div className="md:hidden font-bold text-sm text-gray-600 mb-1">
+                  المادة {index + 1}
                 </div>
+                
+                <SpecializationSearchSelect
+                  specializations={specializations}
+                  value={row.specializationId}
+                  onValueChange={(val) => {
+                    const spec = specializations.find(
+                      (s) => s.specializationId === val,
+                    );
+                    const updates: Partial<SubjectRow> = {
+                      specializationId: val,
+                    };
+                    if (spec?.yearsNumber === 1 && row.studyYear === "2") {
+                      updates.studyYear = "1";
+                    }
+                    setSubjectRows((rows) =>
+                      rows.map((r, i) =>
+                        i === index ? { ...r, ...updates } : r,
+                      ),
+                    );
+                  }}
+                />
 
                 <Input
                   id="name"
-                  placeholder="مثال: برمجة الويب"
+                  placeholder="اسم المادة"
                   value={row.name}
                   onChange={(e) => {
                     updateSubjectRow(index, "name", e.target.value);
                   }}
                   className="h-9! bg-white border-gray-200 text-right w-full"
                   dir="rtl"
+                />
+
+                <MultiTeacherSearchSelect
+                  selectedTeachers={row.teachers}
+                  onTeachersChange={(teachers) => {
+                    updateSubjectRow(index, "teachers", teachers);
+                  }}
                 />
 
                 <Select
@@ -209,7 +225,7 @@ export function AddSubjectToTeacherDialog({
                     updateSubjectRow(index, "studyYear", val);
                   }}
                 >
-                  <SelectTrigger className="h-11 bg-white border-gray-200">
+                  <SelectTrigger className="h-9 bg-white border-gray-200">
                     <SelectValue placeholder="سنة" />
                   </SelectTrigger>
                   <SelectContent dir="rtl">
@@ -245,7 +261,7 @@ export function AddSubjectToTeacherDialog({
                   size="icon"
                   disabled={subjectRows.length === 1}
                   onClick={() => removeSubjectRow(index)}
-                  className="h-9 w-9 text-danger hover:text-danger-foreground hover:bg-danger-light rounded-lg disabled:opacity-30"
+                  className="h-9 w-9 text-danger hover:text-danger-foreground hover:bg-danger-light rounded-lg disabled:opacity-30 self-end md:self-auto"
                   type="button"
                 >
                   <Trash2 className="h-4 w-4" />

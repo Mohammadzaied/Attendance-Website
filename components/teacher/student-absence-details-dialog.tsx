@@ -121,7 +121,7 @@ export function StudentAbsenceDetailsDialog({
                 <TableHead className="sticky top-0 right-[50px] z-30 bg-gray-100 text-right font-bold text-gray-900 w-[200px] min-w-[200px] border-b border-gray-200 border-l border-l-gray-200/50">
                   اسم الطالب
                 </TableHead>
-                <TableHead className=" z-30 bg-gray-100 text-center font-bold text-gray-900 w-[120px] min-w-[120px] border-b border-gray-200 border-l border-l-gray-200/50">
+                <TableHead className="sticky top-0  z-10 bg-gray-100 text-center font-bold text-gray-900 w-[120px] min-w-[120px] border-b border-gray-200 border-l border-l-gray-200/50">
                   مجموع الغيابات
                 </TableHead>
                 <TableHead className="sticky top-0 z-10 bg-gray-50 text-center font-bold text-gray-900 w-24 border-b border-gray-200">

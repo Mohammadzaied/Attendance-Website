@@ -127,7 +127,7 @@ export function TeachersTable({
     if (!editingSubject) return false;
     return (
       subjectForm.name !== editingSubject.name ||
-      subjectForm.teacherId !== editingSubject.teacherId ||
+      subjectForm.teacherId !== editingSubject.teachers?.[0]?.userId ||
       subjectForm.numberOfHours !== editingSubject.numberOfHours
     );
   }, [subjectForm, editingSubject]);
@@ -226,8 +226,8 @@ export function TeachersTable({
     if (editingSubject) {
       setSubjectForm({
         name: editingSubject.name || "",
-        teacherId: editingSubject.teacherId || "",
-        teacherName: editingSubject.teacherName || "",
+        teacherId: editingSubject.teachers?.[0]?.userId || "",
+        teacherName: editingSubject.teachers?.[0]?.fullName || "",
         numberOfHours: editingSubject.numberOfHours || 3,
       });
     }

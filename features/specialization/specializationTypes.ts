@@ -90,8 +90,7 @@ export interface SpecializationSubject {
   subjectId: number;
   name: string;
   studyYear: number;
-  teacherId: string;
-  teacherName: string;
+  teachers: { userId: string; fullName: string }[];
   numberOfHours: number;
   semesterId: number;
 }

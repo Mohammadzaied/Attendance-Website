@@ -120,14 +120,13 @@ export function SubjectsListContent({ role }: SubjectsListContentProps) {
                           isDH && "font-black",
                         )}
                       >
-                        {subject.name} - {subject.specializationName}
+                        {subject.name}
                       </h3>
-                      <p
-                        className={cn(
-                          "text-xs text-gray-500",
-                          isDH && "font-medium",
-                        )}
-                      >
+                      <p className={cn("text-xl text-md text-info-foreground")}>
+                        {subject.specializationName} -{" "}
+                        {subject.studyYear == 1 ? "سنة أولى " : "سنة ثانية"}
+                      </p>
+                      <p className={cn("text-xs text-gray-500")}>
                         {subject.numberOfHours} حصص معتمدة
                       </p>
                     </div>
@@ -152,9 +151,7 @@ export function SubjectsListContent({ role }: SubjectsListContentProps) {
               >
                 لا توجد مواد دراسية
               </p>
-              <p
-                className={cn("text-warning text-sm", isDH && "font-medium")}
-              >
+              <p className={cn("text-warning text-sm", isDH && "font-medium")}>
                 لا توجد مواد دراسية مسجلة لهذه السنة الأكاديمية
               </p>
             </div>

@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/select";
 import { Calendar, BookOpen, Clock, AlertCircle, User } from "lucide-react";
 import { SubjectAbsenceDetailsDialog } from "@/components/student/subject-absence-details-dialog";
+import { formatName } from "@/lib/utils";
 
 export default function StudentAbsencesPage() {
   const dispatch = useAppDispatch();
@@ -250,8 +251,16 @@ export default function StudentAbsencesPage() {
                       <BookOpen className="h-5 w-5 text-blue-600" />
                     </div>
                     <div className="text-right flex-1 mr-3">
-                      <p className="text-xs text-gray-500 mb-0.5">
-                        {subject.teacherName}
+                      <p className="text-xs text-gray-500 mb-0.5 truncate max-w-[150px]">
+                        {subject.teachers.length > 1
+                          ? subject.teachers
+                              ?.map((t) =>
+                                t.fullName.split(" ").slice(0, 1).join(" "),
+                              )
+                              .join(" , ") || "غير محدد"
+                          : subject.teachers?.map((t) =>
+                              formatName(t.fullName),
+                            ) || "غير محدد"}
                       </p>
                       <p className="text-base font-bold text-gray-900">
                         {subject.subjectName}

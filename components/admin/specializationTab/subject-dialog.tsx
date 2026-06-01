@@ -18,7 +18,7 @@ import {
   createSubjectsBatchThunk,
   updateSubjectThunk,
 } from "@/features/specialization";
-import { TeacherSearchSelect } from "./teacher-search-select";
+import { MultiTeacherSearchSelect } from "./multi-teacher-search-select";
 import { Major } from "@/features/specialization";
 import { StudyYear, DetailedSubjectResponse } from "@/features/subject";
 import { StatusType } from "./status-dialog";
@@ -38,15 +38,13 @@ interface SubjectDialogProps {
 
 type SubjectRow = {
   name: string;
-  teacherId: string;
-  teacherName: string;
+  teachers: { userId: string; fullName: string }[];
   numberOfHours: number;
 };
 
 const emptyRow = (): SubjectRow => ({
   name: "",
-  teacherId: "",
-  teacherName: "",
+  teachers: [],
   numberOfHours: 3,
 });
 
@@ -61,16 +59,19 @@ export function SubjectDialog({
   const dispatch = useAppDispatch();
   const [subjectForm, setSubjectForm] = useState({
     name: "",
-    teacherId: "",
-    teacherName: "",
+    teachers: [] as { userId: string; fullName: string }[],
     numberOfHours: 3,
   });
 
   const hasChanges = useMemo(() => {
     if (!editingSubject) return false;
+    
+    const currentTeacherIds = subjectForm.teachers.map((t) => t.userId).sort().join(",");
+    const originalTeacherIds = (editingSubject.teachers || []).map((t) => t.userId).sort().join(",");
+
     return (
       subjectForm.name !== editingSubject.name ||
-      subjectForm.teacherId !== (editingSubject.teacherId || "") ||
+      currentTeacherIds !== originalTeacherIds ||
       subjectForm.numberOfHours !== editingSubject.numberOfHours
     );
   }, [subjectForm, editingSubject]);
@@ -85,8 +86,7 @@ export function SubjectDialog({
     if (editingSubject) {
       setSubjectForm({
         name: editingSubject.name,
-        teacherId: editingSubject.teacherId || "",
-        teacherName: editingSubject.teacherName || "",
+        teachers: editingSubject.teachers || [],
         numberOfHours: editingSubject.numberOfHours,
       });
     } else {
@@ -97,7 +97,7 @@ export function SubjectDialog({
   const updateSubjectRow = (
     index: number,
     field: keyof SubjectRow,
-    value: string | number,
+    value: string | number | { userId: string; fullName: string }[],
   ) => {
     setSubjectRows((rows) =>
       rows.map((r, i) => (i === index ? { ...r, [field]: value } : r)),
@@ -116,7 +116,7 @@ export function SubjectDialog({
     if (!editingSubject) {
       // Batch add mode
       const invalidRow = subjectRows.find(
-        (r) => !r.name.trim() || !r.teacherId,
+        (r) => !r.name.trim() || r.teachers.length === 0,
       );
       if (invalidRow) {
         onSuccess({
@@ -135,7 +135,7 @@ export function SubjectDialog({
               specializationId: Number(major.id),
               semesterId: year.semesterId,
               studyYear: year.studyYear,
-              teacherId: r.teacherId,
+              teacherIds: r.teachers.map((t) => t.userId),
               numberOfHours: r.numberOfHours,
             })),
           ),
@@ -156,7 +156,7 @@ export function SubjectDialog({
       }
     } else {
       // Edit single subject
-      if (!subjectForm.name.trim() || !subjectForm.teacherId) {
+      if (!subjectForm.name.trim() || subjectForm.teachers.length === 0) {
         onSuccess({
           title: "تنبيه التحقق",
           message: "يرجى إدخال اسم المادة واختيار المعلم",
@@ -171,7 +171,7 @@ export function SubjectDialog({
             id: editingSubject.subjectId,
             data: {
               name: subjectForm.name,
-              teacherId: subjectForm.teacherId,
+              teacherIds: subjectForm.teachers.map((t) => t.userId),
               numberOfHours: subjectForm.numberOfHours,
             },
           }),
@@ -211,10 +211,10 @@ export function SubjectDialog({
         </DialogHeader>
 
         {editingSubject && (
-          <div className="grid gap-4 py-4" dir="rtl">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <div className="py-4" dir="rtl">
+            <div className="flex flex-col gap-4 bg-gray-50/60 rounded-xl p-5 border border-gray-100">
               <div className="grid gap-1.5">
-                <Label className="text-right text-sm">اسم المادة</Label>
+                <Label className="text-right text-sm text-gray-700 font-medium">اسم المادة</Label>
                 <Input
                   value={subjectForm.name}
                   onChange={(e) =>
@@ -224,21 +224,19 @@ export function SubjectDialog({
                 />
               </div>
               <div className="grid gap-1.5">
-                <Label className="text-right text-sm">المعلم</Label>
-                <TeacherSearchSelect
-                  value={subjectForm.teacherId}
-                  initialName={subjectForm.teacherName}
-                  onValueChange={(id, name) => {
+                <Label className="text-right text-sm text-gray-700 font-medium">المعلمين</Label>
+                <MultiTeacherSearchSelect
+                  selectedTeachers={subjectForm.teachers}
+                  onTeachersChange={(teachers) => {
                     setSubjectForm({
                       ...subjectForm,
-                      teacherId: id,
-                      teacherName: name,
+                      teachers,
                     });
                   }}
                 />
               </div>
               <div className="grid gap-1.5">
-                <Label className="text-right text-sm">عدد الحصص</Label>
+                <Label className="text-right text-sm text-gray-700 font-medium">عدد الحصص</Label>
                 <Input
                   type="number"
                   value={subjectForm.numberOfHours}
@@ -257,64 +255,70 @@ export function SubjectDialog({
 
         {!editingSubject && (
           <div className="py-4 flex-1 flex flex-col overflow-hidden" dir="rtl">
-            <div className="hidden md:grid grid-cols-[1fr_1fr_100px_36px] gap-2 mb-2 px-1">
-              <span className="text-sm font-bold text-gray-600">
-                اسم المادة <span className="text-danger">*</span>
-              </span>
-              <span className="text-sm font-bold text-gray-600">
-                المعلم <span className="text-danger">*</span>
-              </span>
-              <span className="text-sm font-bold text-gray-600">عدد الحصص</span>
-              <span />
-            </div>
-
-            <div className="overflow-y-auto max-h-[50vh] space-y-2 pr-1">
+            <div className="overflow-y-auto max-h-[60vh] space-y-4 pr-1">
               {subjectRows.map((row, index) => (
                 <div
                   key={index}
-                  className="grid grid-cols-1 md:grid-cols-[1fr_1fr_100px_36px] gap-2 items-center bg-gray-50/60 rounded-lg p-2 border border-gray-100"
+                  className="flex flex-col gap-3 bg-gray-50/60 rounded-xl p-4 border border-gray-100 relative"
                 >
-                  <div className="md:hidden font-bold text-sm text-gray-600 mb-1">
-                    المادة {index + 1}
+                  <div className="flex items-center justify-between mb-1">
+                    <div className="font-bold text-sm text-gray-700">
+                      المادة {index + 1}
+                    </div>
+                    {subjectRows.length > 1 && (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => removeSubjectRow(index)}
+                        className="h-8 w-8 text-danger hover:text-danger-foreground hover:bg-danger-light rounded-lg absolute top-2 left-2"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    )}
                   </div>
-                  <Input
-                    placeholder="اسم المادة"
-                    value={row.name}
-                    onChange={(e) =>
-                      updateSubjectRow(index, "name", e.target.value)
-                    }
-                    className="text-right h-9 bg-white"
-                  />
-                  <TeacherSearchSelect
-                    value={row.teacherId}
-                    initialName={row.teacherName}
-                    onValueChange={(id, name) => {
-                      updateSubjectRow(index, "teacherId", id);
-                      updateSubjectRow(index, "teacherName", name);
-                    }}
-                  />
-                  <Input
-                    type="number"
-                    min={1}
-                    value={row.numberOfHours}
-                    onChange={(e) =>
-                      updateSubjectRow(
-                        index,
-                        "numberOfHours",
-                        Number(e.target.value),
-                      )
-                    }
-                    className="text-right h-9 bg-white"
-                  />
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    disabled={subjectRows.length === 1}
-                    onClick={() => removeSubjectRow(index)}
-                    className="h-9 w-9 text-danger hover:text-danger-foreground hover:bg-danger-light rounded-lg disabled:opacity-30 self-end md:self-auto"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+                  
+                  <div className="grid gap-1.5">
+                    <Label className="text-right text-sm text-gray-600">
+                      اسم المادة <span className="text-danger">*</span>
+                    </Label>
+                    <Input
+                      placeholder="أدخل اسم المادة..."
+                      value={row.name}
+                      onChange={(e) =>
+                        updateSubjectRow(index, "name", e.target.value)
+                      }
+                      className="text-right h-10 bg-white"
+                    />
+                  </div>
+                  
+                  <div className="grid gap-1.5">
+                    <Label className="text-right text-sm text-gray-600">
+                      المعلمين <span className="text-danger">*</span>
+                    </Label>
+                    <MultiTeacherSearchSelect
+                      selectedTeachers={row.teachers}
+                      onTeachersChange={(teachers) => {
+                        updateSubjectRow(index, "teachers", teachers);
+                      }}
+                    />
+                  </div>
+                  
+                  <div className="grid gap-1.5">
+                    <Label className="text-right text-sm text-gray-600">عدد الحصص</Label>
+                    <Input
+                      type="number"
+                      min={1}
+                      value={row.numberOfHours}
+                      onChange={(e) =>
+                        updateSubjectRow(
+                          index,
+                          "numberOfHours",
+                          Number(e.target.value),
+                        )
+                      }
+                      className="text-right h-10 bg-white"
+                    />
+                  </div>
                 </div>
               ))}
             </div>

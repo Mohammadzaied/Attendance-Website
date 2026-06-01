@@ -154,7 +154,7 @@ function SpecializationCard({
   );
 }
 
-export function SpecializationsListPage() {
+export function SpecializationsListPage({ role }: { role: string }) {
   const router = useRouter();
   const dispatch = useAppDispatch();
 
@@ -165,6 +165,11 @@ export function SpecializationsListPage() {
   const { isLoading, error } = useAppSelector(
     (state) => state.specializations.fetchHeadOfDepartmentSpecializationsState,
   );
+  const [search, setSearch] = useState('');
+  const filteredSpecializations = useMemo(() => 
+    specializations.filter(spec => 
+      spec.name?.toLowerCase().includes(search.toLowerCase())
+    ), [specializations, search]);
 
   useEffect(() => {
     dispatch(fetchHeadOfDepartmentSpecializations());
@@ -201,10 +206,6 @@ export function SpecializationsListPage() {
           <h1 className="text-4xl font-black text-gray-900 mb-3 tracking-tight">
             التخصصات الدراسية
           </h1>
-          {/* <p className="text-gray-500 text-sm max-w-2xl font-bold leading-relaxed">
-            البوابة الإدارية لمتابعة غيابات الطلاب والتحصيل الدراسي. يمكنك تصفح
-            التخصصات المتاحة والوصول إلى التقارير التفصيلية لكل مادة.
-          </p> */}
 
           <div className="mt-8 flex items-center gap-6">
             <div className="flex flex-col">
@@ -239,35 +240,36 @@ export function SpecializationsListPage() {
       </div>
 
       {/* Action Bar */}
-      {/* <div className="flex flex-col sm:flex-row items-center gap-4 mb-8">
-        <div className="relative flex-1 w-full">
-          <svg
-            className="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+      {role === "admin" ? (
+        <div className="flex flex-col sm:flex-row items-center gap-4 mb-8">
+          <div className="relative flex-1 w-full">
+            <svg
+              className="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
+            </svg>
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="البحث عن اسم التخصص..."
+              className="w-full bg-white border-2 border-gray-100 rounded-xl pr-12 pl-4 py-3 text-sm text-gray-900 font-bold placeholder-gray-400 focus:outline-none focus:border-blue-600 transition-all shadow-sm"
             />
-          </svg>
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="البحث عن اسم التخصص..."
-            className="w-full bg-white border-2 border-gray-100 rounded-xl pr-12 pl-4 py-3 text-sm text-gray-900 font-bold placeholder-gray-400 focus:outline-none focus:border-blue-600 transition-all shadow-sm"
-          />
+          </div>
         </div>
-      </div> */}
-
+      ) : null}
       {/* Cards grid */}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {isLoading ? (
+                {isLoading ? (
           // Loading Skeletons
           Array.from({ length: 4 }).map((_, i) => (
             <div
@@ -285,21 +287,25 @@ export function SpecializationsListPage() {
               إعادة المحاولة
             </button>
           </div>
-        ) : specializations.length === 0 ? (
+        ) : filteredSpecializations.length === 0 ? (
           <div className="col-span-full bg-white rounded-2xl border-2 border-dashed border-gray-200 py-20 text-center">
             <p className="text-slate-400 font-black text-lg">
               لا يوجد تخصصات متاحة للقسم حالياً
             </p>
           </div>
         ) : (
-          specializations.map((spec) => (
+          filteredSpecializations.map((spec) => (
             <SpecializationCard
               key={spec.specializationId}
               spec={spec}
               onClick={() =>
-                router.push(
-                  `/department-head/specializations/${spec.specializationId}`,
-                )
+                role === "department-head"
+                  ? router.push(
+                      `/department-head/specializations/${spec.specializationId}`,
+                    )
+                  : router.push(
+                      `/admin/specializations/${spec.specializationId}`,
+                    )
               }
             />
           ))

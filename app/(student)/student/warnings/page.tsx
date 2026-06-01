@@ -23,6 +23,7 @@ import {
   Clock,
   CheckCircle2,
 } from "lucide-react";
+import { formatName } from "@/lib/utils";
 
 const getAlertTypeLabel = (type: string | number): string => {
   switch (type) {
@@ -245,7 +246,14 @@ export default function StudentWarningsPage() {
                   </div>
                 </div>
                 <p className="text-xl font-bold text-gray-900">
-                  {subject.teacherName}
+                  {subject.teachers.length > 1
+                    ? subject.teachers
+                        ?.map((t) =>
+                          t.fullName.split(" ").slice(0, 1).join(" "),
+                        )
+                        .join(" , ") || "غير محدد"
+                    : subject.teachers?.map((t) => formatName(t.fullName)) ||
+                      "غير محدد"}
                 </p>
 
                 <div className="space-y-3">
@@ -285,12 +293,6 @@ export default function StudentWarningsPage() {
                             {alert.limitAtIssue}
                           </p>
                         </div>
-                        {/* <div className="space-y-1">
-                          <p className="text-gray-400 text-xs">النسبة</p>
-                          <p className="font-bold text-red-600">
-                            {alert.percentAtIssue}%
-                          </p>
-                        </div> */}
                       </div>
 
                       {alert.isExtended && (
@@ -303,10 +305,17 @@ export default function StudentWarningsPage() {
                         </div>
                       )}
 
+                      {alert.status === 1 && (
+                        <div className="flex items-center gap-1 text-[10px] text-red-600 font-bold bg-red-50 w-fit px-2 py-1 rounded-lg">
+                          <ShieldAlert className="h-3 w-3" />
+                          <span>بانتظار موافقة الإدارة</span>
+                        </div>
+                      )}
+
                       {alert.adminReviewedAt && (
                         <div className="flex items-center gap-1 text-[10px] text-green-600 font-bold bg-green-50 w-fit px-2 py-1 rounded-lg">
                           <CheckCircle2 className="h-3 w-3" />
-                          <span>تمت المراجعة من قبل الإدارة</span>
+                          <span>تمت الموافقة من قبل الإدارة</span>
                         </div>
                       )}
                     </div>

@@ -135,7 +135,7 @@ export interface StudentSubjectsResponse {
   subjects: Array<{
     subjectId: number;
     subjectName: string;
-    teacherName: string;
+    teachers: Array<{ userId: string; fullName: string }>;
     totalAbsences: number;
     lateCount: number;
     excusedCount: number;
@@ -146,9 +146,10 @@ export interface StudentSubjectsResponse {
 export interface StudentAlertsBySubject {
   subjectId: number;
   subjectName: string;
-  teacherName: string;
+  teachers: Array<{ userId: string; fullName: string }>;
   alerts: Array<{
     id: number;
+    status: number;
     type: string;
     message: string;
     date: string;
@@ -236,7 +237,7 @@ export interface AdminAllSubjectsResponse {
       subjects: Array<{
         subjectId: number;
         subjectName: string;
-        teacherName: string;
+        teachers: Array<{ userId: string; fullName: string }>;
         numberOfHours: number;
       }>;
     }>;

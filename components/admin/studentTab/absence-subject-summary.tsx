@@ -2,18 +2,19 @@
 
 import { BookOpen } from "lucide-react";
 import { StudentAbsenceGroupByDateResponse } from "@/features/teacher/teacherTypes";
+import { formatName } from "@/lib/utils";
 
 interface AbsenceSubjectSummaryProps {
   subjectName: string;
   numberOfHours: number;
-  teacherName: string;
+  teachers: { userId: string; fullName: string }[];
   targetAbsenceDetails: StudentAbsenceGroupByDateResponse | null;
 }
 
 export function AbsenceSubjectSummary({
   subjectName,
   numberOfHours,
-  teacherName,
+  teachers,
   targetAbsenceDetails,
 }: AbsenceSubjectSummaryProps) {
   if (!targetAbsenceDetails) return null;
@@ -28,8 +29,12 @@ export function AbsenceSubjectSummary({
           <h4 className="text-base md:text-xl font-black text-gray-900 truncate">
             {subjectName} ({numberOfHours} حصص)
           </h4>
-          <span className="text-xs md:text-[14px] font-black text-info/40 uppercase tracking-widest block mb-0.5 truncate">
-            {teacherName}
+          <span className="text-xs md:text-[14px] font-black text-info/40 uppercase tracking-widest block mb-0.5 truncate max-w-[200px]">
+            {teachers.length > 1
+              ? teachers
+                  ?.map((t) => t.fullName.split(" ").slice(0, 1).join(" "))
+                  .join(" , ") || "غير محدد"
+              : teachers?.map((t) => formatName(t.fullName)) || "غير محدد"}
           </span>
         </div>
       </div>

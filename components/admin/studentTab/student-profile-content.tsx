@@ -38,7 +38,6 @@ import { AlertsSection } from "@/components/admin/studentTab/alerts-section";
 import { AbsencesDialogs } from "@/components/admin/studentTab/presence-dialogs";
 import { DatePicker } from "@/components/ui/date-picker";
 
-
 type Role = "admin" | "department-head";
 
 interface StudentProfileContentProps {
@@ -66,7 +65,8 @@ export function StudentProfileContent({
   // Excuse Tab States
   const [excuseDate, setExcuseDate] = useState<Date | undefined>(() => {
     const today = new Date();
-    if (today.getDay() === 5) today.setDate(today.getDate() - 1); // If Friday, default to Thursday
+    if (today.getDay() === 5)
+      today.setDate(today.getDate() - 1); // If Friday, default to Thursday
     else if (today.getDay() === 6) today.setDate(today.getDate() + 1); // If Saturday, default to Sunday
     return today;
   });
@@ -182,8 +182,6 @@ export function StudentProfileContent({
     return undefined;
   }, [adminSubjects, selectedSemesterId, selectedYearId, profile]);
 
-
-
   // Fetch absence details when active subject changes
   useEffect(() => {
     const activeSubject = allSubjects.find((s) =>
@@ -242,7 +240,8 @@ export function StudentProfileContent({
   useEffect(() => {
     if (activeTypeTab === "excuse" && !isDH) {
       const today = new Date();
-      if (today.getDay() === 5) today.setDate(today.getDate() - 1); // If Friday, default to Thursday
+      if (today.getDay() === 5)
+        today.setDate(today.getDate() - 1); // If Friday, default to Thursday
       else if (today.getDay() === 6) today.setDate(today.getDate() + 1); // If Saturday, default to Sunday
 
       setExcuseDate(today);
@@ -251,8 +250,6 @@ export function StudentProfileContent({
       setExcuseError(null);
     }
   }, [activeTypeTab, isDH]);
-
-
 
   const handleExcuseAbsencesByDate = async () => {
     if (!excuseDate || isDH || !currentInfoId) return;
@@ -266,15 +263,13 @@ export function StudentProfileContent({
         }),
       ).unwrap();
 
-
       setExcuseResult(result);
       setExcuseReason("");
-      
+
       const today = new Date();
       if (today.getDay() === 5) today.setDate(today.getDate() - 1);
       else if (today.getDay() === 6) today.setDate(today.getDate() + 1);
       setExcuseDate(today);
-
     } catch (error: any) {
       console.error("Failed to excuse absences:", error);
       setExcuseError(error || "حدث خطأ غير متوقع أثناء عملية التحويل");
@@ -425,7 +420,6 @@ export function StudentProfileContent({
                       معالجة الأعذار
                     </button>
                   )}
-
                 </div>
               </div>
             </div>
@@ -446,7 +440,6 @@ export function StudentProfileContent({
 
               <ScrollArea className="flex-1">
                 {activeTypeTab === "excuse" && !isDH ? (
-
                   <div className="m-0 p-4 md:p-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
                     <div className="flex flex-col items-center justify-center py-10 md:py-16">
                       <Card className="w-full max-w-lg p-6 md:p-8 border-2 border-dashed border-info-light bg-info-light/30 rounded-[2.5rem] shadow-none">
@@ -465,7 +458,10 @@ export function StudentProfileContent({
                             </p>
                           </div>
 
-                          <div className="space-y-4 text-right w-full" dir="rtl">
+                          <div
+                            className="space-y-4 text-right w-full"
+                            dir="rtl"
+                          >
                             <DatePicker
                               date={excuseDate}
                               setDate={setExcuseDate}
@@ -486,7 +482,6 @@ export function StudentProfileContent({
                               />
                             </div>
 
-
                             <Button
                               disabled={
                                 !excuseDate ||
@@ -494,7 +489,6 @@ export function StudentProfileContent({
                                 !currentInfoId
                               }
                               onClick={handleExcuseAbsencesByDate}
-
                               className="w-full h-14 rounded-2xl bg-info hover:bg-info-foreground text-white font-black text-lg shadow-lg shadow-info/20 transition-all active:scale-[0.98]"
                             >
                               {excuseAbsencesState.isLoading ? (
@@ -540,7 +534,7 @@ export function StudentProfileContent({
                               <AbsenceSubjectSummary
                                 subjectName={subject.subjectName}
                                 numberOfHours={subject.numberOfHours}
-                                teacherName={subject.teacherName}
+                                teachers={subject.teachers}
                                 targetAbsenceDetails={
                                   activeSubjectId ===
                                   (isDH
@@ -552,36 +546,11 @@ export function StudentProfileContent({
                               />
 
                               <div className="px-3 md:px-6 py-3 bg-gray-50/50 border-b border-gray-100 flex flex-wrap items-center gap-2 md:gap-3 rounded-2xl mb-4 overflow-hidden">
-                                <Popover>
-                                  <PopoverTrigger asChild>
-                                    <Button
-                                      variant="outline"
-                                      size="sm"
-                                      className={`gap-2 h-9 border-gray-200 cursor-pointer bg-white text-xs md:text-sm flex-1 md:flex-none ${selectedDate ? "border-info bg-info-light text-info" : ""}`}
-                                    >
-                                      <CalendarDays className="h-4 w-4" />
-                                      {selectedDate
-                                        ? format(selectedDate, "PPP", {
-                                            locale: ar,
-                                          })
-                                        : "تصفية بالتاريخ"}
-                                    </Button>
-                                  </PopoverTrigger>
-                                  <PopoverContent
-                                    className="w-auto p-0 border-none shadow-2xl"
-                                    align="start"
-                                  >
-                                    <Calendar
-                                      mode="single"
-                                      selected={selectedDate}
-                                      onSelect={setSelectedDate}
-                                      initialFocus
-                                      dir="rtl"
-                                      locale={ar}
-                                      className="bg-white rounded-xl"
-                                    />
-                                  </PopoverContent>
-                                </Popover>
+                                <DatePicker
+                                  date={selectedDate}
+                                  setDate={setSelectedDate}
+                                  label="تصفية بالتاريخ"
+                                />
                                 {selectedDate && (
                                   <Button
                                     variant="ghost"
@@ -644,11 +613,15 @@ export function StudentProfileContent({
                             </div>
                           ) : (
                             <AlertsSection
+                              isReadOnly={isDH}
                               unifiedAlerts={unifiedAlerts || []}
                               subjectsWithAlerts={subjectsWithAlerts}
                               selectedAlertSubjectId={selectedAlertSubjectId}
                               setSelectedAlertSubjectId={
                                 setSelectedAlertSubjectId
+                              }
+                              onAlertAction={() =>
+                                dispatch(fetchUnifiedAlerts(studentId))
                               }
                             />
                           )}

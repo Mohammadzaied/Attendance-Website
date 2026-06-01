@@ -12,6 +12,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { DetailedSubjectResponse } from "@/features/subject";
+import { formatName } from "@/lib/utils";
 
 interface SubjectsListProps {
   subjects: DetailedSubjectResponse[];
@@ -90,19 +91,25 @@ export function SubjectsList({
                 </div>
 
                 <div className="flex items-center justify-between pt-3 border-t border-gray-50 bg-gray-50/50 -mx-4 px-4 py-2 mt-auto">
-                  <div className="flex items-center gap-2">
-                    {subject.teacherName ? (
-                      <div className="flex items-center gap-2">
-                        <div className="h-7 w-7 bg-info-light text-info rounded-full flex items-center justify-center text-xs font-black ring-2 ring-white">
-                          {subject.teacherName.charAt(0)}
-                        </div>
-                        <span
-                          className="text-gray-700 text-sm font-bold truncate max-w-[150px]"
-                          title={subject.teacherName}
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    {subject.teachers && subject.teachers.length > 0 ? (
+                      subject.teachers.map((teacher) => (
+                        <Badge
+                          key={teacher.userId}
+                          variant="secondary"
+                          className="bg-info/5 hover:bg-info/10 text-info border border-info/10 pl-2 pr-1 py-1 flex items-center gap-1.5 transition-colors rounded-full"
                         >
-                          {subject.teacherName}
-                        </span>
-                      </div>
+                          <div className="h-5 w-5 bg-white rounded-full flex items-center justify-center text-[10px] font-black shadow-sm text-info shrink-0">
+                            {formatName(teacher.fullName)?.charAt(0)}
+                          </div>
+                          <span
+                            className="text-xs font-bold truncate max-w-[120px]"
+                            title={teacher.fullName}
+                          >
+                            {formatName(teacher.fullName)}
+                          </span>
+                        </Badge>
+                      ))
                     ) : (
                       <span className="text-danger text-xs font-medium">
                         لم يعين معلم
@@ -155,17 +162,22 @@ export function SubjectsList({
               </div>
             </TableCell>
             <TableCell className="text-right border-none">
-              {subject.teacherName ? (
-                <div className="flex items-center gap-2">
-                  <div className="h-7 w-7 bg-info-light text-info rounded-full flex items-center justify-center text-xs font-bold ring-2 ring-white shadow-sm">
-                    {subject.teacherName.charAt(0)}
-                  </div>
-                  <span
-                    className="text-gray-700 font-medium truncate max-w-[150px]"
-                    title={subject.teacherName}
-                  >
-                    {subject.teacherName}
-                  </span>
+              {subject.teachers && subject.teachers.length > 0 ? (
+                <div className="flex flex-wrap items-center gap-1.5 max-w-[280px]">
+                  {subject.teachers.map((teacher) => (
+                    <Badge
+                      key={teacher.userId}
+                      variant="secondary"
+                      className="bg-info/5 hover:bg-info/10 text-info border border-info/10 pl-2 pr-1 py-1 flex items-center gap-1.5 transition-colors rounded-full"
+                    >
+                      <span
+                        className="text-xs font-bold truncate max-w-[120px]"
+                        title={teacher.fullName}
+                      >
+                        {formatName(teacher.fullName)}
+                      </span>
+                    </Badge>
+                  ))}
                 </div>
               ) : (
                 <span className="text-danger text-sm">لم يعين</span>
